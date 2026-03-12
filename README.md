@@ -46,11 +46,13 @@ After months of daily production use — debugging at 2am, shipping features acr
 **What you'll find here:**
 
 - A **667-line power user guide** covering session management to multi-agent orchestration
+- **20 prompt engineering patterns** with copy-paste examples and a decision tree
+- A **quick-reference cheat sheet** for commands, model routing, and session management
+- A **troubleshooting guide** with 15 common issues and diagnostic flowcharts
 - **14 production-ready skills** (custom slash commands) you can drop into any project
-- A **CLAUDE.md template** that prevents the most common failure modes
-- **Hook scripts** that catch errors before they reach your commits
+- **5 CLAUDE.md templates** — general, React, Node API, Python, and full-stack monorepo
+- **6 hook scripts** that catch errors before they reach your commits
 - **Configuration templates** for plugins, MCP servers, and agent teams
-- **Lessons from production** — the stuff nobody tells you until something breaks
 
 ---
 
@@ -111,9 +113,16 @@ graph TB
 ```
 claude-code-playbook/
 ├── docs/
-│   └── guide.md              # The complete power user guide (667 lines)
+│   ├── guide.md               # The complete power user guide (667 lines)
+│   ├── prompt-patterns.md     # 20 prompt engineering patterns with examples
+│   ├── cheat-sheet.md         # Quick-reference card for commands & workflows
+│   └── troubleshooting.md     # 15 common issues with diagnostic flowcharts
 ├── templates/
-│   └── CLAUDE.md              # Annotated CLAUDE.md template — copy and customize
+│   ├── CLAUDE.md              # General CLAUDE.md template — copy and customize
+│   ├── CLAUDE-react.md        # React / Next.js specific template
+│   ├── CLAUDE-node-api.md     # Node.js API specific template
+│   ├── CLAUDE-python.md       # Python project template
+│   └── CLAUDE-fullstack.md    # Full-stack monorepo template
 ├── skills/                    # 14 ready-to-use custom slash commands
 │   ├── autoskill/             # Self-learning: extracts patterns from your sessions
 │   ├── brainstorming/         # Structured multi-perspective idea exploration
@@ -131,6 +140,11 @@ claude-code-playbook/
 │   └── writing-plans/         # Structured implementation planning
 ├── hooks/
 │   ├── ts-check.sh            # Auto-run tsc --noEmit on every TypeScript edit
+│   ├── pre-commit-guard.sh    # Block commits with console.log/debugger
+│   ├── format-check.sh        # Prettier format validation on edits
+│   ├── env-guard.sh           # Prevent committing .env files or secrets
+│   ├── build-check.sh         # OOM-safe TypeScript build check (4GB→8GB)
+│   ├── session-start-check.sh # Environment validation on session start
 │   └── README.md              # Hook setup guide with exit codes and examples
 ├── config/
 │   └── settings-example.json  # Example ~/.claude/settings.json with plugins + hooks
@@ -412,9 +426,30 @@ Never append to shared context files. Always replace the entire content and keep
 
 ---
 
-## The CLAUDE.md Template
+## Documentation
 
-The [template](templates/CLAUDE.md) includes these sections, each addressing a specific failure mode:
+| Doc | Lines | What It Covers |
+|-----|-------|----------------|
+| **[Power User Guide](docs/guide.md)** | 667 | Full lifecycle: sessions, context, plugins, multi-agent, production lessons |
+| **[Prompt Patterns](docs/prompt-patterns.md)** | 459 | 20 patterns with examples: Reverse Prompting, Constraint-First, Scope Lock, and more |
+| **[Cheat Sheet](docs/cheat-sheet.md)** | 192 | Quick-reference card: commands, model routing, session management, troubleshooting |
+| **[Troubleshooting](docs/troubleshooting.md)** | 311 | 15 issues in Symptoms/Cause/Fix format with 3 diagnostic flowcharts |
+
+---
+
+## CLAUDE.md Templates
+
+5 templates for different stacks — copy the one that fits your project:
+
+| Template | Stack | Key Sections |
+|----------|-------|-------------|
+| **[CLAUDE.md](templates/CLAUDE.md)** | General / TypeScript | 12 sections covering all common failure modes |
+| **[CLAUDE-react.md](templates/CLAUDE-react.md)** | React / Next.js | Components, state, styling, a11y, hydration pitfalls |
+| **[CLAUDE-node-api.md](templates/CLAUDE-node-api.md)** | Node.js API | REST conventions, middleware, auth, error handling, security |
+| **[CLAUDE-python.md](templates/CLAUDE-python.md)** | Python | Type hints, pytest, ruff/black, docstrings, common pitfalls |
+| **[CLAUDE-fullstack.md](templates/CLAUDE-fullstack.md)** | Full-stack monorepo | Shared types, build order, API contracts, deployment coordination |
+
+The general [template](templates/CLAUDE.md) includes these sections, each addressing a specific failure mode:
 
 ```mermaid
 graph TB
@@ -478,7 +513,7 @@ sequenceDiagram
     Claude-->>You: "Bug fixed, types clean"
 ```
 
-The included **[ts-check.sh](hooks/ts-check.sh)** catches type errors on every edit. See **[hooks/README.md](hooks/README.md)** for custom hook creation, exit codes, and configuration.
+**6 included hooks:** [ts-check.sh](hooks/ts-check.sh) (type errors), [pre-commit-guard.sh](hooks/pre-commit-guard.sh) (debug statements), [format-check.sh](hooks/format-check.sh) (Prettier), [env-guard.sh](hooks/env-guard.sh) (secrets), [build-check.sh](hooks/build-check.sh) (OOM-safe builds), [session-start-check.sh](hooks/session-start-check.sh) (environment validation). See **[hooks/README.md](hooks/README.md)** for setup and custom hook creation.
 
 ---
 

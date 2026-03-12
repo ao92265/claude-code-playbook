@@ -24,7 +24,15 @@ We learned all of this the hard way — through late-night production debugging,
 
 **A CLAUDE.md template** with 12 sections, each preventing a specific failure mode we discovered in production — from ESM/CJS mismatches to Claude making unsolicited git pushes.
 
-**Hook scripts** that auto-check TypeScript types on every edit, plus setup docs.
+**6 hook scripts** — TypeScript type checking, debug statement blocking, Prettier validation, secret detection, OOM-safe builds, and session environment validation.
+
+**20 prompt engineering patterns** with copy-paste examples, a decision tree, and 8 anti-patterns to avoid.
+
+**A troubleshooting guide** covering 15 common issues with diagnostic flowcharts.
+
+**Stack-specific CLAUDE.md templates** for React/Next.js, Node.js APIs, Python, and full-stack monorepos.
+
+**A quick-reference cheat sheet** for commands, model routing, and session management.
 
 ## The Patterns That Matter Most
 
@@ -64,7 +72,7 @@ Everything is MIT licensed. Fork it, adapt it, contribute back.
 
 ## What's Next
 
-We're actively adding more content — prompt engineering patterns, stack-specific templates (React, Node API, Python, fullstack monorepo), additional hook scripts, a troubleshooting guide, and a quick-reference cheat sheet. Watch the repo or submit a PR if you've got patterns worth sharing.
+The playbook is actively maintained. Watch the repo for updates or submit a PR if you've got patterns worth sharing.
 
 The goal is simple: spend less time fighting Claude and more time shipping.
 
