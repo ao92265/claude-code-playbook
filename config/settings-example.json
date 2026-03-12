@@ -1,42 +1,42 @@
-{
-  "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-  },
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/ts-check.sh",
-            "timeout": 30,
-            "statusMessage": "Checking TypeScript types..."
-          }
-        ]
-      }
-    ]
-  },
-  "enabledPlugins": {
-    "commit-commands@claude-plugins-official": true,
-    "javascript-typescript@claude-code-workflows": true,
-    "pr-review-toolkit@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true,
-    "context7@claude-plugins-official": true
-  },
-  "spinnerVerbs": {
-    "mode": "replace",
-    "verbs": [
-      "Reading",
-      "Writing",
-      "Editing",
-      "Searching",
-      "Executing",
-      "Processing",
-      "Analyzing",
-      "Fetching",
-      "Reasoning"
-    ]
-  },
-  "mcpServers": {}
-}
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/ts-check.sh",
+            "timeout": 30,
+            "statusMessage": "Checking TypeScript types..."
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "commit-commands@claude-plugins-official": true,
+    "javascript-typescript@claude-code-workflows": true,
+    "pr-review-toolkit@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "context7@claude-plugins-official": true
+  },
+  "spinnerVerbs": {
+    "mode": "replace",
+    "verbs": [
+      "Reading",
+      "Writing",
+      "Editing",
+      "Searching",
+      "Executing",
+      "Processing",
+      "Analyzing",
+      "Fetching",
+      "Reasoning"
+    ]
+  },
+  "mcpServers": {}
+}

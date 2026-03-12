@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"git add docs/guide.md && git commit -m \\\"$(cat <<'EOF'\\nFix guide.md table rendering by stripping carriage returns\\n\\nTables were not rendering on GitHub due to \\\\r\\\\r\\\\n line endings\\n(do...",
+  "error": "Exit code 1\nError: File docs/guide.md contains LF line endings. Please convert to CRLF.",
+  "timestamp": "2026-03-12T13:38:04.635Z",
+  "retry_count": 1
+}
