@@ -1,0 +1,15 @@
+title: Claude Code Playbook
+description: Battle-tested patterns, skills, hooks, and templates for Claude Code
+remote_theme: pages-themes/cayman@v0.2.0
+plugins:
+  - jekyll-remote-theme
+
+exclude:
+  - scripts/
+  - config/
+  - hooks/
+  - skills/
+  - templates/
+  - examples/
+  - CONTRIBUTING.md
+  - LICENSE

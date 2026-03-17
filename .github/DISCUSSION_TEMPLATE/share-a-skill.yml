@@ -1,0 +1,35 @@
+title: "[Skill] "
+labels: ["skill-share"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Share a skill you've built! Describe what it does and when to use it.
+  - type: input
+    id: skill-name
+    attributes:
+      label: Skill Name
+      description: What's the slash command? (e.g., /my-skill)
+      placeholder: /skill-name
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What does it do?
+      description: Describe the skill in 2-3 sentences.
+    validations:
+      required: true
+  - type: textarea
+    id: skill-content
+    attributes:
+      label: SKILL.md Content
+      description: Paste your full SKILL.md file here.
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: usage-example
+    attributes:
+      label: Usage Example
+      description: Show an example of using this skill in a real session.

@@ -1,0 +1,31 @@
+title: "[Question] "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ask a question about Claude Code, this playbook, or AI-assisted development in general.
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: What would you like to know?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What have you tried? What's your setup? Any relevant details.
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Skills & Hooks
+        - CLAUDE.md & Templates
+        - Multi-Agent / Orchestration
+        - MCP Servers & Plugins
+        - Session Management
+        - Model Selection
+        - Other
