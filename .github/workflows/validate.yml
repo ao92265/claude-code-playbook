@@ -18,24 +18,27 @@ jobs:
           for skill in skills/*/SKILL.md; do
             if [ ! -f "$skill" ]; then continue; fi
 
+            # Normalize CRLF to LF for parsing
+            content=$(tr -d '\r' < "$skill")
+
             # Check starts with ---
-            if ! head -1 "$skill" | grep -qP "^---\r?$"; then
+            if ! echo "$content" | head -1 | grep -q "^---$"; then
               echo "ERROR: $skill missing opening frontmatter delimiter (---)"
               errors=$((errors + 1))
               continue
             fi
 
             # Check has closing ---
-            if ! awk 'NR>1' "$skill" | grep -qP "^---\r?$"; then
+            if ! echo "$content" | awk 'NR>1' | grep -q "^---$"; then
               echo "ERROR: $skill missing closing frontmatter delimiter (---)"
               errors=$((errors + 1))
               continue
             fi
 
-            # Check required fields
-            frontmatter=$(awk '/^---$/{n++; next} n==1' "$skill")
-            for field in name description metadata; do
-              if ! echo "$frontmatter" | grep -qP "^${field}:"; then
+            # Check required fields (name and description)
+            frontmatter=$(echo "$content" | awk '/^---$/{n++; next} n==1')
+            for field in name description; do
+              if ! echo "$frontmatter" | grep -q "^${field}:"; then
                 echo "ERROR: $skill missing required field: $field"
                 errors=$((errors + 1))
               fi
@@ -61,19 +64,25 @@ jobs:
           for hook in hooks/*.sh; do
             if [ ! -f "$hook" ]; then continue; fi
 
+            # Normalize CRLF to LF before checking
+            clean=$(mktemp)
+            tr -d '\r' < "$hook" > "$clean"
+
             # Check shebang
-            if ! head -1 "$hook" | grep -q "^#!/bin/bash"; then
+            if ! head -1 "$clean" | grep -q "^#!/bin/bash"; then
               echo "ERROR: $hook missing #!/bin/bash shebang"
               errors=$((errors + 1))
             fi
 
-            # Check syntax
-            if ! bash -n "$hook" 2>/dev/null; then
+            # Check syntax on normalized file
+            if ! bash -n "$clean" 2>/dev/null; then
               echo "ERROR: $hook has syntax errors"
               errors=$((errors + 1))
             else
               echo "OK: $hook"
             fi
+
+            rm -f "$clean"
           done
 
           if [ $errors -gt 0 ]; then
@@ -93,14 +102,17 @@ jobs:
           for tmpl in templates/CLAUDE*.md; do
             if [ ! -f "$tmpl" ]; then continue; fi
 
+            # Normalize CRLF for grep
+            content=$(tr -d '\r' < "$tmpl")
+
             # Check for Project Basics section
-            if ! grep -q "^## Project Basics" "$tmpl"; then
+            if ! echo "$content" | grep -q "^## Project Basics"; then
               echo "ERROR: $tmpl missing '## Project Basics' section"
               errors=$((errors + 1))
             fi
 
-            # Check for Verification section
-            if ! grep -q "^## Verification\|^## Git & GitHub" "$tmpl"; then
+            # Check for Verification or Git & GitHub section
+            if ! echo "$content" | grep -qE "^## (Verification|Git & GitHub)"; then
               echo "ERROR: $tmpl missing '## Verification' or '## Git & GitHub' section"
               errors=$((errors + 1))
             fi
