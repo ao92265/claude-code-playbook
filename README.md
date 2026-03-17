@@ -229,10 +229,23 @@ claude-code-playbook/
 
 ## Quick Start
 
-**One-line install** — interactive setup of templates, skills, and hooks:
+**One-line install** — installs all skills, hooks, and a default template automatically:
 
 ```bash
 curl -sL https://raw.githubusercontent.com/ao92265/claude-code-playbook/main/scripts/install.sh | bash
+```
+
+Choose a specific stack template:
+
+```bash
+curl -sL .../install.sh | bash -s -- --all --template react
+# Options: general, react, node, python, fullstack, go, rust, mobile, devops, java, csharp
+```
+
+Or run interactively to pick and choose:
+
+```bash
+git clone https://github.com/ao92265/claude-code-playbook.git && ./claude-code-playbook/scripts/install.sh
 ```
 
 Or set up manually:
