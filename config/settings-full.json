@@ -1,0 +1,90 @@
+{
+  "_comment": "Complete Claude Code settings with all hooks, plugins, and recommended configuration. Copy to ~/.claude/settings.json and customize.",
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/session-start-check.sh",
+            "timeout": 15,
+            "statusMessage": "Checking environment..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/pre-commit-guard.sh",
+            "timeout": 10,
+            "statusMessage": "Checking for debug statements..."
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/env-guard.sh",
+            "timeout": 10,
+            "statusMessage": "Checking for secrets..."
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/commit-message-check.sh",
+            "timeout": 10,
+            "statusMessage": "Checking commit message format..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/ts-check.sh",
+            "timeout": 30,
+            "statusMessage": "Checking TypeScript types..."
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/lint-check.sh",
+            "timeout": 15,
+            "statusMessage": "Running ESLint..."
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/format-check.sh",
+            "timeout": 15,
+            "statusMessage": "Checking formatting..."
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/test-on-save.sh",
+            "timeout": 30,
+            "statusMessage": "Running related tests...",
+            "async": true
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/build-check.sh",
+            "timeout": 60,
+            "statusMessage": "Running build check..."
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "commit-commands@claude-plugins-official": true,
+    "pr-review-toolkit@claude-plugins-official": true,
+    "context7@claude-plugins-official": true
+  },
+  "mcpServers": {}
+}

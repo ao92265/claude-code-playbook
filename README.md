@@ -747,6 +747,23 @@ See **[CONTRIBUTING.md](CONTRIBUTING.md)** for detailed guidelines on contributi
 
 <br/>
 
+## Onboarding
+
+New to Claude Code? Hand your team the **[onboarding package](onboarding/)** — a structured 2-hour program:
+
+| Step | Topic | Time |
+|:-----|:------|:----:|
+| [01 — Install](onboarding/01-install.md) | Install Claude Code, playbook, hooks | 15 min |
+| [02 — First Session](onboarding/02-first-session.md) | Guided exercises with real project | 30 min |
+| [03 — Daily Workflow](onboarding/03-daily-workflow.md) | The core Request-Implement-Verify loop | 15 min |
+| [04 — Skills Tour](onboarding/04-skills-tour.md) | Hands-on with the 10 most useful skills | 30 min |
+| [05 — Advanced](onboarding/05-advanced.md) | Multi-agent, model routing, hooks | 20 min |
+| [Checklist](onboarding/checklist.md) | Completion verification | 5 min |
+
+Also see: [Getting Started](docs/getting-started.md) | [Team Setup](docs/team-setup.md) | [Adoption Playbook](docs/adoption-playbook.md) | [Case Studies](docs/case-studies.md)
+
+<br/>
+
 ---
 
 <div align="center">
