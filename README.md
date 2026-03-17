@@ -4,6 +4,8 @@
 
 ### Stop prompting. Start engineering.
 
+<sub>Built by <strong>Force Information Systems</strong> · A <strong>Harris Computer</strong> Company · Part of <strong>Constellation Software</strong></sub>
+
 [![Quick Start](https://img.shields.io/badge/Quick_Start-0078D4?style=for-the-badge&logo=rocket&logoColor=white)](#-quick-start)
 [![Full Guide](https://img.shields.io/badge/Full_Guide-667_lines-00B4D8?style=for-the-badge&logo=book&logoColor=white)](docs/guide.md)
 [![Skills](https://img.shields.io/badge/Skills-27_included-8B5CF6?style=for-the-badge&logo=puzzle-piece&logoColor=white)](#-skills-reference)
@@ -786,6 +788,10 @@ Also see: [Getting Started](docs/getting-started.md) | [Team Setup](docs/team-se
 <div align="center">
 
 **MIT** — use it, fork it, adapt it, share it.
+
+<br/>
+
+Built with hard-won lessons by **[Force Information Systems](https://www.forceinformationsystems.com)**, a **[Harris Computer](https://www.harriscomputer.com)** company, part of **[Constellation Software](https://www.csisoftware.com)**.
 
 <br/>
 
