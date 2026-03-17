@@ -791,7 +791,7 @@ Also see: [Getting Started](docs/getting-started.md) | [Team Setup](docs/team-se
 
 <br/>
 
-Built with hard-won lessons by **[Force Information Systems](https://www.forceinformationsystems.com)**, a **[Harris Computer](https://www.harriscomputer.com)** company, part of **[Constellation Software](https://www.csisoftware.com)**.
+Built with hard-won lessons by **[Force Information Systems](https://www.force-uk.com)**, a **[Harris Computer](https://www.harriscomputer.com)** company, part of **[Constellation Software](https://www.csisoftware.com)**.
 
 <br/>
 
