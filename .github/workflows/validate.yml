@@ -1,0 +1,139 @@
+name: Validate Playbook
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-skills:
+    name: Validate Skills
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check SKILL.md files have valid frontmatter
+        run: |
+          errors=0
+          for skill in skills/*/SKILL.md; do
+            if [ ! -f "$skill" ]; then continue; fi
+
+            # Check starts with ---
+            if ! head -1 "$skill" | grep -qP "^---\r?$"; then
+              echo "ERROR: $skill missing opening frontmatter delimiter (---)"
+              errors=$((errors + 1))
+              continue
+            fi
+
+            # Check has closing ---
+            if ! awk 'NR>1' "$skill" | grep -qP "^---\r?$"; then
+              echo "ERROR: $skill missing closing frontmatter delimiter (---)"
+              errors=$((errors + 1))
+              continue
+            fi
+
+            # Check required fields
+            frontmatter=$(awk '/^---$/{n++; next} n==1' "$skill")
+            for field in name description metadata; do
+              if ! echo "$frontmatter" | grep -qP "^${field}:"; then
+                echo "ERROR: $skill missing required field: $field"
+                errors=$((errors + 1))
+              fi
+            done
+
+            echo "OK: $skill"
+          done
+
+          if [ $errors -gt 0 ]; then
+            echo "Found $errors error(s)"
+            exit 1
+          fi
+          echo "All skills validated successfully"
+
+  validate-hooks:
+    name: Validate Hooks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check hook scripts
+        run: |
+          errors=0
+          for hook in hooks/*.sh; do
+            if [ ! -f "$hook" ]; then continue; fi
+
+            # Check shebang
+            if ! head -1 "$hook" | grep -q "^#!/bin/bash"; then
+              echo "ERROR: $hook missing #!/bin/bash shebang"
+              errors=$((errors + 1))
+            fi
+
+            # Check syntax
+            if ! bash -n "$hook" 2>/dev/null; then
+              echo "ERROR: $hook has syntax errors"
+              errors=$((errors + 1))
+            else
+              echo "OK: $hook"
+            fi
+          done
+
+          if [ $errors -gt 0 ]; then
+            echo "Found $errors error(s)"
+            exit 1
+          fi
+          echo "All hooks validated successfully"
+
+  validate-templates:
+    name: Validate Templates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check templates have required sections
+        run: |
+          errors=0
+          for tmpl in templates/CLAUDE*.md; do
+            if [ ! -f "$tmpl" ]; then continue; fi
+
+            # Check for Project Basics section
+            if ! grep -q "^## Project Basics" "$tmpl"; then
+              echo "ERROR: $tmpl missing '## Project Basics' section"
+              errors=$((errors + 1))
+            fi
+
+            # Check for Verification section
+            if ! grep -q "^## Verification\|^## Git & GitHub" "$tmpl"; then
+              echo "ERROR: $tmpl missing '## Verification' or '## Git & GitHub' section"
+              errors=$((errors + 1))
+            fi
+
+            echo "OK: $tmpl"
+          done
+
+          if [ $errors -gt 0 ]; then
+            echo "Found $errors error(s)"
+            exit 1
+          fi
+          echo "All templates validated successfully"
+
+  validate-links:
+    name: Validate Internal Links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check README links point to existing files
+        run: |
+          errors=0
+          # Extract markdown links from README that point to local files
+          grep -oP '\[.*?\]\(((?!http|#).*?)\)' README.md | grep -oP '\(([^)]+)\)' | tr -d '()' | while read -r link; do
+            # Remove anchor fragments
+            file=$(echo "$link" | sed 's/#.*//')
+            if [ -n "$file" ] && [ ! -e "$file" ]; then
+              echo "ERROR: README.md links to '$link' but file does not exist"
+              errors=$((errors + 1))
+            fi
+          done
+
+          if [ $errors -gt 0 ]; then
+            echo "Found $errors broken link(s)"
+            exit 1
+          fi
+          echo "All README links valid"

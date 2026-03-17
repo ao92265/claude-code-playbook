@@ -1,0 +1,68 @@
+{
+  "_comment": "Complete hooks configuration for Claude Code. Merge into ~/.claude/settings.json or .claude/settings.json",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/session-start-check.sh",
+            "timeout": 15,
+            "statusMessage": "Checking environment..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/pre-commit-guard.sh",
+            "timeout": 10,
+            "statusMessage": "Checking for debug statements..."
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/env-guard.sh",
+            "timeout": 10,
+            "statusMessage": "Checking for secrets..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/ts-check.sh",
+            "timeout": 30,
+            "statusMessage": "Checking TypeScript types..."
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/lint-check.sh",
+            "timeout": 15,
+            "statusMessage": "Running ESLint..."
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/format-check.sh",
+            "timeout": 15,
+            "statusMessage": "Checking formatting..."
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/build-check.sh",
+            "timeout": 60,
+            "statusMessage": "Running build check..."
+          }
+        ]
+      }
+    ]
+  }
+}

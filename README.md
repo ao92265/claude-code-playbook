@@ -1,20 +1,34 @@
-<p align="center">
-  <h1 align="center">The Claude Code Playbook</h1>
-  <p align="center"><strong>Stop prompting. Start engineering.</strong></p>
-  <p align="center">
-    <a href="#quick-start"><img src="https://img.shields.io/badge/Quick_Start-blue?style=for-the-badge" alt="Quick Start"></a>
-    <a href="docs/guide.md"><img src="https://img.shields.io/badge/Full_Guide-667_lines-green?style=for-the-badge" alt="Full Guide"></a>
-    <a href="#skills-reference"><img src="https://img.shields.io/badge/Skills-14_included-orange?style=for-the-badge" alt="Skills"></a>
-    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License"></a>
-  </p>
-</p>
+<div align="center">
 
-<p align="center">
-  <em>Battle-tested patterns from 900+ sessions across production TypeScript projects.<br/>
-  Skills, hooks, templates, multi-agent orchestration, and hard-won lessons — all in one place.</em>
-</p>
+# The Claude Code Playbook
 
----
+### Stop prompting. Start engineering.
+
+[![Quick Start](https://img.shields.io/badge/Quick_Start-0078D4?style=for-the-badge&logo=rocket&logoColor=white)](#-quick-start)
+[![Full Guide](https://img.shields.io/badge/Full_Guide-667_lines-00B4D8?style=for-the-badge&logo=book&logoColor=white)](docs/guide.md)
+[![Skills](https://img.shields.io/badge/Skills-18_included-8B5CF6?style=for-the-badge&logo=puzzle-piece&logoColor=white)](#-skills-reference)
+[![Templates](https://img.shields.io/badge/Templates-7_stacks-F97316?style=for-the-badge&logo=file-code&logoColor=white)](#-claudemd-templates)
+[![CI](https://img.shields.io/github/actions/workflow/status/ao92265/claude-code-playbook/validate.yml?style=for-the-badge&label=CI&logo=github)](https://github.com/ao92265/claude-code-playbook/actions/workflows/validate.yml)
+[![License](https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/ao92265/claude-code-playbook?style=for-the-badge&logo=github&color=EAB308)](https://github.com/ao92265/claude-code-playbook/stargazers)
+
+<br/>
+
+*Battle-tested patterns from 900+ sessions across production TypeScript projects.*
+*Skills, hooks, templates, multi-agent orchestration, and hard-won lessons — all in one place.*
+
+<br/>
+
+<img src="https://img.shields.io/badge/18-Skills-8B5CF6?style=flat-square" alt="18 Skills"/>
+<img src="https://img.shields.io/badge/7-Templates-F97316?style=flat-square" alt="7 Templates"/>
+<img src="https://img.shields.io/badge/7-Hooks-EF4444?style=flat-square" alt="7 Hooks"/>
+<img src="https://img.shields.io/badge/6-Docs-0078D4?style=flat-square" alt="6 Docs"/>
+<img src="https://img.shields.io/badge/3-Examples-22C55E?style=flat-square" alt="3 Examples"/>
+<img src="https://img.shields.io/badge/20-Prompt_Patterns-EC4899?style=flat-square" alt="20 Prompt Patterns"/>
+
+</div>
+
+<br/>
 
 ## The Core Loop
 
@@ -35,7 +49,7 @@ graph LR
 
 > **The cardinal rule:** Each step has a clear boundary. Don't blur them. Plan in one session, execute in another. Verify with real tests, not code inspection.
 
----
+<br/>
 
 ## Why This Exists
 
@@ -43,18 +57,31 @@ Most Claude Code guides tell you how to install it. This one tells you how to *u
 
 After months of daily production use — debugging at 2am, shipping features across 30+ file changes, managing fleets of sub-agents, and learning the hard way what breaks — we distilled everything into this playbook.
 
-**What you'll find here:**
+<table>
+<tr>
+<td width="50%">
 
-- A **667-line power user guide** covering session management to multi-agent orchestration
-- **20 prompt engineering patterns** with copy-paste examples and a decision tree
-- A **quick-reference cheat sheet** for commands, model routing, and session management
-- A **troubleshooting guide** with 15 common issues and diagnostic flowcharts
-- **14 production-ready skills** (custom slash commands) you can drop into any project
-- **5 CLAUDE.md templates** — general, React, Node API, Python, and full-stack monorepo
-- **6 hook scripts** that catch errors before they reach your commits
-- **Configuration templates** for plugins, MCP servers, and agent teams
+**Learn**
+- A [667-line power user guide](docs/guide.md) covering session management to multi-agent orchestration
+- [20 prompt engineering patterns](docs/prompt-patterns.md) with copy-paste examples and a decision tree
+- [Quick-reference cheat sheet](docs/cheat-sheet.md) for commands, model routing, and session management
+- [Troubleshooting guide](docs/troubleshooting.md) with 15 common issues and diagnostic flowcharts
 
----
+</td>
+<td width="50%">
+
+**Use**
+- [18 production-ready skills](skills/) (custom `/commands`) you can drop into any project
+- [7 CLAUDE.md templates](templates/) — TypeScript, React, Node, Python, Full-stack, Go, Rust
+- [7 hook scripts](hooks/) that catch errors before they reach your commits
+- [3 annotated example sessions](examples/) showing real workflows in action
+- [MCP server guide](docs/mcp-servers.md) and [model comparison](docs/model-comparison.md) for optimal setup
+
+</td>
+</tr>
+</table>
+
+<br/>
 
 ## Architecture Overview
 
@@ -106,9 +133,13 @@ graph TB
     style GH fill:#DDA0DD,stroke:#BA55D3,color:#333
 ```
 
----
+<br/>
 
 ## What's Inside
+
+<details>
+<summary><strong>Full directory tree</strong> (click to expand)</summary>
+<br/>
 
 ```
 claude-code-playbook/
@@ -116,103 +147,126 @@ claude-code-playbook/
 │   ├── guide.md               # The complete power user guide (667 lines)
 │   ├── prompt-patterns.md     # 20 prompt engineering patterns with examples
 │   ├── cheat-sheet.md         # Quick-reference card for commands & workflows
-│   └── troubleshooting.md     # 15 common issues with diagnostic flowcharts
+│   ├── troubleshooting.md     # 15 common issues with diagnostic flowcharts
+│   ├── mcp-servers.md         # MCP server guide: setup, token impact, troubleshooting
+│   └── model-comparison.md    # Claude model comparison: Haiku vs Sonnet vs Opus
+├── examples/
+│   ├── bug-fix-session.md     # Annotated bug fix session transcript
+│   ├── feature-session.md     # Annotated new feature session transcript
+│   └── multi-agent-session.md # Annotated multi-agent orchestration transcript
 ├── templates/
-│   ├── CLAUDE.md              # General CLAUDE.md template — copy and customize
-│   ├── CLAUDE-react.md        # React / Next.js specific template
-│   ├── CLAUDE-node-api.md     # Node.js API specific template
-│   ├── CLAUDE-python.md       # Python project template
-│   └── CLAUDE-fullstack.md    # Full-stack monorepo template
-├── skills/                    # 14 ready-to-use custom slash commands
-│   ├── autoskill/             # Self-learning: extracts patterns from your sessions
-│   ├── brainstorming/         # Structured multi-perspective idea exploration
-│   ├── check-env/             # Pre-flight checks: ports, Docker, .env, git, credentials
-│   ├── codex-prepush-review/  # Automated code review before every push
-│   ├── cross-project-search/  # Search across all repos in your workspace
-│   ├── deep-explore/          # Deep multi-step codebase exploration
-│   ├── dependency-audit/      # Audit deps for vulnerabilities and updates
-│   ├── deploy/                # Safe deployment with OOM prevention and confirmations
-│   ├── executing-plans/       # Execute written plans with checkpoints
-│   ├── karpathy-guidelines/   # Anti-overcomplication checklist (inspired by Karpathy)
-│   ├── pr-batch-review/       # Review and manage multiple PRs in one pass
-│   ├── skill-creator/         # Meta-skill: create new skills from session patterns
-│   ├── verification-before-completion/ # Enforce proof before "done" claims
-│   └── writing-plans/         # Structured implementation planning
+│   ├── CLAUDE.md              # General CLAUDE.md template
+│   ├── CLAUDE-react.md        # React / Next.js
+│   ├── CLAUDE-node-api.md     # Node.js API
+│   ├── CLAUDE-python.md       # Python
+│   ├── CLAUDE-fullstack.md    # Full-stack monorepo
+│   ├── CLAUDE-go.md           # Go
+│   └── CLAUDE-rust.md         # Rust
+├── skills/                    # 18 ready-to-use custom slash commands
+│   ├── autoskill/             # Self-learning from sessions
+│   ├── brainstorming/         # Structured idea exploration
+│   ├── changelog/             # Generate changelog from commits
+│   ├── check-env/             # Pre-flight environment checks
+│   ├── codex-prepush-review/  # Code review before push
+│   ├── cross-project-search/  # Search across repos
+│   ├── deep-explore/          # Deep codebase exploration
+│   ├── dependency-audit/      # Vulnerability & update audit
+│   ├── deploy/                # Safe deployment checklist
+│   ├── executing-plans/       # Execute plans with checkpoints
+│   ├── karpathy-guidelines/   # Anti-overcomplication checklist
+│   ├── pr-batch-review/       # Batch PR management
+│   ├── refactor/              # Zero-behavior-change refactor
+│   ├── security-check/        # OWASP Top 10 scan
+│   ├── skill-creator/         # Create new skills
+│   ├── test-first/            # TDD workflow
+│   ├── verification-before-completion/
+│   └── writing-plans/         # Implementation planning
 ├── hooks/
-│   ├── ts-check.sh            # Auto-run tsc --noEmit on every TypeScript edit
-│   ├── pre-commit-guard.sh    # Block commits with console.log/debugger
-│   ├── format-check.sh        # Prettier format validation on edits
-│   ├── env-guard.sh           # Prevent committing .env files or secrets
-│   ├── build-check.sh         # OOM-safe TypeScript build check (4GB→8GB)
-│   ├── session-start-check.sh # Environment validation on session start
-│   └── README.md              # Hook setup guide with exit codes and examples
+│   ├── ts-check.sh            # TypeScript type checking
+│   ├── lint-check.sh          # ESLint validation
+│   ├── pre-commit-guard.sh    # Block debug statements
+│   ├── format-check.sh        # Prettier formatting
+│   ├── env-guard.sh           # Secret detection
+│   ├── build-check.sh         # OOM-safe builds
+│   ├── session-start-check.sh # Environment validation
+│   └── README.md              # Hook setup guide
 ├── config/
-│   └── settings-example.json  # Example ~/.claude/settings.json with plugins + hooks
+│   ├── settings-example.json  # Example settings.json
+│   └── hooks-example.json     # All 7 hooks configured
+├── .github/workflows/
+│   └── validate.yml           # CI validation
+├── article.md                 # Original article
+├── CONTRIBUTING.md            # Contribution guide
 └── LICENSE                    # MIT
 ```
 
----
+</details>
+
+<br/>
 
 ## Quick Start
 
-### 1. Get the CLAUDE.md template into your project
+<table>
+<tr>
+<td>
+
+### 1. Get the template
 
 ```bash
 git clone https://github.com/ao92265/claude-code-playbook.git
-cp claude-code-playbook/templates/CLAUDE.md /path/to/your/project/CLAUDE.md
+cp claude-code-playbook/templates/CLAUDE.md your-project/CLAUDE.md
 ```
 
-Edit each section — the template has HTML comments explaining what each rule does and why. This single file saves 10-20 minutes per session.
+Edit each section — the template has HTML comments explaining what each rule does and why.
 
-### 2. Install the skills you want
+</td>
+<td>
+
+### 2. Install skills
 
 ```bash
-# Global (available in all projects)
+# Global (all projects)
 cp -r claude-code-playbook/skills/check-env ~/.claude/skills/
 
-# Project-local (only this project)
-cp -r claude-code-playbook/skills/deploy /path/to/your/project/.claude/skills/
+# Project-local
+cp -r claude-code-playbook/skills/deploy your-project/.claude/skills/
 ```
 
-Then use them:
-```
-> /check-env          # Pre-flight environment check
-> /deploy             # Safe deployment with OOM prevention
-> /pr-batch-review    # Review all open PRs at once
-```
+</td>
+</tr>
+<tr>
+<td>
 
-### 3. Set up the TypeScript hook
+### 3. Set up hooks
 
 ```bash
-cp claude-code-playbook/hooks/ts-check.sh ~/.claude/hooks/
-chmod +x ~/.claude/hooks/ts-check.sh
+cp claude-code-playbook/hooks/*.sh ~/.claude/hooks/
+chmod +x ~/.claude/hooks/*.sh
 ```
 
-Add to `~/.claude/settings.json` (see [hooks/README.md](hooks/README.md)):
-```json
-{
-  "hooks": {
-    "PostToolUse": [{
-      "matcher": "Edit|Write",
-      "hooks": [{
-        "type": "command",
-        "command": "~/.claude/hooks/ts-check.sh",
-        "timeout": 30,
-        "statusMessage": "Checking TypeScript types..."
-      }]
-    }]
-  }
-}
+See [hooks/README.md](hooks/README.md) for `settings.json` config, or copy the complete [hooks-example.json](config/hooks-example.json).
+
+</td>
+<td>
+
+### 4. Use them
+
+```bash
+> /check-env        # Pre-flight checks
+> /deploy           # Safe deployment
+> /test-first       # TDD workflow
+> /security-check   # OWASP scan
+> /pr-batch-review  # Review all PRs
 ```
 
-Type errors caught immediately — not 10 minutes later when the build fails.
+</td>
+</tr>
+</table>
 
-### 4. Read the guide
-
-**[docs/guide.md](docs/guide.md)** covers everything:
+Then read the **[Full Guide](docs/guide.md)** — it covers everything:
 
 | Section | What You'll Learn |
-|---------|-------------------|
+|:--------|:------------------|
 | Core Workflow | The Request-Implement-Verify-Close cycle that prevents marathon sessions |
 | Context Management | Why Claude "gets dumber" mid-session and how to prevent it |
 | Reverse Prompting | Let Claude interview *you* for better specs |
@@ -222,15 +276,19 @@ Type errors caught immediately — not 10 minutes later when the build fails.
 | Troubleshooting | Session disconnects, agent deadlocks, OOM crashes |
 | Production Lessons | Hard-won patterns from a 10,000+ test codebase |
 
----
+<br/>
 
 ## Plugin Ecosystem
 
-The guide covers two major orchestration plugins in depth. Here's how they compare:
+The guide covers two major orchestration plugins in depth:
+
+<table>
+<tr>
+<td width="50%" valign="top">
 
 ### BMAD — Multi-Agent Roles
 
-BMAD spawns specialized agents who each bring a different perspective to your work:
+Specialized agents who each bring a different perspective:
 
 ```mermaid
 graph TB
@@ -250,11 +308,14 @@ graph TB
     style PM fill:#DDA0DD,stroke:#BA55D3,color:#333
 ```
 
-**Best for:** Architecture reviews, code reviews, sprint planning, production incident analysis. Use Party Mode (`/bmad-party-mode`) to get all agents responding in character simultaneously.
+**Best for:** Architecture reviews, code reviews, sprint planning, production incident analysis.
+
+</td>
+<td width="50%" valign="top">
 
 ### OMC — Session Orchestration
 
-OMC provides execution modes that control *how* Claude works:
+Execution modes that control *how* Claude works:
 
 ```mermaid
 graph LR
@@ -287,71 +348,106 @@ graph LR
     style O fill:#FF69B4,stroke:#DB7093,color:#fff
 ```
 
-**Best for:** Autonomous feature development, parallel codebase changes, persistent bug fixing. Smart model routing saves 30-50% on tokens automatically.
+**Best for:** Autonomous feature dev, parallel codebase changes, persistent bug fixing. Saves 30-50% on tokens.
+
+</td>
+</tr>
+</table>
 
 > See the [full guide](docs/guide.md) for complete command references, magic keywords, and module breakdowns.
 
----
+<br/>
 
 ## Skills Reference
 
 Every skill is a drop-in `/command` that teaches Claude a specific workflow. Copy the ones you need.
 
-### Environment & Safety
+<details open>
+<summary><strong>Environment & Safety</strong></summary>
 
 | Skill | What It Does | When To Use |
-|-------|-------------|-------------|
+|:------|:------------|:------------|
 | **[check-env](skills/check-env/)** | Checks ports, Docker, .env files, git status, GitHub credentials, Node.js memory | Start of every session |
 | **[deploy](skills/deploy/)** | Pre-deploy checklist: OOM-safe build, tests, env vars, git status, explicit confirmation | Before any deployment |
+| **[security-check](skills/security-check/)** | Quick security scan for OWASP Top 10: secrets, injection, XSS, auth issues | Before releases or after security-sensitive changes |
 | **[verification-before-completion](skills/verification-before-completion/)** | Forces Claude to prove work is done with actual test/build output | Automatically before "done" claims |
 
-### Code Quality
+</details>
+
+<details open>
+<summary><strong>Code Quality</strong></summary>
 
 | Skill | What It Does | When To Use |
-|-------|-------------|-------------|
+|:------|:------------|:------------|
+| **[test-first](skills/test-first/)** | TDD workflow: write failing tests, implement, verify green, refactor | Any new feature or bug fix where you want test discipline |
+| **[refactor](skills/refactor/)** | Focused refactoring with zero behavior change — reverts if any test fails | When improving structure without changing behavior |
 | **[codex-prepush-review](skills/codex-prepush-review/)** | Automated code review triggered before `git push` | Every push |
 | **[pr-batch-review](skills/pr-batch-review/)** | Reviews all open PRs in one pass with a consolidated summary table | PR management sessions |
 | **[dependency-audit](skills/dependency-audit/)** | Scans dependencies for vulnerabilities, outdated packages, and license issues | Before releases or periodically |
 | **[karpathy-guidelines](skills/karpathy-guidelines/)** | Pre-coding checklist to prevent over-engineering and unnecessary complexity | Before starting any feature |
 
-### Planning & Execution
+</details>
+
+<details open>
+<summary><strong>Planning & Execution</strong></summary>
 
 | Skill | What It Does | When To Use |
-|-------|-------------|-------------|
+|:------|:------------|:------------|
 | **[writing-plans](skills/writing-plans/)** | Creates structured implementation plans with architecture decisions and risk flags | Before complex features |
 | **[executing-plans](skills/executing-plans/)** | Executes written plans in batches with verification checkpoints | After planning is done |
 | **[brainstorming](skills/brainstorming/)** | Multi-perspective structured brainstorming with devil's advocate analysis | When exploring approaches |
 
-### Research & Discovery
+</details>
+
+<details>
+<summary><strong>Research & Discovery</strong></summary>
 
 | Skill | What It Does | When To Use |
-|-------|-------------|-------------|
+|:------|:------------|:------------|
 | **[deep-explore](skills/deep-explore/)** | Multi-step codebase exploration across many files with structural analysis | Understanding unfamiliar code |
 | **[cross-project-search](skills/cross-project-search/)** | Searches across all repos in your workspace for patterns and implementations | Finding examples across projects |
 
-### Meta / Self-Improvement
+</details>
+
+<details>
+<summary><strong>Release & Maintenance</strong></summary>
 
 | Skill | What It Does | When To Use |
-|-------|-------------|-------------|
+|:------|:------------|:------------|
+| **[changelog](skills/changelog/)** | Generates formatted changelog from recent commits (Keep a Changelog style) | Before releases or version tags |
+
+</details>
+
+<details>
+<summary><strong>Meta / Self-Improvement</strong></summary>
+
+| Skill | What It Does | When To Use |
+|:------|:------------|:------------|
 | **[autoskill](skills/autoskill/)** | Analyzes your sessions to extract patterns and create new skills automatically | After sessions with lots of corrections |
 | **[skill-creator](skills/skill-creator/)** | Meta-skill for creating, testing, and refining new skills | When you need a new custom workflow |
 
----
+</details>
+
+<br/>
 
 ## Key Patterns
 
 These are the highest-impact patterns from [the full guide](docs/guide.md):
 
-### Context Pollution — The #1 Performance Killer
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### Context Pollution — The #1 Killer
 
 ```mermaid
 graph LR
-    A["Fresh Session<br/><em>100% performance</em>"] --> B["Add tasks<br/><em>90%</em>"]
-    B --> C["Debug output<br/><em>70%</em>"]
-    C --> D["Failed approaches<br/><em>50%</em>"]
-    D --> E["Claude 'gets dumber'<br/><em>30%</em>"]
+    A["Fresh<br/><em>100%</em>"] --> B["Tasks<br/><em>90%</em>"]
+    B --> C["Debug<br/><em>70%</em>"]
+    C --> D["Failures<br/><em>50%</em>"]
+    D --> E["Dumb<br/><em>30%</em>"]
 
-    F["/clear or new session"] --> A
+    F["/clear"] --> A
 
     style A fill:#50C878,stroke:#3CB371,color:#fff
     style B fill:#90EE90,stroke:#32CD32,color:#333
@@ -361,56 +457,63 @@ graph LR
     style F fill:#4A90D9,stroke:#357ABD,color:#fff
 ```
 
-When Claude starts giving generic answers, your context is polluted. Use `/clear` when switching tasks. Use `/compact` at 50%. Start fresh above 80%.
+When Claude gives generic answers, your context is polluted. `/clear` when switching tasks. `/compact` at 50%. Fresh session above 80%.
+
+</td>
+<td width="50%" valign="top">
 
 ### Separate Planning from Execution
 
 ```mermaid
 graph LR
     subgraph "Session 1: Plan"
-        P1["Discuss"] --> P2["Disagree"] --> P3["Settle on approach"] --> P4["Save notes"]
+        P1["Discuss"] --> P2["Settle"] --> P3["Save"]
     end
 
     subgraph "Session 2: Execute"
-        E1["Read plan"] --> E2["Implement"] --> E3["Verify"] --> E4["Ship"]
+        E1["Read"] --> E2["Build"] --> E3["Ship"]
     end
 
-    P4 -->|"Close & reopen"| E1
+    P3 -->|"New session"| E1
 
     style P1 fill:#7B68EE,stroke:#6A5ACD,color:#fff
     style P2 fill:#7B68EE,stroke:#6A5ACD,color:#fff
     style P3 fill:#7B68EE,stroke:#6A5ACD,color:#fff
-    style P4 fill:#7B68EE,stroke:#6A5ACD,color:#fff
     style E1 fill:#50C878,stroke:#3CB371,color:#fff
     style E2 fill:#50C878,stroke:#3CB371,color:#fff
     style E3 fill:#50C878,stroke:#3CB371,color:#fff
-    style E4 fill:#50C878,stroke:#3CB371,color:#fff
 ```
 
 Planning context pollutes implementation focus. Three rejected approaches in memory = defensive, over-engineered code.
 
-### Multi-Agent Safety Rules
+</td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### Multi-Agent Safety
 
 ```mermaid
 graph TB
-    PARENT["Parent Agent"] --> W1["Worker 1<br/><em>Own worktree</em>"]
-    PARENT --> W2["Worker 2<br/><em>Own worktree</em>"]
-    PARENT --> W3["Worker 3<br/><em>Own worktree</em>"]
+    P["Parent"] --> W1["Worker 1<br/><em>Own worktree</em>"]
+    P --> W2["Worker 2<br/><em>Own worktree</em>"]
+    P --> W3["Worker 3<br/><em>Own worktree</em>"]
 
-    W1 -.- R1["Only commit<br/>own files"]
-    W2 -.- R2["No git stash<br/>No branch switch"]
-    W3 -.- R3["Exit cleanly<br/>on failure"]
-
-    style PARENT fill:#4A90D9,stroke:#357ABD,color:#fff
+    style P fill:#4A90D9,stroke:#357ABD,color:#fff
     style W1 fill:#50C878,stroke:#3CB371,color:#fff
     style W2 fill:#50C878,stroke:#3CB371,color:#fff
     style W3 fill:#50C878,stroke:#3CB371,color:#fff
-    style R1 fill:#FFF8DC,stroke:#DAA520,color:#333
-    style R2 fill:#FFF8DC,stroke:#DAA520,color:#333
-    style R3 fill:#FFF8DC,stroke:#DAA520,color:#333
 ```
 
-Cap at 3-4 parallel agents. Never `git add -A` in multi-agent contexts. Each worker gets its own worktree.
+- Cap at 3-4 parallel agents
+- Never `git add -A` in multi-agent contexts
+- Each worker gets its own worktree
+
+</td>
+<td width="50%" valign="top">
 
 ### Reverse Prompting
 
@@ -420,36 +523,47 @@ Instead of writing detailed specs yourself:
 
 Claude's questions reveal edge cases you hadn't considered. Your domain knowledge + Claude's pattern recognition = better specs than either alone.
 
-### The Replace-Don't-Append Rule
+### Replace-Don't-Append
 
-Never append to shared context files. Always replace the entire content and keep it under 30 lines. Files that grow unbounded silently exceed the context window — Claude drops them without warning.
+Never append to shared context files. Always replace the entire content and keep it under 30 lines. Files that grow unbounded silently exceed the context window.
 
----
+</td>
+</tr>
+</table>
+
+<br/>
 
 ## Documentation
 
-| Doc | Lines | What It Covers |
-|-----|-------|----------------|
-| **[Power User Guide](docs/guide.md)** | 667 | Full lifecycle: sessions, context, plugins, multi-agent, production lessons |
-| **[Prompt Patterns](docs/prompt-patterns.md)** | 459 | 20 patterns with examples: Reverse Prompting, Constraint-First, Scope Lock, and more |
-| **[Cheat Sheet](docs/cheat-sheet.md)** | 192 | Quick-reference card: commands, model routing, session management, troubleshooting |
-| **[Troubleshooting](docs/troubleshooting.md)** | 311 | 15 issues in Symptoms/Cause/Fix format with 3 diagnostic flowcharts |
+| | Doc | What It Covers |
+|:--|:----|:---------------|
+| **[Power User Guide](docs/guide.md)** | 667 lines | Full lifecycle: sessions, context, plugins, multi-agent, production lessons |
+| **[Prompt Patterns](docs/prompt-patterns.md)** | 459 lines | 20 patterns: Reverse Prompting, Constraint-First, Scope Lock, and more |
+| **[Cheat Sheet](docs/cheat-sheet.md)** | 192 lines | Quick-reference: commands, model routing, session management, troubleshooting |
+| **[Troubleshooting](docs/troubleshooting.md)** | 311 lines | 15 issues in Symptoms/Cause/Fix format with 3 diagnostic flowcharts |
+| **[MCP Servers](docs/mcp-servers.md)** | Guide | Setup, token impact, recommended servers, when to disable |
+| **[Model Comparison](docs/model-comparison.md)** | Guide | Haiku vs Sonnet vs Opus: routing, cost optimization, decision flowchart |
+| **[Article](article.md)** | Article | The original article that inspired this playbook |
 
----
+<br/>
 
 ## CLAUDE.md Templates
 
-5 templates for different stacks — copy the one that fits your project:
+7 templates for different stacks — copy the one that fits your project:
 
 | Template | Stack | Key Sections |
-|----------|-------|-------------|
+|:---------|:------|:------------|
 | **[CLAUDE.md](templates/CLAUDE.md)** | General / TypeScript | 12 sections covering all common failure modes |
 | **[CLAUDE-react.md](templates/CLAUDE-react.md)** | React / Next.js | Components, state, styling, a11y, hydration pitfalls |
 | **[CLAUDE-node-api.md](templates/CLAUDE-node-api.md)** | Node.js API | REST conventions, middleware, auth, error handling, security |
 | **[CLAUDE-python.md](templates/CLAUDE-python.md)** | Python | Type hints, pytest, ruff/black, docstrings, common pitfalls |
 | **[CLAUDE-fullstack.md](templates/CLAUDE-fullstack.md)** | Full-stack monorepo | Shared types, build order, API contracts, deployment coordination |
+| **[CLAUDE-go.md](templates/CLAUDE-go.md)** | Go | Error handling, concurrency, table-driven tests, static binaries |
+| **[CLAUDE-rust.md](templates/CLAUDE-rust.md)** | Rust | Ownership, error handling (thiserror/anyhow), unsafe rules, clippy |
 
-The general [template](templates/CLAUDE.md) includes these sections, each addressing a specific failure mode:
+<details>
+<summary><strong>Template architecture</strong> — each section addresses a specific failure mode</summary>
+<br/>
 
 ```mermaid
 graph TB
@@ -488,7 +602,9 @@ graph TB
     style GG fill:#FF6B6B,stroke:#EE5A5A,color:#fff
 ```
 
----
+</details>
+
+<br/>
 
 ## Hooks
 
@@ -513,9 +629,11 @@ sequenceDiagram
     Claude-->>You: "Bug fixed, types clean"
 ```
 
-**6 included hooks:** [ts-check.sh](hooks/ts-check.sh) (type errors), [pre-commit-guard.sh](hooks/pre-commit-guard.sh) (debug statements), [format-check.sh](hooks/format-check.sh) (Prettier), [env-guard.sh](hooks/env-guard.sh) (secrets), [build-check.sh](hooks/build-check.sh) (OOM-safe builds), [session-start-check.sh](hooks/session-start-check.sh) (environment validation). See **[hooks/README.md](hooks/README.md)** for setup and custom hook creation.
+**7 included hooks:** [ts-check.sh](hooks/ts-check.sh) (type errors) | [lint-check.sh](hooks/lint-check.sh) (ESLint) | [pre-commit-guard.sh](hooks/pre-commit-guard.sh) (debug statements) | [format-check.sh](hooks/format-check.sh) (Prettier) | [env-guard.sh](hooks/env-guard.sh) (secrets) | [build-check.sh](hooks/build-check.sh) (OOM-safe builds) | [session-start-check.sh](hooks/session-start-check.sh) (environment validation)
 
----
+> See **[hooks/README.md](hooks/README.md)** for setup and **[config/hooks-example.json](config/hooks-example.json)** for a complete configuration with all 7 hooks wired up.
+
+<br/>
 
 ## Production Metrics
 
@@ -548,38 +666,47 @@ graph LR
 ```
 
 | Metric | Before | After |
-|--------|--------|-------|
-| Feature implementation | 2-3 weeks | 4-7 hours |
-| Bug fix (triage to prod) | 3-5 days | 30-45 minutes |
-| Regressions from AI code | N/A | Zero (caught in testing) |
-| Test suite | ~200 tests | 10,000+ passing |
-| TypeScript errors | Frequent | Zero |
-| ESLint errors | Frequent | Zero |
-| Vulnerabilities | Unknown | Zero |
+|:-------|:------:|:-----:|
+| Feature implementation | 2-3 weeks | **4-7 hours** |
+| Bug fix (triage to prod) | 3-5 days | **30-45 minutes** |
+| Regressions from AI code | N/A | **Zero** |
+| Test suite | ~200 tests | **10,000+ passing** |
+| TypeScript errors | Frequent | **Zero** |
+| ESLint errors | Frequent | **Zero** |
+| Vulnerabilities | Unknown | **Zero** |
 
----
+<br/>
+
+## Examples
+
+Real session transcripts annotated with explanations of what's happening and why each decision matters.
+
+| Example | Pattern | Key Takeaway |
+|:--------|:--------|:------------|
+| **[Bug Fix](examples/bug-fix-session.md)** | Request-Implement-Verify-Close | Paste real errors, scope-lock fixes, verify with actual tests |
+| **[New Feature](examples/feature-session.md)** | Reverse prompting + scope constraints | Let Claude ask questions, constrain the blast radius |
+| **[Multi-Agent](examples/multi-agent-session.md)** | Parallel agents with model routing | Cap at 3-4 agents, use worktree isolation, verify combined output |
+
+<br/>
 
 ## Contributing
 
 Found a useful pattern? Built a skill that saved you hours? PRs welcome.
 
-**To contribute a skill:**
-1. Create a folder in `skills/` with a `SKILL.md` file
-2. Use YAML frontmatter with `name`, `description`, and `metadata`
-3. Ensure it's generic — no company names, project names, or user-specific paths
-4. Submit a PR with a brief description of when and why to use it
+See **[CONTRIBUTING.md](CONTRIBUTING.md)** for detailed guidelines on contributing skills, hooks, templates, and documentation.
 
-**To contribute a hook:**
-1. Add the script to `hooks/`
-2. Update `hooks/README.md` with setup instructions
-3. Document the matcher, exit codes, and use case
-
-**To contribute patterns or lessons:**
-1. Add to `docs/guide.md` under the appropriate section
-2. Include context on *why* the pattern matters, not just *what* to do
+<br/>
 
 ---
 
-<p align="center">
-  <strong>MIT</strong> — use it, fork it, adapt it, share it.
-</p>
+<div align="center">
+
+**MIT** — use it, fork it, adapt it, share it.
+
+<br/>
+
+*If this playbook saved you time, consider giving it a star.*
+
+<a href="https://github.com/ao92265/claude-code-playbook/stargazers"><img src="https://img.shields.io/github/stars/ao92265/claude-code-playbook?style=social" alt="Stars"></a>
+
+</div>
