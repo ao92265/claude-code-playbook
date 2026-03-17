@@ -6,8 +6,8 @@
 
 [![Quick Start](https://img.shields.io/badge/Quick_Start-0078D4?style=for-the-badge&logo=rocket&logoColor=white)](#-quick-start)
 [![Full Guide](https://img.shields.io/badge/Full_Guide-667_lines-00B4D8?style=for-the-badge&logo=book&logoColor=white)](docs/guide.md)
-[![Skills](https://img.shields.io/badge/Skills-18_included-8B5CF6?style=for-the-badge&logo=puzzle-piece&logoColor=white)](#-skills-reference)
-[![Templates](https://img.shields.io/badge/Templates-7_stacks-F97316?style=for-the-badge&logo=file-code&logoColor=white)](#-claudemd-templates)
+[![Skills](https://img.shields.io/badge/Skills-22_included-8B5CF6?style=for-the-badge&logo=puzzle-piece&logoColor=white)](#-skills-reference)
+[![Templates](https://img.shields.io/badge/Templates-9_stacks-F97316?style=for-the-badge&logo=file-code&logoColor=white)](#-claudemd-templates)
 [![CI](https://img.shields.io/github/actions/workflow/status/ao92265/claude-code-playbook/validate.yml?style=for-the-badge&label=CI&logo=github)](https://github.com/ao92265/claude-code-playbook/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/ao92265/claude-code-playbook?style=for-the-badge&logo=github&color=EAB308)](https://github.com/ao92265/claude-code-playbook/stargazers)
@@ -19,12 +19,12 @@
 
 <br/>
 
-<img src="https://img.shields.io/badge/18-Skills-8B5CF6?style=flat-square" alt="18 Skills"/>
-<img src="https://img.shields.io/badge/7-Templates-F97316?style=flat-square" alt="7 Templates"/>
+<img src="https://img.shields.io/badge/22-Skills-8B5CF6?style=flat-square" alt="22 Skills"/>
+<img src="https://img.shields.io/badge/9-Templates-F97316?style=flat-square" alt="9 Templates"/>
 <img src="https://img.shields.io/badge/7-Hooks-EF4444?style=flat-square" alt="7 Hooks"/>
-<img src="https://img.shields.io/badge/6-Docs-0078D4?style=flat-square" alt="6 Docs"/>
+<img src="https://img.shields.io/badge/9-Docs-0078D4?style=flat-square" alt="9 Docs"/>
 <img src="https://img.shields.io/badge/3-Examples-22C55E?style=flat-square" alt="3 Examples"/>
-<img src="https://img.shields.io/badge/20-Prompt_Patterns-EC4899?style=flat-square" alt="20 Prompt Patterns"/>
+<img src="https://img.shields.io/badge/20-Anti--Patterns-EC4899?style=flat-square" alt="20 Anti-Patterns"/>
 
 </div>
 
@@ -71,11 +71,12 @@ After months of daily production use — debugging at 2am, shipping features acr
 <td width="50%">
 
 **Use**
-- [18 production-ready skills](skills/) (custom `/commands`) you can drop into any project
-- [7 CLAUDE.md templates](templates/) — TypeScript, React, Node, Python, Full-stack, Go, Rust
+- [22 production-ready skills](skills/) (custom `/commands`) you can drop into any project
+- [9 CLAUDE.md templates](templates/) — TypeScript, React, Node, Python, Full-stack, Go, Rust, Mobile, DevOps
 - [7 hook scripts](hooks/) that catch errors before they reach your commits
 - [3 annotated example sessions](examples/) showing real workflows in action
-- [MCP server guide](docs/mcp-servers.md) and [model comparison](docs/model-comparison.md) for optimal setup
+- [MCP server guide](docs/mcp-servers.md), [model comparison](docs/model-comparison.md), [workflow decision tree](docs/workflows.md), and [20 anti-patterns](docs/anti-patterns.md)
+- **One-line installer** for skills, hooks, and templates
 
 </td>
 </tr>
@@ -149,7 +150,10 @@ claude-code-playbook/
 │   ├── cheat-sheet.md         # Quick-reference card for commands & workflows
 │   ├── troubleshooting.md     # 15 common issues with diagnostic flowcharts
 │   ├── mcp-servers.md         # MCP server guide: setup, token impact, troubleshooting
-│   └── model-comparison.md    # Claude model comparison: Haiku vs Sonnet vs Opus
+│   ├── model-comparison.md    # Claude model comparison: Haiku vs Sonnet vs Opus
+│   ├── workflows.md           # Decision tree: which skill to use when
+│   ├── anti-patterns.md       # 20 things that go wrong and how to avoid them
+│   └── awesome-claude-code.md # Curated list of tools, plugins, and resources
 ├── examples/
 │   ├── bug-fix-session.md     # Annotated bug fix session transcript
 │   ├── feature-session.md     # Annotated new feature session transcript
@@ -161,19 +165,25 @@ claude-code-playbook/
 │   ├── CLAUDE-python.md       # Python
 │   ├── CLAUDE-fullstack.md    # Full-stack monorepo
 │   ├── CLAUDE-go.md           # Go
-│   └── CLAUDE-rust.md         # Rust
-├── skills/                    # 18 ready-to-use custom slash commands
+│   ├── CLAUDE-rust.md         # Rust
+│   ├── CLAUDE-mobile.md       # React Native / Mobile
+│   └── CLAUDE-devops.md       # DevOps / Infrastructure
+├── skills/                    # 22 ready-to-use custom slash commands
 │   ├── autoskill/             # Self-learning from sessions
 │   ├── brainstorming/         # Structured idea exploration
 │   ├── changelog/             # Generate changelog from commits
 │   ├── check-env/             # Pre-flight environment checks
+│   ├── code-review/           # Structured code review
 │   ├── codex-prepush-review/  # Code review before push
 │   ├── cross-project-search/  # Search across repos
 │   ├── deep-explore/          # Deep codebase exploration
 │   ├── dependency-audit/      # Vulnerability & update audit
 │   ├── deploy/                # Safe deployment checklist
 │   ├── executing-plans/       # Execute plans with checkpoints
+│   ├── explain/               # Layered code explanations
+│   ├── handoff/               # Session handoff summaries
 │   ├── karpathy-guidelines/   # Anti-overcomplication checklist
+│   ├── migrate-db/            # Safe database migrations
 │   ├── pr-batch-review/       # Batch PR management
 │   ├── refactor/              # Zero-behavior-change refactor
 │   ├── security-check/        # OWASP Top 10 scan
@@ -193,8 +203,11 @@ claude-code-playbook/
 ├── config/
 │   ├── settings-example.json  # Example settings.json
 │   └── hooks-example.json     # All 7 hooks configured
-├── .github/workflows/
-│   └── validate.yml           # CI validation
+├── scripts/
+│   └── install.sh             # Interactive installer
+├── .github/
+│   ├── workflows/validate.yml # CI validation
+│   └── ISSUE_TEMPLATE/        # Bug, skill request, pattern templates
 ├── article.md                 # Original article
 ├── CONTRIBUTING.md            # Contribution guide
 └── LICENSE                    # MIT
@@ -205,6 +218,14 @@ claude-code-playbook/
 <br/>
 
 ## Quick Start
+
+**One-line install** — interactive setup of templates, skills, and hooks:
+
+```bash
+curl -sL https://raw.githubusercontent.com/ao92265/claude-code-playbook/main/scripts/install.sh | bash
+```
+
+Or set up manually:
 
 <table>
 <tr>
@@ -381,6 +402,7 @@ Every skill is a drop-in `/command` that teaches Claude a specific workflow. Cop
 |:------|:------------|:------------|
 | **[test-first](skills/test-first/)** | TDD workflow: write failing tests, implement, verify green, refactor | Any new feature or bug fix where you want test discipline |
 | **[refactor](skills/refactor/)** | Focused refactoring with zero behavior change — reverts if any test fails | When improving structure without changing behavior |
+| **[code-review](skills/code-review/)** | Structured code review with severity ratings and categorized feedback | After completing changes |
 | **[codex-prepush-review](skills/codex-prepush-review/)** | Automated code review triggered before `git push` | Every push |
 | **[pr-batch-review](skills/pr-batch-review/)** | Reviews all open PRs in one pass with a consolidated summary table | PR management sessions |
 | **[dependency-audit](skills/dependency-audit/)** | Scans dependencies for vulnerabilities, outdated packages, and license issues | Before releases or periodically |
@@ -406,6 +428,7 @@ Every skill is a drop-in `/command` that teaches Claude a specific workflow. Cop
 |:------|:------------|:------------|
 | **[deep-explore](skills/deep-explore/)** | Multi-step codebase exploration across many files with structural analysis | Understanding unfamiliar code |
 | **[cross-project-search](skills/cross-project-search/)** | Searches across all repos in your workspace for patterns and implementations | Finding examples across projects |
+| **[explain](skills/explain/)** | Layered code explanations — from one-liner to deep implementation details | Understanding unfamiliar code quickly |
 
 </details>
 
@@ -415,6 +438,8 @@ Every skill is a drop-in `/command` that teaches Claude a specific workflow. Cop
 | Skill | What It Does | When To Use |
 |:------|:------------|:------------|
 | **[changelog](skills/changelog/)** | Generates formatted changelog from recent commits (Keep a Changelog style) | Before releases or version tags |
+| **[migrate-db](skills/migrate-db/)** | Safe database migration with backup verification, dry-run, and rollback plan | Running schema changes |
+| **[handoff](skills/handoff/)** | Structured session summary: what's done, what's left, decisions, gotchas | End of every session |
 
 </details>
 
@@ -543,13 +568,16 @@ Never append to shared context files. Always replace the entire content and keep
 | **[Troubleshooting](docs/troubleshooting.md)** | 311 lines | 15 issues in Symptoms/Cause/Fix format with 3 diagnostic flowcharts |
 | **[MCP Servers](docs/mcp-servers.md)** | Guide | Setup, token impact, recommended servers, when to disable |
 | **[Model Comparison](docs/model-comparison.md)** | Guide | Haiku vs Sonnet vs Opus: routing, cost optimization, decision flowchart |
+| **[Workflows](docs/workflows.md)** | Guide | Decision tree: which skill to use for any situation |
+| **[Anti-Patterns](docs/anti-patterns.md)** | 20 items | The "don't do this" guide with real examples of what goes wrong |
+| **[Awesome Claude Code](docs/awesome-claude-code.md)** | List | Curated tools, plugins, MCP servers, and community resources |
 | **[Article](article.md)** | Article | The original article that inspired this playbook |
 
 <br/>
 
 ## CLAUDE.md Templates
 
-7 templates for different stacks — copy the one that fits your project:
+9 templates for different stacks — copy the one that fits your project:
 
 | Template | Stack | Key Sections |
 |:---------|:------|:------------|
@@ -560,6 +588,8 @@ Never append to shared context files. Always replace the entire content and keep
 | **[CLAUDE-fullstack.md](templates/CLAUDE-fullstack.md)** | Full-stack monorepo | Shared types, build order, API contracts, deployment coordination |
 | **[CLAUDE-go.md](templates/CLAUDE-go.md)** | Go | Error handling, concurrency, table-driven tests, static binaries |
 | **[CLAUDE-rust.md](templates/CLAUDE-rust.md)** | Rust | Ownership, error handling (thiserror/anyhow), unsafe rules, clippy |
+| **[CLAUDE-mobile.md](templates/CLAUDE-mobile.md)** | React Native | Navigation, platform-specific code, performance, Safe Area |
+| **[CLAUDE-devops.md](templates/CLAUDE-devops.md)** | DevOps / IaC | Terraform, Docker, CI/CD, secrets management, monitoring |
 
 <details>
 <summary><strong>Template architecture</strong> — each section addresses a specific failure mode</summary>
