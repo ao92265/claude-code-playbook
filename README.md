@@ -589,6 +589,10 @@ Never append to shared context files. Always replace the entire content and keep
 | **[FAQ](docs/faq.md)** | Q&A | Quick answers to the most common questions |
 | **[Getting Started](docs/getting-started.md)** | Guide | Zero to productive in 10 minutes |
 | **[Team Setup](docs/team-setup.md)** | Guide | How to roll out the playbook to your team |
+| **[Permissions](docs/permissions.md)** | Guide | Permission modes, allowlists, `--dangerously-skip-permissions` safety |
+| **[Comparison](docs/comparison.md)** | Guide | Claude Code vs Cursor vs Copilot vs Windsurf |
+| **[Case Studies](docs/case-studies.md)** | Stories | Real results: 85% faster features, zero regressions |
+| **[Adoption Playbook](docs/adoption-playbook.md)** | Guide | How to pitch and roll out Claude Code to your org |
 | **[Article](article.md)** | Article | The original article that inspired this playbook |
 
 <br/>

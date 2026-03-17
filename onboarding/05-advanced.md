@@ -2,6 +2,21 @@
 
 These are power-user features. You don't need them on day one, but they'll multiply your productivity as you get comfortable.
 
+## Permission Modes
+
+Claude Code asks permission before editing files and running commands. You can control this:
+
+| Mode | Command | Best For |
+|:-----|:--------|:---------|
+| **Default** | `claude` | Learning, unfamiliar projects |
+| **Auto-edit** | `claude --auto-edit` | Daily coding (recommended) |
+| **Plan** | `claude --plan` | Read-only review sessions |
+| **Full auto** | `claude --dangerously-skip-permissions` | CI/CD only — never on your machine |
+
+For granular control, add an allowlist to `~/.claude/settings.json` — allow edits and safe commands, but still require approval for git push, rm, and destructive operations.
+
+See the full [permissions guide](../docs/permissions.md) for allowlist patterns and recommendations by role.
+
 ## Model Routing
 
 Claude Code has three model tiers. The default (Sonnet) handles most work, but you can optimize:
