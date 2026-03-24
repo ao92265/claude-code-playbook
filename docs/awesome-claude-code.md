@@ -31,6 +31,32 @@ See [docs/mcp-servers.md](mcp-servers.md) for detailed setup and configuration.
 | **Brave Search** | Web search from Claude Code sessions | [npm](https://www.npmjs.com/package/@anthropic/mcp-brave-search) |
 | **GitHub** | Extended GitHub operations beyond `gh` CLI | [npm](https://www.npmjs.com/package/@modelcontextprotocol/server-github) |
 
+## Agent Skills Ecosystem
+
+The [Skills CLI](https://skills.sh/) (`npx skills`) is the package manager for the open agent skills ecosystem. Install community-maintained skills that teach Claude Code best practices for specific frameworks and tools.
+
+```bash
+npx skills find "react"                                           # Search
+npx skills add vercel-labs/agent-skills@react-best-practices -y   # Install
+npx skills update                                                 # Update all
+```
+
+See **[docs/skills-ecosystem.md](skills-ecosystem.md)** for the full guide — evaluation criteria, recommended skills by stack, redundancy cleanup, and creating your own.
+
+**Top skills by category:**
+
+| Category | Skill | Installs |
+|:---------|:------|:---------|
+| React | `vercel-labs/agent-skills@react-best-practices` | 241K |
+| Azure | `microsoft/azure-skills@azure-prepare` | 81K |
+| Tailwind | `wshobson/agents@tailwind-design-system` | 23K |
+| Playwright | `currents-dev/playwright-best-practices-skill` | 14.8K |
+| Playwright CLI | `microsoft/playwright-cli` | 10.3K |
+| NestJS | `kadajett/agent-nestjs-skills@nestjs-best-practices` | 8.8K |
+| Accessibility | `addyosmani/web-quality-skills@accessibility` | 4K |
+| Performance | `sickn33/antigravity-awesome-skills@web-performance-optimization` | 1.3K |
+| OWASP Security | `hoodini/ai-agents-skills@owasp-security` | 716 |
+
 ## Community Resources
 
 | Resource | Description |

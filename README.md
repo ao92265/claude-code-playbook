@@ -24,7 +24,7 @@
 <img src="https://img.shields.io/badge/27-Skills-8B5CF6?style=flat-square" alt="27 Skills"/>
 <img src="https://img.shields.io/badge/11-Templates-F97316?style=flat-square" alt="11 Templates"/>
 <img src="https://img.shields.io/badge/7-Hooks-EF4444?style=flat-square" alt="7 Hooks"/>
-<img src="https://img.shields.io/badge/12-Docs-0078D4?style=flat-square" alt="12 Docs"/>
+<img src="https://img.shields.io/badge/13-Docs-0078D4?style=flat-square" alt="13 Docs"/>
 <img src="https://img.shields.io/badge/3-Examples-22C55E?style=flat-square" alt="3 Examples"/>
 <img src="https://img.shields.io/badge/20-Anti--Patterns-EC4899?style=flat-square" alt="20 Anti-Patterns"/>
 
@@ -77,7 +77,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 - [11 CLAUDE.md templates](templates/) — TypeScript, React, Node, Python, Full-stack, Go, Rust, Mobile, DevOps, Java, C#
 - [7 hook scripts](hooks/) that catch errors before they reach your commits
 - [3 annotated example sessions](examples/) showing real workflows in action
-- [MCP server guide](docs/mcp-servers.md), [model comparison](docs/model-comparison.md), [workflow decision tree](docs/workflows.md), and [20 anti-patterns](docs/anti-patterns.md)
+- [MCP server guide](docs/mcp-servers.md), [skills ecosystem](docs/skills-ecosystem.md), [model comparison](docs/model-comparison.md), [workflow decision tree](docs/workflows.md), and [20 anti-patterns](docs/anti-patterns.md)
 - **One-line installer** for skills, hooks, and templates
 
 </td>
@@ -156,6 +156,7 @@ claude-code-playbook/
 │   ├── workflows.md           # Decision tree: which skill to use when
 │   ├── anti-patterns.md       # 20 things that go wrong and how to avoid them
 │   ├── awesome-claude-code.md # Curated list of tools, plugins, and resources
+│   ├── skills-ecosystem.md    # Agent skills package manager (skills.sh)
 │   ├── faq.md                 # Frequently asked questions
 │   ├── getting-started.md     # Beginner-friendly quickstart (10 min)
 │   └── team-setup.md          # How to roll out the playbook to a team
@@ -610,6 +611,7 @@ Never append to shared context files. Always replace the entire content and keep
 | **[Comparison](docs/comparison.md)** | Guide | Claude Code vs Cursor vs Copilot vs Windsurf |
 | **[Case Studies](docs/case-studies.md)** | Stories | Real results: 85% faster features, zero regressions |
 | **[Adoption Playbook](docs/adoption-playbook.md)** | Guide | How to pitch and roll out Claude Code to your org |
+| **[Skills Ecosystem](docs/skills-ecosystem.md)** | Guide | Agent skills package manager: discovery, evaluation, recommended skills by stack |
 | **[Article](article.md)** | Article | The original article that inspired this playbook |
 
 <br/>
