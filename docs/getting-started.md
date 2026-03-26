@@ -4,6 +4,12 @@ Go from zero to productive with Claude Code in 10 minutes.
 
 ---
 
+## Step 0: Create a Claude Account
+
+If you don't have one yet, sign up at [claude.ai](https://claude.ai) and choose a plan. See the [Account Setup guide](account-setup.md) for plan comparisons and recommendations.
+
+---
+
 ## Step 1: Install the Playbook (2 minutes)
 
 **Option A — Interactive installer:**

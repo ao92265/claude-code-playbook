@@ -24,7 +24,7 @@
 <img src="https://img.shields.io/badge/27-Skills-8B5CF6?style=flat-square" alt="27 Skills"/>
 <img src="https://img.shields.io/badge/11-Templates-F97316?style=flat-square" alt="11 Templates"/>
 <img src="https://img.shields.io/badge/7-Hooks-EF4444?style=flat-square" alt="7 Hooks"/>
-<img src="https://img.shields.io/badge/13-Docs-0078D4?style=flat-square" alt="13 Docs"/>
+<img src="https://img.shields.io/badge/16-Docs-0078D4?style=flat-square" alt="13 Docs"/>
 <img src="https://img.shields.io/badge/3-Examples-22C55E?style=flat-square" alt="3 Examples"/>
 <img src="https://img.shields.io/badge/20-Anti--Patterns-EC4899?style=flat-square" alt="20 Anti-Patterns"/>
 
@@ -158,8 +158,12 @@ claude-code-playbook/
 │   ├── awesome-claude-code.md # Curated list of tools, plugins, and resources
 │   ├── skills-ecosystem.md    # Agent skills package manager (skills.sh)
 │   ├── faq.md                 # Frequently asked questions
+│   ├── account-setup.md       # Claude account signup and plan tiers
 │   ├── getting-started.md     # Beginner-friendly quickstart (10 min)
-│   └── team-setup.md          # How to roll out the playbook to a team
+│   ├── team-setup.md          # How to roll out the playbook to a team
+│   ├── github-actions.md      # Claude Code in CI/CD: PR review, issue-to-PR, Bedrock/Vertex
+│   ├── enterprise-governance.md # SSO, compliance API, managed policies, EU AI Act
+│   └── agent-teams.md         # Native Agent Teams: parallel multi-agent coordination
 ├── examples/
 │   ├── bug-fix-session.md     # Annotated bug fix session transcript
 │   ├── feature-session.md     # Annotated new feature session transcript

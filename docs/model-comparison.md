@@ -8,11 +8,19 @@ Practical guidance on choosing the right Claude model for each task in Claude Co
 
 Claude Code uses the Claude 4.5/4.6 model family. The three tiers trade off speed, cost, and reasoning depth:
 
-| Model | Speed | Cost | Context Window | Best For |
-|-------|-------|------|---------------|----------|
-| **Haiku 4.5** | Fastest | Lowest | 200K tokens | Simple lookups, formatting, boilerplate |
-| **Sonnet 4.6** | Fast | Medium | 200K tokens | Standard implementation, editing, testing |
-| **Opus 4.6** | Slower | Highest | 1M tokens | Complex reasoning, architecture, debugging |
+| Model | Speed | Cost (Input/Output per 1M tokens) | Context Window | Max Output | Best For |
+|-------|-------|----------------------------------|---------------|------------|----------|
+| **Haiku 4.5** | Fastest | $1 / $5 | 200K tokens | 64K tokens | Simple lookups, formatting, boilerplate |
+| **Sonnet 4.6** | Fast | $3 / $15 | 1M tokens | 64K tokens | Standard implementation, editing, testing |
+| **Opus 4.6** | Slower | $5 / $25 | 1M tokens | 128K tokens | Complex reasoning, architecture, debugging |
+
+---
+
+### Deprecation Notice
+
+- **Claude Haiku 3** (`claude-3-haiku-20240307`) retires **April 19, 2026**. Migrate to Haiku 4.5.
+- **Opus 4.1** is still available but costs 3x more than Opus 4.6 ($15/$75 vs $5/$25). Upgrade immediately.
+- Legacy models (Sonnet 4.5, Opus 4.5) remain available but are superseded by the 4.6 generation.
 
 ---
 
@@ -108,14 +116,14 @@ Agent(model: "opus", prompt: "Review the authentication architecture for securit
 
 ### Cost Comparison (Approximate)
 
-For a typical 10-file feature implementation session:
+For a typical 10-file feature implementation session (~50K tokens in, ~20K tokens out):
 
-| Strategy | Relative Cost |
-|----------|--------------|
-| All Opus | 5x |
-| All Sonnet | 1x (baseline) |
-| Smart routing (Haiku + Sonnet + Opus) | 0.7x |
-| All Haiku (if it could handle it) | 0.2x |
+| Strategy | Input Cost | Output Cost | Total |
+|----------|-----------|-------------|-------|
+| All Opus | $0.25 | $0.50 | $0.75 |
+| All Sonnet | $0.15 | $0.30 | $0.45 |
+| Smart routing (Haiku + Sonnet + Opus) | $0.10 | $0.20 | $0.30 |
+| All Haiku | $0.05 | $0.10 | $0.15 |
 
 Smart routing — using the right model for each task — typically saves 30-50% versus defaulting to the most capable model.
 
@@ -138,3 +146,22 @@ Does it involve architecture, security, or complex debugging?
 ```
 
 When in doubt, use Sonnet. It handles most tasks well and you can always escalate.
+
+---
+
+## Extended Thinking & Adaptive Thinking
+
+All three current models support **Extended Thinking** — Claude explicitly reasons through complex problems before responding. This improves accuracy on architecture decisions, debugging, and multi-step logic at the cost of additional tokens.
+
+**Opus 4.6 and Sonnet 4.6** also support **Adaptive Thinking** — Claude automatically adjusts reasoning depth based on task complexity. Simple tasks get fast responses; complex tasks get deeper analysis.
+
+When to enable Extended Thinking:
+- Architecture decisions with multiple trade-offs
+- Complex debugging where the root cause isn't obvious
+- Security review requiring systematic analysis
+- Plan verification where missing a flaw is costly
+
+When to skip it:
+- File searches and exploration (use Haiku)
+- Standard implementation (Sonnet default is fine)
+- Any task where speed matters more than depth

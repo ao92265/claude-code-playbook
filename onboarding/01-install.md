@@ -1,5 +1,9 @@
 # Step 1: Installation (15 minutes)
 
+## Prerequisites: Claude Account
+
+You need an active Claude account before installing. If you don't have one, sign up at [claude.ai](https://claude.ai) and choose a plan. See the [Account Setup guide](../docs/account-setup.md) for plan comparisons and recommendations.
+
 ## Install Claude Code
 
 If you haven't already, install Claude Code:

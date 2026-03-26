@@ -6,9 +6,11 @@ Model Context Protocol (MCP) servers extend Claude Code's capabilities beyond co
 
 ## What Are MCP Servers?
 
-MCP servers are local processes that expose tools to Claude Code over a standardized protocol. When you enable an MCP server, its tools appear alongside Claude's built-in tools. Claude can then call them during a session to perform actions like taking screenshots, querying databases, or fetching documentation.
+MCP servers are local processes that expose tools to Claude Code over a standardized protocol. The MCP ecosystem has grown to **300+ servers** as of early 2026, covering databases, APIs, monitoring, project management, and more. When you enable an MCP server, its tools appear alongside Claude's built-in tools. Claude can then call them during a session to perform actions like taking screenshots, querying databases, or fetching documentation.
 
 **The trade-off:** Each MCP server adds tools to your context window. More tools = fewer tokens available for your actual work. Only enable what you actively use.
+
+> **New in 2026:** MCP Tool Search (lazy loading) is now enabled by default. Claude only loads tool definitions when it needs them, reducing context usage by up to 95%. This significantly reduces the "context tax" of having many MCP servers enabled.
 
 ---
 
@@ -26,6 +28,11 @@ MCP servers are local processes that expose tools to Claude Code over a standard
 | **PostgreSQL / SQLite** | Database queries, schema inspection, migrations | Medium (~6 tools) | Backend development with database work |
 | **GitHub** | Extended GitHub operations beyond `gh` CLI | Medium (~8 tools) | PR management, CI/CD workflows, issue automation |
 | **Slack** | Read/send messages, channel management | Medium (~6 tools) | Incident response, team communication automation |
+| **Chrome DevTools** | Browser automation, screenshots, performance audits, Lighthouse | High (~20 tools) | Frontend development, performance optimization, visual testing |
+| **Jira** | Issue tracking, sprint management, backlog grooming | Medium (~8 tools) | Enterprise teams using Atlassian stack |
+| **ServiceNow** | Incident management, change requests, CMDB | Medium (~6 tools) | Enterprise IT operations, incident response |
+| **Confluence** | Documentation search, page creation, knowledge base | Medium (~5 tools) | Teams needing access to internal documentation during coding |
+| **Grafana** | Dashboard queries, alert management, metric exploration | Medium (~5 tools) | Performance debugging, observability-driven development |
 
 ---
 
@@ -97,6 +104,35 @@ Disable MCP servers when:
 
 ---
 
+## Security Review for Third-Party MCPs
+
+With 300+ MCP servers available, not all are equally trustworthy. Review checklist before enabling a third-party server:
+
+### Before Installing
+
+| Check | What to Look For |
+|:------|:----------------|
+| **Source** | Is the package from a known publisher? Check npm/GitHub for maintainer reputation. |
+| **Permissions** | What does the server access? File system, network, databases? |
+| **Network** | Does it phone home or send data to external services? |
+| **Updates** | Is the package actively maintained? Last commit < 6 months? |
+| **Dependencies** | Run `npm audit` on the package before enabling. |
+
+### Risk Levels
+
+| Risk Level | Examples | Policy |
+|:-----------|:--------|:-------|
+| **Low** | Context7 (docs lookup), Memory (local file) | Enable freely |
+| **Medium** | GitHub, Linear, Slack (authenticated API calls) | Verify OAuth scopes, review what data is shared |
+| **High** | Database servers, filesystem servers | Project-local only, verify connection strings, restrict to dev databases |
+| **Custom/internal** | Your own MCP servers | Follow your org's code review process |
+
+### Enterprise Recommendation
+
+Use managed policies (Enterprise plan) to maintain an approved MCP server allowlist. Block unapproved servers to prevent data leakage through unvetted third-party tools.
+
+---
+
 ## Troubleshooting
 
 ### Server not connecting
@@ -144,3 +180,4 @@ MCP server "foo" error: EACCES
 3. **Don't duplicate built-in tools** — Claude already has Bash, Read, Write, Grep, Glob
 4. **Disable in CI** — MCP servers add startup time and potential flakiness
 5. **Audit periodically** — Review `/mcp` output monthly, disable what you're not using
+6. **Review third-party servers** — Check the security review checklist above before enabling any MCP server you didn't write

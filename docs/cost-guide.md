@@ -18,17 +18,17 @@ Claude Code charges based on **tokens** — the units of text that Claude reads 
 
 ## Typical Session Costs
 
-Based on real production usage with the Claude API pricing (as of 2025):
+Based on real production usage with the Claude API pricing (as of 2026):
 
-| Session Type | Duration | Tokens Used | Sonnet Cost | Opus Cost |
-|:-------------|:--------:|:-----------:|:-----------:|:---------:|
-| Quick bug fix | 5-10 min | 10K-30K | $0.10-0.30 | $0.50-1.50 |
-| Standard feature | 15-30 min | 30K-80K | $0.30-0.80 | $1.50-4.00 |
-| Complex feature | 30-60 min | 80K-200K | $0.80-2.00 | $4.00-10.00 |
-| Multi-agent feature | 30-60 min | 150K-400K | $1.50-4.00 | $8.00-20.00 |
-| Code review | 10-20 min | 20K-60K | $0.20-0.60 | $1.00-3.00 |
-| Debugging session | 15-45 min | 40K-120K | $0.40-1.20 | $2.00-6.00 |
-| Planning session | 10-20 min | 15K-50K | $0.15-0.50 | $0.75-2.50 |
+| Session Type | Duration | Tokens Used | Haiku Cost | Sonnet Cost | Opus Cost |
+|:-------------|:--------:|:-----------:|:----------:|:-----------:|:---------:|
+| Quick bug fix | 5-10 min | 10K-30K | $0.03-0.10 | $0.10-0.30 | $0.50-1.50 |
+| Standard feature | 15-30 min | 30K-80K | $0.10-0.25 | $0.30-0.80 | $1.50-4.00 |
+| Complex feature | 30-60 min | 80K-200K | $0.25-0.65 | $0.80-2.00 | $4.00-10.00 |
+| Multi-agent feature | 30-60 min | 150K-400K | $0.50-1.30 | $1.50-4.00 | $8.00-20.00 |
+| Code review | 10-20 min | 20K-60K | $0.07-0.20 | $0.20-0.60 | $1.00-3.00 |
+| Debugging session | 15-45 min | 40K-120K | $0.13-0.40 | $0.40-1.20 | $2.00-6.00 |
+| Planning session | 10-20 min | 15K-50K | $0.05-0.15 | $0.15-0.50 | $0.75-2.50 |
 
 *Costs are approximate. Actual costs depend on codebase size, conversation length, and model choice.*
 
@@ -52,6 +52,8 @@ Based on real production usage with the Claude API pricing (as of 2025):
 | Claude Code usage | $200-500 | $2,400-6,000 |
 | Subscription fees | $100-500 | $1,200-6,000 |
 | **Total** | **$300-1,000** | **$3,600-12,000** |
+
+> **Note:** Claude Code Team plan is $150/user/month ($1,500/month for 10 developers, $18,000/year). This is the highest-cost AI coding tool on the market. See the [comparison guide](comparison.md) for a hybrid strategy that can reduce costs 40-50%.
 
 ---
 
@@ -80,6 +82,58 @@ For a developer earning $150K/year ($75/hour):
 | **Total per developer** | **12-24 hours** | **$900-1,800** | **$47K-94K** |
 
 **ROI: 40-80x return on Claude Code investment.**
+
+---
+
+## Enterprise ROI: The Honest Numbers
+
+The ROI numbers above reflect individual developer productivity gains. Enterprise-wide measurement tells a more nuanced story.
+
+### The Perception-Reality Gap
+
+Industry research across ~40,000 developers found:
+- Developers **feel** 24% faster but **measure** 19% slower on complex tasks
+- 15-25% of "time saved" coding is spent debugging AI-generated code
+- Actual measured organisational ROI: **5-15% improvement** in delivery metrics
+- High-performing implementations (strong governance + training) exceed **500% ROI**
+
+The gap exists because AI excels at boilerplate and scaffolding but can introduce subtle bugs in complex logic. Teams that train developers to review AI output effectively close this gap.
+
+### Enterprise Benchmarks
+
+| Org Size | Investment | 3-Year ROI | Payback Period |
+|:---------|:----------|:-----------|:--------------|
+| Small (50-200 devs) | $100K-500K | 150-250% | 12-18 months |
+| Mid-market (200-1K devs) | $500K-2M | 200-400% | 8-15 months |
+| Large (1K+ devs) | $2M-10M+ | 300-600% | 6-12 months |
+
+### Total Cost of Ownership (10-Developer Team)
+
+Don't just count subscription fees. The real cost includes:
+
+| Cost Category | Annual Cost |
+|:-------------|:-----------|
+| Claude Code Team subscriptions (10 × $150/mo) | $18,000 |
+| API usage (overages beyond included quota) | $2,000-6,000 |
+| Training and onboarding (initial) | $2,000-4,000 |
+| Debugging overhead (15-25% of saved time) | Included in productivity |
+| **Total** | **$22,000-28,000** |
+
+Against savings of $200K-400K/year in developer productivity, the ROI remains strong — but the honest number is **8-15x**, not the 40-80x that ignores hidden costs.
+
+### Metrics That Actually Matter
+
+**Leading indicators** (measure monthly):
+- Code review turnaround time (target: 20-30% reduction)
+- Deployment frequency
+- AI-assisted code acceptance rate per developer
+
+**Lagging indicators** (measure quarterly):
+- Change failure rate
+- Defect escape rate (bugs reaching production)
+- Technical debt trend (are you accumulating or reducing?)
+
+Track these before and after rollout. Without a baseline, you can't prove ROI.
 
 ---
 
