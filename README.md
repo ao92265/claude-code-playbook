@@ -24,7 +24,7 @@
 <img src="https://img.shields.io/badge/27-Skills-8B5CF6?style=flat-square" alt="27 Skills"/>
 <img src="https://img.shields.io/badge/11-Templates-F97316?style=flat-square" alt="11 Templates"/>
 <img src="https://img.shields.io/badge/7-Hooks-EF4444?style=flat-square" alt="7 Hooks"/>
-<img src="https://img.shields.io/badge/16-Docs-0078D4?style=flat-square" alt="13 Docs"/>
+<img src="https://img.shields.io/badge/19-Docs-0078D4?style=flat-square" alt="13 Docs"/>
 <img src="https://img.shields.io/badge/3-Examples-22C55E?style=flat-square" alt="3 Examples"/>
 <img src="https://img.shields.io/badge/20-Anti--Patterns-EC4899?style=flat-square" alt="20 Anti-Patterns"/>
 
@@ -163,7 +163,10 @@ claude-code-playbook/
 │   ├── team-setup.md          # How to roll out the playbook to a team
 │   ├── github-actions.md      # Claude Code in CI/CD: PR review, issue-to-PR, Bedrock/Vertex
 │   ├── enterprise-governance.md # SSO, compliance API, managed policies, EU AI Act
-│   └── agent-teams.md         # Native Agent Teams: parallel multi-agent coordination
+│   ├── agent-teams.md         # Native Agent Teams: parallel multi-agent coordination
+│   ├── security-remediation.md # Scanner-to-fix pipeline: OWASP patterns, batch remediation
+│   ├── legacy-modernization.md # AI-assisted tech debt reduction and code migration
+│   └── plugin-authoring.md    # Build and distribute Claude Code plugins
 ├── examples/
 │   ├── bug-fix-session.md     # Annotated bug fix session transcript
 │   ├── feature-session.md     # Annotated new feature session transcript
