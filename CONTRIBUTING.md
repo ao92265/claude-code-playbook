@@ -67,6 +67,16 @@ metadata:
    - Use tables for comparisons and quick references
 3. If adding a new doc, update the Documentation table in `README.md`
 
+## Contributing a Plugin
+
+Plugins bundle skills, hooks, and MCP servers into a single distributable package.
+
+1. Create a `plugin.json` manifest — see [Plugin Authoring](docs/plugin-authoring.md) for the schema
+2. Include skills, hooks, MCP configs, or rules as needed
+3. Add a README explaining purpose, installation, and usage
+4. Test installation: `npx skills install ./your-plugin`
+5. Include a compatible license (MIT preferred)
+
 ## Contributing Examples
 
 1. Add to `examples/` as `{scenario}-session.md`

@@ -117,6 +117,7 @@ Claude Code reads your codebase and CLAUDE.md at session start. The more context
 2. Fine-tune CLAUDE.md based on lessons learned
 3. Train new team members using the onboarding materials
 4. Share results and case studies internally
+5. For enterprise scale (50+ devs), set up SSO and governance — see [Enterprise Governance](enterprise-governance.md)
 
 ---
 

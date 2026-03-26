@@ -102,6 +102,8 @@ claude-team-config/
 
 Each developer copies from the shared template and adds personal customizations.
 
+> **Scaling beyond 20 developers?** See the [Enterprise Governance guide](enterprise-governance.md) for SSO, managed policies, Compliance API, and audit trail setup.
+
 ---
 
 ## Measuring Impact

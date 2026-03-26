@@ -135,6 +135,30 @@ Git worktrees are separate working directories that share the same repository. E
 
 ---
 
+---
+
+## Enterprise & CI/CD
+
+### How do I use Claude Code in my CI/CD pipeline?
+
+Use the official `anthropics/claude-code-action@v1` GitHub Action. It supports automated PR review, `@claude` triggers in comments, and issue-to-PR automation. See the [GitHub Actions guide](github-actions.md).
+
+### How do I set up Claude Code for a large team?
+
+Start with the [Team Setup guide](team-setup.md) for rollout. For 50+ developers or when you need SSO, managed policies, and audit trails, see the [Enterprise Governance guide](enterprise-governance.md).
+
+### How do I fix security vulnerabilities at scale?
+
+Export findings from your scanner (Checkmarx, Snyk, etc.), then use Claude Code with OWASP fix patterns — one finding per session. See the [Security Remediation guide](security-remediation.md).
+
+### How do I create a Claude Code plugin?
+
+Bundle skills, hooks, and MCP servers into a distributable plugin with a `plugin.json` manifest. See the [Plugin Authoring guide](plugin-authoring.md).
+
+### What are Agent Teams?
+
+An experimental feature (Feb 2026) that runs multiple independent Claude Code sessions coordinating via shared task lists and messaging. See the [Agent Teams guide](agent-teams.md).
+
 ## Troubleshooting
 
 ### Claude is modifying files I didn't ask about

@@ -16,6 +16,9 @@ graph TD
     START --> PLAN["Plan work"]
     START --> UNDERSTAND["Understand code"]
     START --> MAINTAIN["Maintenance"]
+    START --> CICD["Automate CI/CD"]
+    START --> SECURE["Fix vulnerabilities"]
+    START --> MODERNIZE["Modernize legacy code"]
 
     FIX --> FIX_Q{"Have the error message?"}
     FIX_Q -->|"Yes"| FIX_GO["Paste error + scope lock<br/><em>See: bug-fix example</em>"]
@@ -54,6 +57,9 @@ graph TD
     MAINT_Q -->|"Changelog"| CL_GO["/changelog"]
     MAINT_Q -->|"Database migration"| DB_GO["/migrate-db"]
     MAINT_Q -->|"Session wrap-up"| HO_GO["/handoff"]
+    CICD --> CICD_GO["See: github-actions.md"]
+    SECURE --> SECURE_GO["See: security-remediation.md<br/><em>OWASP fix patterns</em>"]
+    MODERNIZE --> MOD_GO["See: legacy-modernization.md<br/><em>Incremental approach</em>"]
 
     style START fill:#4A90D9,stroke:#357ABD,color:#fff
     style FIX fill:#FF6B6B,stroke:#EE5A5A,color:#fff
@@ -64,6 +70,9 @@ graph TD
     style PLAN fill:#DDA0DD,stroke:#BA55D3,color:#333
     style UNDERSTAND fill:#20B2AA,stroke:#008B8B,color:#fff
     style MAINTAIN fill:#DAA520,stroke:#B8860B,color:#fff
+    style CICD fill:#4169E1,stroke:#27408B,color:#fff
+    style SECURE fill:#DC143C,stroke:#B22222,color:#fff
+    style MODERNIZE fill:#2E8B57,stroke:#006400,color:#fff
 ```
 
 ---

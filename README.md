@@ -24,7 +24,7 @@
 <img src="https://img.shields.io/badge/27-Skills-8B5CF6?style=flat-square" alt="27 Skills"/>
 <img src="https://img.shields.io/badge/11-Templates-F97316?style=flat-square" alt="11 Templates"/>
 <img src="https://img.shields.io/badge/7-Hooks-EF4444?style=flat-square" alt="7 Hooks"/>
-<img src="https://img.shields.io/badge/19-Docs-0078D4?style=flat-square" alt="13 Docs"/>
+<img src="https://img.shields.io/badge/25-Docs-0078D4?style=flat-square" alt="25 Docs"/>
 <img src="https://img.shields.io/badge/3-Examples-22C55E?style=flat-square" alt="3 Examples"/>
 <img src="https://img.shields.io/badge/20-Anti--Patterns-EC4899?style=flat-square" alt="20 Anti-Patterns"/>
 
@@ -78,6 +78,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 - [7 hook scripts](hooks/) that catch errors before they reach your commits
 - [3 annotated example sessions](examples/) showing real workflows in action
 - [MCP server guide](docs/mcp-servers.md), [skills ecosystem](docs/skills-ecosystem.md), [model comparison](docs/model-comparison.md), [workflow decision tree](docs/workflows.md), and [20 anti-patterns](docs/anti-patterns.md)
+- [CI/CD automation](docs/github-actions.md), [enterprise governance](docs/enterprise-governance.md), [agent teams](docs/agent-teams.md), [security remediation](docs/security-remediation.md), and [legacy modernization](docs/legacy-modernization.md)
 - **One-line installer** for skills, hooks, and templates
 
 </td>
@@ -615,10 +616,16 @@ Never append to shared context files. Always replace the entire content and keep
 | **[Prompt Library](docs/prompt-library.md)** | 50+ prompts | Copy-paste prompts for every situation — the cheat codes page |
 | **[Cost Guide](docs/cost-guide.md)** | Guide | Real token costs, ROI calculator, optimization strategies, budget templates |
 | **[Permissions](docs/permissions.md)** | Guide | Permission modes, allowlists, `--dangerously-skip-permissions` safety |
-| **[Comparison](docs/comparison.md)** | Guide | Claude Code vs Cursor vs Copilot vs Windsurf |
+| **[Comparison](docs/comparison.md)** | Guide | Claude Code vs Cursor vs Copilot vs Windsurf vs Codex vs Kiro vs Antigravity |
 | **[Case Studies](docs/case-studies.md)** | Stories | Real results: 85% faster features, zero regressions |
 | **[Adoption Playbook](docs/adoption-playbook.md)** | Guide | How to pitch and roll out Claude Code to your org |
 | **[Skills Ecosystem](docs/skills-ecosystem.md)** | Guide | Agent skills package manager: discovery, evaluation, recommended skills by stack |
+| **[GitHub Actions](docs/github-actions.md)** | Guide | CI/CD automation: PR review, @claude triggers, Bedrock/Vertex, issue-to-PR |
+| **[Enterprise Governance](docs/enterprise-governance.md)** | Guide | SSO, managed policies, Compliance API, spend controls, EU AI Act |
+| **[Agent Teams](docs/agent-teams.md)** | Guide | Native parallel multi-agent coordination with shared task lists |
+| **[Security Remediation](docs/security-remediation.md)** | Guide | Scanner-to-fix pipeline: OWASP patterns, Checkmarx/Snyk, batch remediation |
+| **[Legacy Modernization](docs/legacy-modernization.md)** | Guide | AI-assisted tech debt reduction, characterisation tests, incremental migration |
+| **[Plugin Authoring](docs/plugin-authoring.md)** | Guide | Build and distribute plugins: skills, hooks, MCP servers bundled |
 | **[Article](article.md)** | Article | The original article that inspired this playbook |
 
 <br/>
@@ -790,7 +797,7 @@ New to Claude Code? Hand your team the **[onboarding package](onboarding/)** —
 | [05 — Advanced](onboarding/05-advanced.md) | Multi-agent, model routing, hooks | 20 min |
 | [Checklist](onboarding/checklist.md) | Completion verification | 5 min |
 
-Also see: [Getting Started](docs/getting-started.md) | [Team Setup](docs/team-setup.md) | [Adoption Playbook](docs/adoption-playbook.md) | [Case Studies](docs/case-studies.md)
+Also see: [Getting Started](docs/getting-started.md) | [Team Setup](docs/team-setup.md) | [Adoption Playbook](docs/adoption-playbook.md) | [Case Studies](docs/case-studies.md) | [Enterprise Governance](docs/enterprise-governance.md) | [GitHub Actions](docs/github-actions.md)
 
 <br/>
 

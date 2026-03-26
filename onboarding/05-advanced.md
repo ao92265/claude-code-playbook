@@ -116,6 +116,9 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md) for the format.
 | MCP servers | [MCP guide](../docs/mcp-servers.md) |
 | Prompt patterns | [20 prompt patterns](../docs/prompt-patterns.md) |
 | Full reference | [Power user guide (667 lines)](../docs/guide.md) |
+| Agent Teams | [Agent Teams guide](../docs/agent-teams.md) |
+| CI/CD automation | [GitHub Actions guide](../docs/github-actions.md) |
+| Enterprise setup | [Enterprise Governance](../docs/enterprise-governance.md) |
 
 ---
 

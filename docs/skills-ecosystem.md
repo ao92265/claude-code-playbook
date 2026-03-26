@@ -195,6 +195,8 @@ Instructions and patterns for the agent to follow...
 
 See the [skill-creator](../skills/skill-creator/) skill in this playbook for an interactive workflow.
 
+To bundle multiple skills, hooks, and MCP servers into a distributable plugin, see the [Plugin Authoring guide](plugin-authoring.md).
+
 ---
 
 ## Tips
