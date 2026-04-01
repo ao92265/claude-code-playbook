@@ -61,6 +61,23 @@ Add hook configurations to `~/.claude/settings.json`. Here's a complete example 
             "command": "~/.claude/hooks/env-guard.sh",
             "timeout": 10,
             "statusMessage": "Checking for secrets..."
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/firewall.sh",
+            "timeout": 5,
+            "statusMessage": "Checking for dangerous commands..."
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/protect-paths.sh",
+            "timeout": 5,
+            "statusMessage": "Checking for protected files..."
           }
         ]
       }
@@ -191,6 +208,32 @@ Validates the development environment when a new Claude Code session begins. Rep
 | **Matcher** | `""` (empty — matches all) |
 | **Catches** | Port conflicts, missing credentials, Docker issues, missing .env |
 | **Note** | Always exits 0 (informational only) |
+
+### firewall.sh
+
+Blocks irreversible or dangerous shell commands before they execute. Catches `rm -rf /`, `git reset --hard`, `git push --force`, `DROP TABLE`, `TRUNCATE TABLE`, and `git clean -fd`.
+
+| Property | Value |
+|----------|-------|
+| **Hook point** | `PreToolUse` |
+| **Matcher** | `Bash` |
+| **Catches** | Destructive shell commands that are hard or impossible to reverse |
+| **Triggers on** | Any bash command matching dangerous patterns |
+
+---
+
+### protect-paths.sh
+
+Prevents Claude from editing or writing to sensitive files (`.env`, lockfiles, Prisma schema) without explicit developer permission. Customize the `PROTECTED` array for your project.
+
+| Property | Value |
+|----------|-------|
+| **Hook point** | `PreToolUse` |
+| **Matcher** | `Edit\|Write` |
+| **Catches** | Modifications to `.env*`, `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`, `prisma/schema.prisma` |
+| **Customizable** | Edit the `PROTECTED` array to add/remove paths |
+
+---
 
 ## Creating Custom Hooks
 

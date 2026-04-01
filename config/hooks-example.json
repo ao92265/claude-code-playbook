@@ -1,5 +1,5 @@
 {
-  "_comment": "Complete hooks configuration for Claude Code. Merge into ~/.claude/settings.json or .claude/settings.json",
+  "_comment": "Complete hooks configuration for Claude Code (9 hooks). Merge into ~/.claude/settings.json or .claude/settings.json",
   "hooks": {
     "SessionStart": [
       {
@@ -29,6 +29,23 @@
             "command": "~/.claude/hooks/env-guard.sh",
             "timeout": 10,
             "statusMessage": "Checking for secrets..."
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/firewall.sh",
+            "timeout": 5,
+            "statusMessage": "Checking for dangerous commands..."
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/protect-paths.sh",
+            "timeout": 5,
+            "statusMessage": "Checking for protected files..."
           }
         ]
       }

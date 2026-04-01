@@ -23,7 +23,7 @@
 
 <img src="https://img.shields.io/badge/27-Skills-8B5CF6?style=flat-square" alt="27 Skills"/>
 <img src="https://img.shields.io/badge/11-Templates-F97316?style=flat-square" alt="11 Templates"/>
-<img src="https://img.shields.io/badge/7-Hooks-EF4444?style=flat-square" alt="7 Hooks"/>
+<img src="https://img.shields.io/badge/9-Hooks-EF4444?style=flat-square" alt="9 Hooks"/>
 <img src="https://img.shields.io/badge/25-Docs-0078D4?style=flat-square" alt="25 Docs"/>
 <img src="https://img.shields.io/badge/3-Examples-22C55E?style=flat-square" alt="3 Examples"/>
 <img src="https://img.shields.io/badge/20-Anti--Patterns-EC4899?style=flat-square" alt="20 Anti-Patterns"/>
@@ -75,10 +75,11 @@ After months of daily production use — debugging at 2am, shipping features acr
 **Use**
 - [27 production-ready skills](skills/) (custom `/commands`) you can drop into any project
 - [11 CLAUDE.md templates](templates/) — TypeScript, React, Node, Python, Full-stack, Go, Rust, Mobile, DevOps, Java, C#
-- [7 hook scripts](hooks/) that catch errors before they reach your commits
+- [9 hook scripts](hooks/) that catch errors before they reach your commits
 - [3 annotated example sessions](examples/) showing real workflows in action
 - [MCP server guide](docs/mcp-servers.md), [skills ecosystem](docs/skills-ecosystem.md), [model comparison](docs/model-comparison.md), [workflow decision tree](docs/workflows.md), and [20 anti-patterns](docs/anti-patterns.md)
 - [CI/CD automation](docs/github-actions.md), [enterprise governance](docs/enterprise-governance.md), [agent teams](docs/agent-teams.md), [security remediation](docs/security-remediation.md), and [legacy modernization](docs/legacy-modernization.md)
+- [Skills 2.0](docs/skills-v2.md) (context fork, dynamic injection, agent frontmatter), [Code Container](docs/code-container.md) (Docker sandboxing), [auto mode](docs/auto-mode.md), [path-scoped rules](docs/path-scoped-rules.md), and [channels](docs/channels.md)
 - **One-line installer** for skills, hooks, and templates
 
 </td>
@@ -167,7 +168,12 @@ claude-code-playbook/
 │   ├── agent-teams.md         # Native Agent Teams: parallel multi-agent coordination
 │   ├── security-remediation.md # Scanner-to-fix pipeline: OWASP patterns, batch remediation
 │   ├── legacy-modernization.md # AI-assisted tech debt reduction and code migration
-│   └── plugin-authoring.md    # Build and distribute Claude Code plugins
+│   ├── plugin-authoring.md    # Build and distribute Claude Code plugins
+│   ├── channels.md            # Claude.ai channels and conversation management
+│   ├── path-scoped-rules.md   # Directory-scoped CLAUDE.md rules and overrides
+│   ├── auto-mode.md           # Auto Mode: skip-permissions for autonomous sessions
+│   ├── skills-v2.md           # Skills 2.0: context fork, dynamic injection, agent frontmatter
+│   └── code-container.md      # Docker sandboxing for autonomous Claude Code work
 ├── examples/
 │   ├── bug-fix-session.md     # Annotated bug fix session transcript
 │   ├── feature-session.md     # Annotated new feature session transcript
@@ -220,6 +226,8 @@ claude-code-playbook/
 │   ├── env-guard.sh           # Secret detection
 │   ├── build-check.sh         # OOM-safe builds
 │   ├── session-start-check.sh # Environment validation
+│   ├── firewall.sh            # Dangerous command blocker
+│   ├── protect-paths.sh       # Protected file guard
 │   └── README.md              # Hook setup guide
 ├── config/
 │   ├── settings-example.json  # Example settings.json
@@ -716,9 +724,9 @@ sequenceDiagram
     Claude-->>You: "Bug fixed, types clean"
 ```
 
-**7 included hooks:** [ts-check.sh](hooks/ts-check.sh) (type errors) | [lint-check.sh](hooks/lint-check.sh) (ESLint) | [pre-commit-guard.sh](hooks/pre-commit-guard.sh) (debug statements) | [format-check.sh](hooks/format-check.sh) (Prettier) | [env-guard.sh](hooks/env-guard.sh) (secrets) | [build-check.sh](hooks/build-check.sh) (OOM-safe builds) | [session-start-check.sh](hooks/session-start-check.sh) (environment validation)
+**9 included hooks:** [ts-check.sh](hooks/ts-check.sh) (type errors) | [lint-check.sh](hooks/lint-check.sh) (ESLint) | [pre-commit-guard.sh](hooks/pre-commit-guard.sh) (debug statements) | [format-check.sh](hooks/format-check.sh) (Prettier) | [env-guard.sh](hooks/env-guard.sh) (secrets) | [build-check.sh](hooks/build-check.sh) (OOM-safe builds) | [session-start-check.sh](hooks/session-start-check.sh) (environment validation) | [firewall.sh](hooks/firewall.sh) (dangerous command blocker) | [protect-paths.sh](hooks/protect-paths.sh) (protected file guard)
 
-> See **[hooks/README.md](hooks/README.md)** for setup and **[config/hooks-example.json](config/hooks-example.json)** for a complete configuration with all 7 hooks wired up.
+> See **[hooks/README.md](hooks/README.md)** for setup and **[config/hooks-example.json](config/hooks-example.json)** for a complete configuration with all 9 hooks wired up.
 
 <br/>
 
