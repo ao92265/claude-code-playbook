@@ -214,6 +214,16 @@ These are the most common mistakes from 900+ sessions. Each one has burned real 
 
 ---
 
+### 21. Cognitive Debt
+
+**Don't:** Let AI generate code without specs, reviews, or design phases — "vibe coding"
+
+**Why it fails:** Karpathy himself renamed "vibe coding" to "agentic engineering" one year after coining it. At scale, 1% vulnerability rate × 1,000 PRs/week = 10 new security holes per week. Without specs, there's no reasoning to follow when debugging. Without reviews, context collapse accumulates as "cognitive debt" — the cost of poorly managed AI interactions.
+
+**Do instead:** Write spec first → break into scoped tasks → review every diff with PR rigor → test relentlessly. The governance structure is the product, not the code generation.
+
+---
+
 ## Quick Reference
 
 | # | Anti-Pattern | Fix |
@@ -238,3 +248,4 @@ These are the most common mistakes from 900+ sessions. Each one has burned real 
 | 18 | God commit | One commit per logical change |
 | 19 | No CLAUDE.md | Copy a template from this playbook |
 | 20 | Stale lessons | Review and prune monthly |
+| 21 | Cognitive debt | Spec → scoped tasks → PR review → test. Governance is the product |
