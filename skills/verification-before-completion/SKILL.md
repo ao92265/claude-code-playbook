@@ -52,6 +52,32 @@ Before finalizing any response that implies completion, check for the following 
 
 If any flagged phrase is found: do not publish the response. Execute Step 3 first.
 
+## Rationalization Prevention
+
+If you catch yourself thinking any of these, STOP and run verification instead:
+
+| Excuse | Reality |
+|---|---|
+| "Should work now" | RUN the verification |
+| "I'm confident" | Confidence ≠ evidence |
+| "Just this once" | No exceptions |
+| "Linter passed" | Linter ≠ compiler ≠ tests |
+| "Agent said success" | Verify independently — agent reports are claims, not proof |
+| "Partial check is enough" | Partial proves nothing about the whole |
+| "Different words so rule doesn't apply" | Spirit over letter — any implication of success counts |
+| "I'll verify after I commit" | Verification gates the commit, not the other way around |
+
+### Red Flags — Immediate STOP
+
+- Using "should", "probably", "seems to" in a completion claim
+- Expressing satisfaction before verification ("Great!", "Perfect!", "All done!")
+- About to commit/push/PR without fresh verification output
+- Trusting a subagent's success report without checking the diff/output yourself
+- Thinking "just this once" or "it's a trivial change"
+- Relying on a previous run's output instead of a fresh execution
+
+If any red flag is present: do not publish the response. Execute Step 3 first.
+
 ## Step 3: Execute the Proof Command
 
 1. Run the proof command identified in Step 1.
