@@ -1,3 +1,8 @@
+---
+title: Governance
+nav_order: 1
+parent: Enterprise
+---
 # Enterprise Governance Guide
 
 How to deploy Claude Code across your organisation with proper controls, compliance, and audit trails.

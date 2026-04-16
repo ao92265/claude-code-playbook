@@ -1,3 +1,7 @@
+---
+title: FAQ
+nav_order: 11
+---
 # Frequently Asked Questions
 
 Quick answers to the most common questions about Claude Code and this playbook.

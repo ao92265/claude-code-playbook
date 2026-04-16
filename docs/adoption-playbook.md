@@ -1,3 +1,8 @@
+---
+title: Adoption Playbook
+nav_order: 3
+parent: Enterprise
+---
 # Adoption Playbook: Convincing Your Team (and Management)
 
 A practical guide for getting buy-in and rolling out Claude Code across your organization.

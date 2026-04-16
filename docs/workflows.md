@@ -1,3 +1,8 @@
+---
+title: Workflows
+nav_order: 4
+parent: "Patterns & Techniques"
+---
 # Workflow Decision Tree
 
 Not sure which skill or pattern to use? Start here.

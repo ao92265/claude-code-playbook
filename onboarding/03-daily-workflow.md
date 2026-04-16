@@ -1,3 +1,8 @@
+---
+title: Daily Workflow
+nav_order: 3
+parent: Onboarding
+---
 # Step 3: The Daily Workflow (15 minutes)
 
 ## The Core Loop

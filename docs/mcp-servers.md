@@ -1,3 +1,8 @@
+---
+title: MCP Servers
+nav_order: 3
+parent: Configuration
+---
 # MCP Servers Guide
 
 Model Context Protocol (MCP) servers extend Claude Code's capabilities beyond code editing — giving it access to browsers, databases, documentation, and external services.

@@ -1,3 +1,8 @@
+---
+title: Security Remediation
+nav_order: 4
+parent: Enterprise
+---
 # Security Remediation with Claude Code
 
 How to take vulnerability scanner findings and turn them into verified fixes using Claude Code.

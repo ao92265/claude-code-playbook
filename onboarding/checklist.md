@@ -1,3 +1,8 @@
+---
+title: Checklist
+nav_order: 6
+parent: Onboarding
+---
 # Onboarding Checklist
 
 Complete these items to confirm you're ready for daily Claude Code use.

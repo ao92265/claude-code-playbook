@@ -1,3 +1,8 @@
+---
+title: DevOps
+nav_order: 10
+parent: Templates
+---
 # CLAUDE.md — DevOps / Infrastructure Project
 
 <!-- Copy this template to your project root as CLAUDE.md and customize each section. -->

@@ -1,3 +1,9 @@
+---
+title: Onboarding
+nav_order: 14
+has_children: true
+permalink: /onboarding/
+---
 # Claude Code Onboarding Package
 
 Everything a new developer needs to go from "never used Claude Code" to productive in one day.

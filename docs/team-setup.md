@@ -1,3 +1,8 @@
+---
+title: Team Setup
+nav_order: 2
+parent: Enterprise
+---
 # Team Setup Guide
 
 How to roll out the Claude Code Playbook to your team.

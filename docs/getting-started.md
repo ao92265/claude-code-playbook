@@ -1,3 +1,7 @@
+---
+title: Getting Started
+nav_order: 1
+---
 # Getting Started
 
 Go from zero to productive with Claude Code in 10 minutes.

@@ -1,3 +1,7 @@
+---
+title: Account Setup
+nav_order: 2
+---
 # Claude Account Setup
 
 How to create your Anthropic account and choose the right plan before installing Claude Code.

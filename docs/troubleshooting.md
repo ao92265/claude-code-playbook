@@ -1,3 +1,7 @@
+---
+title: Troubleshooting
+nav_order: 10
+---
 # Troubleshooting Guide
 
 Common problems, why they happen, and how to fix them.

@@ -1,3 +1,8 @@
+---
+title: Anti-Patterns
+nav_order: 3
+parent: "Patterns & Techniques"
+---
 # Anti-Patterns: 20 Things That Go Wrong with Claude Code
 
 These are the most common mistakes from 900+ sessions. Each one has burned real hours. Learn from our pain.

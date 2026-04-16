@@ -1,3 +1,8 @@
+---
+title: Path-Scoped Rules
+nav_order: 2
+parent: Configuration
+---
 # Path-Scoped Rules: Keeping Claude Focused on What Matters
 
 A monolithic `CLAUDE.md` that covers every project convention — TypeScript, React, testing, databases, CI/CD — loads into every session regardless of what you're actually working on. The result is **priority saturation**: all instructions compete for attention equally, so the most critical ones get diluted by the least relevant ones.

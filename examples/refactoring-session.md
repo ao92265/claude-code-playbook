@@ -1,3 +1,8 @@
+---
+title: Refactoring Session
+nav_order: 5
+parent: Examples
+---
 # Example: Refactoring Session
 
 An annotated session showing the `/refactor` skill's zero-behavior-change workflow.

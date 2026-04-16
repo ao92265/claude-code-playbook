@@ -1,3 +1,8 @@
+---
+title: C#
+nav_order: 5
+parent: Templates
+---
 # CLAUDE.md — C# / .NET Project
 
 <!-- Copy this template to your project root as CLAUDE.md and customize each section. -->

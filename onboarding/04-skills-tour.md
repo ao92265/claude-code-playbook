@@ -1,3 +1,8 @@
+---
+title: Skills Tour
+nav_order: 4
+parent: Onboarding
+---
 # Step 4: Skills Tour (30 minutes)
 
 Try each of these skills in a real session. Spend ~5 minutes on each.

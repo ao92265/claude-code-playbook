@@ -1,3 +1,8 @@
+---
+title: Feature Session
+nav_order: 3
+parent: Examples
+---
 # Example: New Feature Session
 
 An annotated session showing how to build a new feature with reverse prompting, scope constraints, and multi-file verification.

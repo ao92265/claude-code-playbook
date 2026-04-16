@@ -1,3 +1,8 @@
+---
+title: Multi-Agent Session
+nav_order: 4
+parent: Examples
+---
 # Example: Multi-Agent Session
 
 An annotated session showing parallel agent orchestration with model routing and worktree isolation.

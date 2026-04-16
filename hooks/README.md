@@ -1,3 +1,7 @@
+---
+title: Hooks
+nav_order: 16
+---
 # Claude Code Hooks
 
 Hooks are shell scripts that run automatically at defined points during a Claude Code session. They enforce consistency without requiring manual review.

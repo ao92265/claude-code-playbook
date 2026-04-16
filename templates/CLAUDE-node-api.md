@@ -1,3 +1,8 @@
+---
+title: Node API
+nav_order: 2
+parent: Templates
+---
 # CLAUDE.md — Node.js API Project
 
 <!-- Copy this template to your project root as CLAUDE.md and customize each section. -->

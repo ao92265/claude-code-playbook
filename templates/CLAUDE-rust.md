@@ -1,3 +1,8 @@
+---
+title: Rust
+nav_order: 8
+parent: Templates
+---
 # CLAUDE.md — Rust Project
 
 <!-- Copy this template to your project root as CLAUDE.md and customize each section. -->

@@ -1,3 +1,8 @@
+---
+title: Debugging Session
+nav_order: 2
+parent: Examples
+---
 # Example: Debugging Session
 
 An annotated session showing the `/debug` skill's scientific method in action.

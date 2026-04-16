@@ -1,3 +1,8 @@
+---
+title: Java
+nav_order: 7
+parent: Templates
+---
 # CLAUDE.md — Java / Spring Boot Project
 
 <!-- Copy this template to your project root as CLAUDE.md and customize each section. -->

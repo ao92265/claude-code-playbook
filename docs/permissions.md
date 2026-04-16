@@ -1,3 +1,8 @@
+---
+title: Permissions
+nav_order: 1
+parent: Configuration
+---
 # Permission Modes & Tool Allowlists
 
 Claude Code asks for permission before running commands, editing files, and accessing the network. Here's how to control that behavior — and when you should.

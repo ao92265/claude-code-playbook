@@ -1,3 +1,8 @@
+---
+title: Mobile
+nav_order: 9
+parent: Templates
+---
 # CLAUDE.md — React Native / Mobile Project
 
 <!-- Copy this template to your project root as CLAUDE.md and customize each section. -->

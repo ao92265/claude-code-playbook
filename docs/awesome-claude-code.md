@@ -1,3 +1,7 @@
+---
+title: Awesome Claude Code
+nav_order: 13
+---
 # Awesome Claude Code
 
 A curated list of tools, plugins, MCP servers, and resources for Claude Code.

@@ -1,3 +1,8 @@
+---
+title: React
+nav_order: 1
+parent: Templates
+---
 # CLAUDE.md — React / Next.js Project
 
 <!-- Copy this template to your project root as CLAUDE.md and customize each section. -->

@@ -1,3 +1,8 @@
+---
+title: GitHub Actions
+nav_order: 2
+parent: Advanced
+---
 # Claude Code in GitHub Actions
 
 Automate code review, issue-to-PR workflows, and quality gates using Claude Code in your CI/CD pipeline.

@@ -1,3 +1,9 @@
+---
+title: Examples
+nav_order: 15
+has_children: true
+permalink: /examples/
+---
 # Examples
 
 Annotated session transcripts showing Claude Code patterns in action. Each example is a realistic conversation with annotations explaining what's happening and why each decision matters.

@@ -1,3 +1,8 @@
+---
+title: Skills Ecosystem
+nav_order: 1
+parent: "Skills & Extensibility"
+---
 # The Agent Skills Ecosystem
 
 The open agent skills ecosystem (`skills.sh`) is a package manager for AI agent skills — modular packages that extend Claude Code (and other agents) with specialized knowledge, workflows, and best practices.

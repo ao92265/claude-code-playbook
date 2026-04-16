@@ -1,15 +1,39 @@
 title: Claude Code Playbook
 description: Battle-tested patterns, skills, hooks, and templates for Claude Code
-remote_theme: pages-themes/cayman@v0.2.0
+remote_theme: just-the-docs/just-the-docs@v0.10.1
+
+url: "https://ao92265.github.io"
+baseurl: "/claude-code-playbook"
+
+permalink: pretty
+
+aux_links:
+  "GitHub":
+    - "https://github.com/ao92265/claude-code-playbook"
+
+aux_links_new_tab: true
+
+search_enabled: true
+search.heading_level: 3
+
+heading_anchor: true
+
+nav_sort: case_insensitive
+
+color_scheme: light
+
+footer_content: "Built by Force Information Systems &middot; Harris Computer &middot; Constellation Software. Licensed under MIT."
+
 plugins:
   - jekyll-remote-theme
 
 exclude:
   - scripts/
   - config/
-  - hooks/
-  - skills/
-  - templates/
-  - examples/
   - CONTRIBUTING.md
   - LICENSE
+  - CLAUDE.md
+  - article.md
+  - .omc/
+  - .claude/
+  - "response-to-*.md"

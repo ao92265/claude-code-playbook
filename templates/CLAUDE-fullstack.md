@@ -1,3 +1,8 @@
+---
+title: Full-Stack
+nav_order: 4
+parent: Templates
+---
 # CLAUDE.md — Full-Stack Monorepo
 
 <!-- Copy this template to your project root as CLAUDE.md and customize each section. -->

@@ -1,3 +1,8 @@
+---
+title: Auto Mode
+nav_order: 5
+parent: "Patterns & Techniques"
+---
 # Auto Mode: AI-Powered Permission Triage
 
 Claude Code stops to ask permission before running shell commands, writing files, and calling external services. In a productive session, you can hit 40+ permission prompts. Developers learn to approve them without reading.

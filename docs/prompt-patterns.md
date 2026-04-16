@@ -1,3 +1,8 @@
+---
+title: Prompt Patterns
+nav_order: 1
+parent: "Patterns & Techniques"
+---
 # Prompt Engineering Patterns for Claude Code
 
 Practical patterns refined through 900+ sessions. Each pattern includes a copy-paste ready example.

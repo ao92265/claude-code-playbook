@@ -1,3 +1,7 @@
+---
+title: Complete Guide
+nav_order: 4
+---
 # Claude Code: The Complete Power User Guide
 
 Skills, Plugins, MCP Servers, Agents, and Orchestration

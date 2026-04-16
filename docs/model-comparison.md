@@ -1,3 +1,8 @@
+---
+title: Model Comparison
+nav_order: 4
+parent: Configuration
+---
 # Claude Model Comparison Guide
 
 Practical guidance on choosing the right Claude model for each task in Claude Code.

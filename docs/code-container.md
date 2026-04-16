@@ -1,3 +1,8 @@
+---
+title: Code Container
+nav_order: 3
+parent: Advanced
+---
 # Code Container — Docker Sandboxing for Autonomous Claude Code Work
 
 Code Container is a lightweight Docker wrapper that gives Claude Code full root and network access inside an isolated container — eliminating the constant permission approval interruptions that slow down autonomous agent work, without putting your actual machine at risk.

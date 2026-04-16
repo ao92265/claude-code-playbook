@@ -1,3 +1,8 @@
+---
+title: Python
+nav_order: 3
+parent: Templates
+---
 # CLAUDE.md — Python Project
 
 <!-- Copy this template to your project root as CLAUDE.md and customize each section. -->

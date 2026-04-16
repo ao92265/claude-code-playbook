@@ -1,3 +1,7 @@
+---
+title: Tool Comparison
+nav_order: 12
+---
 # Claude Code vs Other AI Coding Tools
 
 An honest comparison to help you choose the right tool — or use them together.

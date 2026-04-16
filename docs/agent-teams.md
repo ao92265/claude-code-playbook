@@ -1,3 +1,8 @@
+---
+title: Agent Teams
+nav_order: 1
+parent: Advanced
+---
 # Agent Teams Guide
 
 How to use Claude Code's native Agent Teams for parallel, coordinated multi-agent development.

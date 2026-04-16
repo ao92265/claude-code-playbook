@@ -1,3 +1,8 @@
+---
+title: First Session
+nav_order: 2
+parent: Onboarding
+---
 # Step 2: Your First Session (30 minutes)
 
 ## Start Claude Code

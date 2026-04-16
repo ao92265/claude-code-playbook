@@ -1,3 +1,8 @@
+---
+title: Installation
+nav_order: 1
+parent: Onboarding
+---
 # Step 1: Installation (15 minutes)
 
 ## Prerequisites: Claude Account

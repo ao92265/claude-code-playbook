@@ -1,3 +1,8 @@
+---
+title: Prompt Library
+nav_order: 2
+parent: "Patterns & Techniques"
+---
 # Prompt Library
 
 50+ copy-paste prompts for every situation. Bookmark this page.

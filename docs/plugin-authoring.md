@@ -1,3 +1,8 @@
+---
+title: Plugin Authoring
+nav_order: 3
+parent: "Skills & Extensibility"
+---
 # Plugin Authoring Guide
 
 How to bundle skills, hooks, and MCP servers into distributable Claude Code plugins.

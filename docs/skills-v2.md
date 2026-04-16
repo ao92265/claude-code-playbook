@@ -1,3 +1,8 @@
+---
+title: Skills v2
+nav_order: 2
+parent: "Skills & Extensibility"
+---
 # Skills 2.0 — Programmable Agents
 
 Skills 2.0 unified custom instructions and agent commands under a single `.claude/skills/` directory model. Where Skills 1.0 was passive context (markdown the agent reads), Skills 2.0 is active execution — skills can now spawn isolated subagents, inject live shell output, and declare full agent behavior in frontmatter.

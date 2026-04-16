@@ -1,3 +1,8 @@
+---
+title: Cost Guide
+nav_order: 5
+parent: Configuration
+---
 # Claude Code Cost Guide
 
 Real token usage and cost data to help you budget, optimize, and justify the investment.

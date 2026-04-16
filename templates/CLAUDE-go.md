@@ -1,3 +1,8 @@
+---
+title: Go
+nav_order: 6
+parent: Templates
+---
 # CLAUDE.md — Go Project
 
 <!-- Copy this template to your project root as CLAUDE.md and customize each section. -->

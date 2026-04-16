@@ -1,3 +1,8 @@
+---
+title: Advanced Usage
+nav_order: 5
+parent: Onboarding
+---
 # Step 5: Advanced Features (20 minutes)
 
 These are power-user features. You don't need them on day one, but they'll multiply your productivity as you get comfortable.

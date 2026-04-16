@@ -1,3 +1,8 @@
+---
+title: Case Studies
+nav_order: 6
+parent: Enterprise
+---
 # Case Studies
 
 Real results from teams using the patterns in this playbook.

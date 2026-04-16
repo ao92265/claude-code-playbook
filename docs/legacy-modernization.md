@@ -1,3 +1,8 @@
+---
+title: Legacy Modernization
+nav_order: 5
+parent: Enterprise
+---
 # Legacy Modernization with Claude Code
 
 How to use Claude Code to understand, refactor, and incrementally modernize legacy codebases without big-bang rewrites.

@@ -1,3 +1,9 @@
+---
+title: Templates
+nav_order: 17
+has_children: true
+permalink: /templates/
+---
 # CLAUDE.md Template
 
 <!--

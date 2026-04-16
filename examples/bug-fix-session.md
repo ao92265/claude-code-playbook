@@ -1,3 +1,8 @@
+---
+title: Bug Fix Session
+nav_order: 1
+parent: Examples
+---
 # Example: Bug Fix Session
 
 An annotated session showing the core Request-Implement-Verify-Close loop for fixing a bug.

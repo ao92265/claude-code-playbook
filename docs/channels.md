@@ -1,3 +1,8 @@
+---
+title: Channels
+nav_order: 4
+parent: Advanced
+---
 # Claude Code Channels
 
 Channels turns a running Claude Code session into a reachable service — messages sent from your phone arrive in the session, Claude does work, and replies come back to your phone. Shipped March 20, 2026 as a research preview.

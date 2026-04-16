@@ -1,3 +1,7 @@
+---
+title: Cheat Sheet
+nav_order: 3
+---
 # Claude Code Cheat Sheet
 
 Pin this next to your monitor.
