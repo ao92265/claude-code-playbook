@@ -8,7 +8,7 @@
 
 [![Quick Start](https://img.shields.io/badge/Quick_Start-0078D4?style=for-the-badge&logo=rocket&logoColor=white)](#-quick-start)
 [![Full Guide](https://img.shields.io/badge/Full_Guide-667_lines-00B4D8?style=for-the-badge&logo=book&logoColor=white)](docs/guide.md)
-[![Skills](https://img.shields.io/badge/Skills-27_included-8B5CF6?style=for-the-badge&logo=puzzle-piece&logoColor=white)](#-skills-reference)
+[![Skills](https://img.shields.io/badge/Skills-29_included-8B5CF6?style=for-the-badge&logo=puzzle-piece&logoColor=white)](#-skills-reference)
 [![Templates](https://img.shields.io/badge/Templates-11_stacks-F97316?style=for-the-badge&logo=file-code&logoColor=white)](#-claudemd-templates)
 [![CI](https://img.shields.io/github/actions/workflow/status/ao92265/claude-code-playbook/validate.yml?style=for-the-badge&label=CI&logo=github)](https://github.com/ao92265/claude-code-playbook/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
@@ -21,7 +21,7 @@
 
 <br/>
 
-<img src="https://img.shields.io/badge/27-Skills-8B5CF6?style=flat-square" alt="27 Skills"/>
+<img src="https://img.shields.io/badge/29-Skills-8B5CF6?style=flat-square" alt="29 Skills"/>
 <img src="https://img.shields.io/badge/11-Templates-F97316?style=flat-square" alt="11 Templates"/>
 <img src="https://img.shields.io/badge/9-Hooks-EF4444?style=flat-square" alt="9 Hooks"/>
 <img src="https://img.shields.io/badge/25-Docs-0078D4?style=flat-square" alt="25 Docs"/>
@@ -73,7 +73,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 <td width="50%">
 
 **Use**
-- [27 production-ready skills](skills/) (custom `/commands`) you can drop into any project
+- [29 production-ready skills](skills/) (custom `/commands`) you can drop into any project
 - [11 CLAUDE.md templates](templates/) — TypeScript, React, Node, Python, Full-stack, Go, Rust, Mobile, DevOps, Java, C#
 - [9 hook scripts](hooks/) that catch errors before they reach your commits
 - [3 annotated example sessions](examples/) showing real workflows in action
@@ -190,7 +190,7 @@ claude-code-playbook/
 │   ├── CLAUDE-devops.md       # DevOps / Infrastructure
 │   ├── CLAUDE-java.md         # Java / Spring Boot
 │   └── CLAUDE-csharp.md       # C# / .NET
-├── skills/                    # 27 ready-to-use custom slash commands
+├── skills/                    # 29 ready-to-use custom slash commands
 │   ├── api-test/              # API endpoint testing
 │   ├── autoskill/             # Self-learning from sessions
 │   ├── brainstorming/         # Structured idea exploration
@@ -213,6 +213,12 @@ claude-code-playbook/
 │   ├── perf-check/            # Performance investigation
 │   ├── pr-batch-review/       # Batch PR management
 │   ├── refactor/              # Zero-behavior-change refactor
+│   ├── security/
+│   │   ├── browser-security/  # Browser security hardening (CSP, headers, cookies)
+│   │   │   ├── SKILL.md
+│   │   │   └── references/    # Framework-specific: aspnet.md, node.md, django.md
+│   │   └── fix-vulnerability/ # Scanner-to-fix pipeline (Checkmarx CSV → OWASP fix)
+│   │       └── SKILL.md
 │   ├── security-check/        # OWASP Top 10 scan
 │   ├── skill-creator/         # Create new skills
 │   ├── test-first/            # TDD workflow
@@ -435,6 +441,16 @@ Every skill is a drop-in `/command` that teaches Claude a specific workflow. Cop
 | **[deploy](skills/deploy/)** | Pre-deploy checklist: OOM-safe build, tests, env vars, git status, explicit confirmation | Before any deployment |
 | **[security-check](skills/security-check/)** | Quick security scan for OWASP Top 10: secrets, injection, XSS, auth issues | Before releases or after security-sensitive changes |
 | **[verification-before-completion](skills/verification-before-completion/)** | Forces Claude to prove work is done with actual test/build output | Automatically before "done" claims |
+
+</details>
+
+<details open>
+<summary><strong>Security Remediation</strong></summary>
+
+| Skill | What It Does | When To Use |
+|:------|:------------|:------------|
+| **[browser-security](skills/security/browser-security/)** | Browser security hardening: CSP, security headers, cookie flags, with framework-specific references | Hardening web apps against client-side attacks |
+| **[fix-vulnerability](skills/security/fix-vulnerability/)** | Scanner-to-fix pipeline: takes Checkmarx/Snyk findings, applies OWASP fixes, verifies with re-scan | Remediating scanner findings at scale |
 
 </details>
 
