@@ -1,7 +1,8 @@
 ---
 title: Agent Harness — what pros understand
-parent: News & Research
-nav_order: 17
+parent: Prompting & Discipline
+grand_parent: News & Research
+nav_order: 3
 ---
 # Agent Harness: The Buzz Everyone's Now Using (But Only Pros Understand)
 

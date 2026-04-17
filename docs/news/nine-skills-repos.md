@@ -1,7 +1,8 @@
 ---
 title: 9 Agent Skills Repos I Tried
-parent: News & Research
-nav_order: 26
+parent: Claude Code Features & Updates
+grand_parent: News & Research
+nav_order: 9
 ---
 # 9 Agent Skills Repos I Tried (And Now I Can't Stop Using Them)
 

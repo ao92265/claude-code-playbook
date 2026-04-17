@@ -1,7 +1,8 @@
 ---
 title: Learn Anything 100x Faster With Claude
-parent: News & Research
-nav_order: 47
+parent: Industry Signals
+grand_parent: News & Research
+nav_order: 7
 ---
 # You Can Now Learn Anything 100x Faster With Claude
 

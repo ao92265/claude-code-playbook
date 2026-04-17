@@ -1,7 +1,8 @@
 ---
 title: Opus 4.7 launch-day reactions
-parent: News & Research
-nav_order: 13
+parent: Models & Vendors
+grand_parent: News & Research
+nav_order: 3
 ---
 # Opus 4.7 Released! — Community Launch-Day Reactions
 

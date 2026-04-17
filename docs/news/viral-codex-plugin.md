@@ -1,7 +1,8 @@
 ---
 title: Viral Codex plugin for Claude Code
-parent: News & Research
-nav_order: 27
+parent: Multi-Model Orchestration
+grand_parent: News & Research
+nav_order: 8
 ---
 # I Tested New Viral Codex Plugin for Claude Code (Shouldn't Exist But Exploding)
 

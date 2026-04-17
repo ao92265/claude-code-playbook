@@ -1,7 +1,8 @@
 ---
 title: I reduced my token usage by 178x — the honest reframe
-parent: News & Research
-nav_order: 10
+parent: Cost & Performance
+grand_parent: News & Research
+nav_order: 3
 ---
 # I reduced my token usage by 178x in Claude Code!! (Graperoot)
 

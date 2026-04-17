@@ -1,6 +1,7 @@
 ---
 title: Opus 4.7 — the behavioural release
-parent: News & Research
+parent: Models & Vendors
+grand_parent: News & Research
 nav_order: 1
 ---
 # Opus 4.7 — the behavioural release

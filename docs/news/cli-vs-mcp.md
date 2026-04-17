@@ -1,7 +1,8 @@
 ---
 title: The CLI vs MCP Debate Is Asking the Wrong Question
-parent: News & Research
-nav_order: 9
+parent: Multi-Model Orchestration
+grand_parent: News & Research
+nav_order: 2
 ---
 # The CLI vs MCP Debate Is Asking the Wrong Question
 

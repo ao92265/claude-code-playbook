@@ -1,7 +1,8 @@
 ---
 title: Build an Autonomous Code Review Bot with Claude Code Hooks + GitHub Actions
-parent: News & Research
-nav_order: 48
+parent: Claude Code Features & Updates
+grand_parent: News & Research
+nav_order: 11
 ---
 # Build an Autonomous Code Review Bot with Claude Code Hooks + GitHub Actions
 

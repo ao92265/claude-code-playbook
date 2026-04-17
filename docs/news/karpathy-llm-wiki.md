@@ -1,7 +1,8 @@
 ---
 title: Why Karpathy's LLM Wiki is the Future
-parent: News & Research
-nav_order: 8
+parent: Knowledge Management
+grand_parent: News & Research
+nav_order: 1
 ---
 # Why Andrej Karpathy's "LLM Wiki" is the Future of Personal Knowledge
 

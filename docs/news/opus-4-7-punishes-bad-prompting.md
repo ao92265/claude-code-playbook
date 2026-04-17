@@ -1,6 +1,7 @@
 ---
 title: Opus 4.7 punishes bad prompting
-parent: News & Research
+parent: Models & Vendors
+grand_parent: News & Research
 nav_order: 2
 ---
 # Opus 4.7 — the first model that punishes bad prompting

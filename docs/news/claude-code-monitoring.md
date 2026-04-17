@@ -1,7 +1,8 @@
 ---
 title: The New Claude Code Monitoring
-parent: News & Research
-nav_order: 4
+parent: Cost & Performance
+grand_parent: News & Research
+nav_order: 2
 ---
 # The New Claude Code Monitoring — What Our Team Data Revealed
 

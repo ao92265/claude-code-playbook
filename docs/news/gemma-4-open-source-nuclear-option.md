@@ -1,7 +1,8 @@
 ---
 title: Gemma 4 — Google's Open-Source Nuclear Option
-parent: News & Research
-nav_order: 51
+parent: Models & Vendors
+grand_parent: News & Research
+nav_order: 14
 ---
 # Gemma 4: Google Just Dropped Its Open-Source Nuclear Option
 

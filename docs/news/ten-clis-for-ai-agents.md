@@ -1,7 +1,8 @@
 ---
 title: 10 Must-Have CLIs for Your AI Agents in 2026
-parent: News & Research
-nav_order: 46
+parent: Multi-Model Orchestration
+grand_parent: News & Research
+nav_order: 5
 ---
 # 10 Must-have CLIs for Your AI Agents in 2026
 

@@ -1,7 +1,8 @@
 ---
 title: Opus 4.7 leaks — Geeky Gadgets
-parent: News & Research
-nav_order: 39
+parent: Models & Vendors
+grand_parent: News & Research
+nav_order: 4
 ---
 # Claude Opus 4.7 Leaks & Anthropic's Full-Stack AI Studio
 

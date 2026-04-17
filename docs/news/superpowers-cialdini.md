@@ -1,7 +1,8 @@
 ---
 title: Superpowers — the Cialdini psychology hack for LLMs
-parent: News & Research
-nav_order: 7
+parent: Prompting & Discipline
+grand_parent: News & Research
+nav_order: 1
 ---
 # Superpowers: The Psychology Hack That Makes LLMs Obey Engineering Discipline
 

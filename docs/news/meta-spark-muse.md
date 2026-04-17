@@ -1,7 +1,8 @@
 ---
 title: Meta Spark Muse — skip
-parent: News & Research
-nav_order: 14
+parent: Models & Vendors
+grand_parent: News & Research
+nav_order: 9
 ---
 # Meta just dropped a new coding model (Spark Muse)
 

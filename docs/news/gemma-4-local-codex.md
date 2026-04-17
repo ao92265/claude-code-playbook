@@ -1,7 +1,8 @@
 ---
 title: I ran Gemma 4 as a local model in Codex CLI
-parent: News & Research
-nav_order: 6
+parent: Local Inference
+grand_parent: News & Research
+nav_order: 1
 ---
 # I ran Gemma 4 as a local model in Codex CLI
 

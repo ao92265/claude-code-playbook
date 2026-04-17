@@ -1,7 +1,8 @@
 ---
 title: ClawHub — official OpenClaw registry
-parent: News & Research
-nav_order: 34
+parent: Claude Code Features & Updates
+grand_parent: News & Research
+nav_order: 8
 ---
 # I Found ClawHub (New): Official Way to Find (& Publish) Verified OpenClaw Components
 

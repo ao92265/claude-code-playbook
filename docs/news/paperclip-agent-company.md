@@ -1,7 +1,8 @@
 ---
 title: Paperclip — agents as a company
-parent: News & Research
-nav_order: 28
+parent: Industry Signals
+grand_parent: News & Research
+nav_order: 3
 ---
 # Paperclip: The Open-Source Platform Turning AI Agents into an Actual Company
 

@@ -1,7 +1,8 @@
 ---
 title: Ghostty Terminal Hands-On
-parent: News & Research
-nav_order: 36
+parent: Adjacent & Off-Topic
+grand_parent: News & Research
+nav_order: 1
 ---
 # Ghostty Terminal Hands-On: Set Up in 5 Minutes
 

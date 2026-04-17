@@ -1,7 +1,8 @@
 ---
 title: The Orchestrator Was Missing
-parent: News & Research
-nav_order: 24
+parent: Knowledge Management
+grand_parent: News & Research
+nav_order: 2
 ---
 # The Orchestrator Was Missing: Building an Internal Research Agent Around AutoResearch
 

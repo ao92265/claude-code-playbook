@@ -1,7 +1,8 @@
 ---
 title: Claude Code Unpacked — visual walkthrough
-parent: News & Research
-nav_order: 29
+parent: Claude Code Features & Updates
+grand_parent: News & Research
+nav_order: 7
 ---
 # I Found Claude Code Unpacked: The Best Visual Walkthrough of Claude Code's Source
 

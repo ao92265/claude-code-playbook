@@ -1,7 +1,8 @@
 ---
 title: Cut Claude Code's output tokens by 75%
-parent: News & Research
-nav_order: 3
+parent: Cost & Performance
+grand_parent: News & Research
+nav_order: 1
 ---
 # I Cut Claude Code's Output Tokens by 75%
 

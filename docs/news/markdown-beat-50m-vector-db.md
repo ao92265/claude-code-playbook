@@ -1,7 +1,8 @@
 ---
 title: The Markdown File That Beat a $50M Vector Database
-parent: News & Research
-nav_order: 53
+parent: Knowledge Management
+grand_parent: News & Research
+nav_order: 3
 ---
 # The Markdown File That Beat a $50M Vector Database
 

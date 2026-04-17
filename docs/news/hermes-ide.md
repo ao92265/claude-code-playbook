@@ -1,7 +1,8 @@
 ---
 title: Hermes IDE — AI-native terminal
-parent: News & Research
-nav_order: 44
+parent: Models & Vendors
+grand_parent: News & Research
+nav_order: 12
 ---
 # Introducing Hermes IDE: An AI-Native Terminal That Actually Understands Your Shell
 

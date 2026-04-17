@@ -1,7 +1,8 @@
 ---
 title: Claude Mythos preview
-parent: News & Research
-nav_order: 32
+parent: Models & Vendors
+grand_parent: News & Research
+nav_order: 5
 ---
 # Claude Mythos Preview Is Here (I Reviewed The System Card)
 

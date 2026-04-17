@@ -1,7 +1,8 @@
 ---
 title: Glasswing & Claude Mythos — what CTOs should read
-parent: News & Research
-nav_order: 33
+parent: Models & Vendors
+grand_parent: News & Research
+nav_order: 6
 ---
 # Project Glasswing & Claude Mythos: What CTOs Shipping Claude Should Read
 

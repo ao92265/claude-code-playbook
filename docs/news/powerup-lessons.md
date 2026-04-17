@@ -1,7 +1,8 @@
 ---
 title: Claude Code /powerup — 10 built-in lessons
-parent: News & Research
-nav_order: 20
+parent: Claude Code Features & Updates
+grand_parent: News & Research
+nav_order: 2
 ---
 # Claude Code /powerup: 10 Built-In Lessons That Teach You Features You Are Already Missing
 

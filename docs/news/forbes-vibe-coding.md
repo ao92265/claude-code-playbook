@@ -1,7 +1,8 @@
 ---
 title: Forbes — Vibe coding goes mainstream
-parent: News & Research
-nav_order: 15
+parent: Industry Signals
+grand_parent: News & Research
+nav_order: 1
 ---
 # How To Vibe Code $2,000/month In Extra Income This Week
 

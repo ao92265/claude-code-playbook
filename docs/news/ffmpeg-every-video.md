@@ -1,7 +1,8 @@
 ---
 title: Every Video on Earth — FFmpeg story
-parent: News & Research
-nav_order: 37
+parent: Adjacent & Off-Topic
+grand_parent: News & Research
+nav_order: 2
 ---
 # Every Video on Earth Runs Through His Code. He Chose Poverty.
 

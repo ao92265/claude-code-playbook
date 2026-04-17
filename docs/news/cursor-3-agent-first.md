@@ -1,7 +1,8 @@
 ---
 title: Cursor 3 has arrived — agent-first
-parent: News & Research
-nav_order: 30
+parent: Models & Vendors
+grand_parent: News & Research
+nav_order: 10
 ---
 # Cursor 3 Has Arrived — And Just Went Agent-First (Google Antigravity Clone?)
 

@@ -1,7 +1,8 @@
 ---
 title: Anthropic's Harness Engineering — Two Agents, One Feature List
-parent: News & Research
-nav_order: 45
+parent: Multi-Model Orchestration
+grand_parent: News & Research
+nav_order: 4
 ---
 # Anthropic's Harness Engineering: Two Agents, One Feature List, Zero Context Overflow
 

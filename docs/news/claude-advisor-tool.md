@@ -1,7 +1,8 @@
 ---
 title: Claude Advisor Tool — sub-agent pattern, inverted
-parent: News & Research
-nav_order: 54
+parent: Multi-Model Orchestration
+grand_parent: News & Research
+nav_order: 7
 ---
 # Anthropic Just Made Cheap Models Think Like Opus (Claude Advisor Tool Is Wild)
 

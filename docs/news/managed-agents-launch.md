@@ -1,7 +1,8 @@
 ---
 title: Anthropic Managed Agents — public beta
-parent: News & Research
-nav_order: 12
+parent: Models & Vendors
+grand_parent: News & Research
+nav_order: 8
 ---
 # Introducing Claude Managed Agents, Now in Public Beta
 

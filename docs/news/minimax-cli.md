@@ -1,7 +1,8 @@
 ---
 title: MiniMax CLI — not another Claude Code clone
-parent: News & Research
-nav_order: 56
+parent: Models & Vendors
+grand_parent: News & Research
+nav_order: 15
 ---
 # MiniMax CLI is Here — I Tested It (And It's Not Another Claude Code Clone)
 

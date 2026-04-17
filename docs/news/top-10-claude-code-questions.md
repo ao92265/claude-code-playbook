@@ -1,7 +1,8 @@
 ---
 title: Top 10 Claude Code Questions Businesses Are Asking
-parent: News & Research
-nav_order: 49
+parent: Industry Signals
+grand_parent: News & Research
+nav_order: 6
 ---
 # Top 10 Claude Code Questions Businesses Are Asking Right Now
 

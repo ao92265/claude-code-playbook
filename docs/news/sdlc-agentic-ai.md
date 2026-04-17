@@ -1,7 +1,8 @@
 ---
 title: SDLC for Agentic AI Engineering
-parent: News & Research
-nav_order: 42
+parent: Industry Signals
+grand_parent: News & Research
+nav_order: 4
 ---
 # SDLC for Agentic AI Engineering
 

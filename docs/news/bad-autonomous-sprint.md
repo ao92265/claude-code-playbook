@@ -1,7 +1,8 @@
 ---
 title: /bad — BMad Autonomous Development
-parent: News & Research
-nav_order: 11
+parent: Multi-Model Orchestration
+grand_parent: News & Research
+nav_order: 3
 ---
 # /bad: BMad Autonomous Development — A Fully Autonomous Sprint Orchestrator
 

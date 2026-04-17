@@ -1,7 +1,8 @@
 ---
 title: It's Time to Increase Claude Code Visibility
-parent: News & Research
-nav_order: 35
+parent: Industry Signals
+grand_parent: News & Research
+nav_order: 2
 ---
 # It's Time To Increase Claude Code Visibility
 

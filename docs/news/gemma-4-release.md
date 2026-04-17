@@ -1,7 +1,8 @@
 ---
 title: Gemma 4 — Google's open-source release
-parent: News & Research
-nav_order: 19
+parent: Models & Vendors
+grand_parent: News & Research
+nav_order: 13
 ---
 # Gemma 4: Google Just Released an Open Source AI Model for Developers
 

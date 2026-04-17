@@ -1,7 +1,8 @@
 ---
 title: 6 Claude Code new commands & variables
-parent: News & Research
-nav_order: 31
+parent: Claude Code Features & Updates
+grand_parent: News & Research
+nav_order: 6
 ---
 # 6 Claude Code New Commands & Variables (You Likely Missed)
 

@@ -1,7 +1,8 @@
 ---
 title: 7 Homebrew Tools That Replace GUI Apps
-parent: News & Research
-nav_order: 16
+parent: Adjacent & Off-Topic
+grand_parent: News & Research
+nav_order: 3
 ---
 # 7 Homebrew Tools That Replace GUI Apps — The Minimalist's Secret Stack
 

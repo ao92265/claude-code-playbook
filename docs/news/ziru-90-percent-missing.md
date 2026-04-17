@@ -1,7 +1,8 @@
 ---
 title: 90% of Claude Code users are missing the most powerful feature
-parent: News & Research
-nav_order: 40
+parent: Prompting & Discipline
+grand_parent: News & Research
+nav_order: 2
 ---
 # Why 90% of Claude Code Users Are Missing Its Most Powerful Feature
 

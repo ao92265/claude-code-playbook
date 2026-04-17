@@ -1,7 +1,8 @@
 ---
 title: /team-onboarding — fixes team setup chaos
-parent: News & Research
-nav_order: 18
+parent: Claude Code Features & Updates
+grand_parent: News & Research
+nav_order: 1
 ---
 # I Tested Claude Code /team-onboarding (And It Fixes Team Setup Chaos)
 

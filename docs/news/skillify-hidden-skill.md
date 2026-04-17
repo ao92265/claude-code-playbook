@@ -1,7 +1,8 @@
 ---
 title: /skillify — the internal skill nobody knew about
-parent: News & Research
-nav_order: 22
+parent: Claude Code Features & Updates
+grand_parent: News & Research
+nav_order: 4
 ---
 # Claude Code Has an Internal Skill Nobody Knew About: /skillify
 

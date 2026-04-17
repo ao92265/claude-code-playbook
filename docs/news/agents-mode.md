@@ -1,7 +1,8 @@
 ---
 title: Claude Code agents — the feature I ignored for months
-parent: News & Research
-nav_order: 23
+parent: Claude Code Features & Updates
+grand_parent: News & Research
+nav_order: 5
 ---
 # The Claude Code Feature I Ignored for Months Was the Most Important One
 

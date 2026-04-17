@@ -1,7 +1,8 @@
 ---
 title: Anthropic's Mythos Model — A Full Tier Above Opus
-parent: News & Research
-nav_order: 50
+parent: Models & Vendors
+grand_parent: News & Research
+nav_order: 7
 ---
 # Anthropic's Mythos Model. A Full Tier Above Opus
 

@@ -1,7 +1,8 @@
 ---
 title: Claude Code /buddy reroll
-parent: News & Research
-nav_order: 38
+parent: Claude Code Features & Updates
+grand_parent: News & Research
+nav_order: 10
 ---
 # This Claude Code Buddy Reroll Lets You Find Your New Claude Code Pet
 

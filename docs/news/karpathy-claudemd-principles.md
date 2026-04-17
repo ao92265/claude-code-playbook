@@ -1,7 +1,8 @@
 ---
 title: Karpathy's CLAUDE.md — what each principle really fixes
-parent: News & Research
-nav_order: 52
+parent: Prompting & Discipline
+grand_parent: News & Research
+nav_order: 4
 ---
 # Andrej Karpathy's CLAUDE.md: What Each Principle Really Fixes
 

@@ -1,7 +1,8 @@
 ---
 title: GLM-5.1 on Claude Code — long-horizon agentic coding
-parent: News & Research
-nav_order: 55
+parent: Models & Vendors
+grand_parent: News & Research
+nav_order: 16
 ---
 # I Tried GLM-5.1 on Claude Code (And Discovered Long-Horizon Agentic Coding)
 

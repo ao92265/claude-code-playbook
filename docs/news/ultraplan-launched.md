@@ -1,7 +1,8 @@
 ---
 title: Claude Code /ultraplan launched
-parent: News & Research
-nav_order: 21
+parent: Claude Code Features & Updates
+grand_parent: News & Research
+nav_order: 3
 ---
 # Claude Code Ultraplan Launched: I Just Tested It (And It's Better Than It Looks)
 

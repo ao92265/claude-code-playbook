@@ -1,7 +1,8 @@
 ---
 title: I Ran Codex and Claude Side by Side
-parent: News & Research
-nav_order: 5
+parent: Multi-Model Orchestration
+grand_parent: News & Research
+nav_order: 1
 ---
 # I Ran Codex and Claude Side by Side. Here's What I Found.
 

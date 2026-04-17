@@ -1,7 +1,8 @@
 ---
 title: A Lawyer Just Beat 500 Developers at Anthropic's Hackathon
-parent: News & Research
-nav_order: 41
+parent: Industry Signals
+grand_parent: News & Research
+nav_order: 5
 ---
 # A Lawyer Just Beat 500 Developers at Anthropic's Hackathon
 

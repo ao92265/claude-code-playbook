@@ -1,7 +1,8 @@
 ---
 title: Building a first Managed Agent from scratch
-parent: News & Research
-nav_order: 25
+parent: Multi-Model Orchestration
+grand_parent: News & Research
+nav_order: 6
 ---
 # How Claude Code Built My First Claude Managed Agent (From Scratch)
 

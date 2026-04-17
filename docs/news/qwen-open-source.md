@@ -1,7 +1,8 @@
 ---
 title: Qwen — the most-downloaded open-source AI model family
-parent: News & Research
-nav_order: 43
+parent: Models & Vendors
+grand_parent: News & Research
+nav_order: 11
 ---
 # Qwen Just Quietly Became the Most Dangerous Open-Source AI Model
 
