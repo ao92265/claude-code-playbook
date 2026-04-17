@@ -1,6 +1,7 @@
 ---
 title: Awesome Claude Code
-nav_order: 43
+parent: Help
+nav_order: 4
 ---
 # Awesome Claude Code
 

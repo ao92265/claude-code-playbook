@@ -1,6 +1,7 @@
 ---
 title: FAQ
-nav_order: 41
+parent: Help
+nav_order: 2
 ---
 # Frequently Asked Questions
 

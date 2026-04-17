@@ -1,6 +1,7 @@
 ---
 title: Troubleshooting
-nav_order: 40
+parent: Help
+nav_order: 1
 ---
 # Troubleshooting Guide
 

@@ -1,8 +1,9 @@
 ---
 title: Examples
-nav_order: 30
 has_children: true
 permalink: /examples/
+parent: Resources
+nav_order: 1
 ---
 # Examples
 

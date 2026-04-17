@@ -1,8 +1,9 @@
 ---
 title: Templates
-nav_order: 31
 has_children: true
 permalink: /templates/
+parent: Resources
+nav_order: 2
 ---
 # CLAUDE.md Template
 

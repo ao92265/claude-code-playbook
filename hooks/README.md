@@ -1,6 +1,7 @@
 ---
 title: Hooks
-nav_order: 32
+parent: Resources
+nav_order: 3
 ---
 # Claude Code Hooks
 
