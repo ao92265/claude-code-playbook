@@ -41,6 +41,55 @@ Every quote and number in this briefing traces back to a named primary source; i
 
 Everything in this briefing is actionable in the next 30 days if you want it to be. The rest of the document is the "how."
 
+### The April 2026 landscape in one picture
+
+```mermaid
+flowchart TB
+    subgraph Model["Model tier — what shipped"]
+        O47[Opus 4.7<br/>behavioural release<br/>16 April]
+        Mythos[Claude Mythos<br/>tier above Opus<br/>restricted preview]
+        O47 -.-> Mythos
+    end
+    subgraph Cost["Cost & observability"]
+        Cave[caveman<br/>75% output tokens]
+        OTel[OpenTelemetry<br/>built-in, opt-in]
+    end
+    subgraph Orch["Multi-model orchestration"]
+        Codex[OpenAI Codex plugin<br/>for Claude Code]
+        Managed[Anthropic<br/>Managed Agents]
+        Cowork[MS Copilot Cowork<br/>Critique / Council]
+    end
+    subgraph Gov["Regulation & compliance"]
+        SR[SR 11-7 attribution gap]
+        EU[EU AI Act Article 12<br/>effective 2 Aug 2026]
+    end
+    subgraph Local["Local inference"]
+        G4[Gemma 4<br/>86.4% tau2-bench]
+    end
+    subgraph Loop["Autonomous loops"]
+        BAD[/bad BMad<br/>overnight sprint]
+    end
+
+    O47 --> Cave
+    O47 --> OTel
+    O47 --> Codex
+    Cowork --> SR
+    Cowork --> EU
+    Managed -.-> BAD
+    G4 --> Local
+
+    classDef hot fill:#ffd966,stroke:#a07800,color:#4d3800;
+    classDef risk fill:#d9534f,stroke:#8b2c2c,color:#fff;
+    classDef tool fill:#f4f7fb,stroke:#1a2b4a,color:#1a2b4a;
+    classDef model fill:#1a2b4a,stroke:#0f1a2e,color:#fff;
+    class O47,Mythos model;
+    class Cave,OTel,Codex,Managed,G4,BAD tool;
+    class Cowork hot;
+    class SR,EU risk;
+```
+
+*Illustration suggestion (generate separately with nano-banana or similar): "Single landscape image showing an engineering operations centre in April 2026 — central monitor shows Opus 4.7 behavioural metrics, adjacent panels show OpenTelemetry dashboards, regulatory document overlays, and a local Gemma 4 workstation."*
+
 ---
 
 ## 1. Claude Opus 4.7 — the behavioural release
@@ -50,6 +99,24 @@ Everything in this briefing is actionable in the next 30 days if you want it to 
 **Pricing:** Per-token price unchanged at $5 / $25 per million input/output. **Tokenizer shifted — same input now maps to 1.0–1.35× more tokens depending on content.** Real bills will shift even though the rate card didn't.
 
 > **Deep reads:** [Opus 4.7 — the behavioural release]({{ site.baseurl }}/docs/news/opus-4-7-behavioral-release/) (Rezvani) · [Opus 4.7 punishes bad prompting]({{ site.baseurl }}/docs/news/opus-4-7-punishes-bad-prompting/) (Njenga) · [Launch-day community reactions]({{ site.baseurl }}/docs/news/opus-4-7-reddit-reactions/)
+
+### Capability vs behavioural release — what actually changed
+
+```mermaid
+flowchart LR
+    P46[4.6-era prompt] -->|loose interpretation<br/>gaps filled silently| O46[4.6 output]
+    P46 -->|literal interpretation<br/>inconsistencies surfaced| O47O[4.7 output]
+    O47O -->|verifies itself<br/>pushes back when wrong| SE([Senior-engineer behaviour])
+
+    classDef in fill:#1a2b4a,stroke:#0f1a2e,color:#fff,rx:10,ry:10;
+    classDef weak fill:#f4f7fb,stroke:#1a2b4a,color:#1a2b4a;
+    classDef strong fill:#ffd966,stroke:#a07800,color:#4d3800;
+    class P46,SE in;
+    class O46 weak;
+    class O47O strong;
+```
+
+*Illustration suggestion: "Side-by-side AI responses — the 4.6 output is verbose with filler; the 4.7 output is terse, self-verified, and includes a 'pushing back' annotation. Nano-banana style, minimal flat illustration."*
 
 ### The five behavioural patterns
 
@@ -98,6 +165,28 @@ If you run an internal security or red-team function at Harris:
 - **"Car wash test" regressions** reported by community testers.
 - **Model-identification bug** — some early testers found 4.7 claiming "4.6 doesn't exist, did you mean 4.5?" Resolved for most users within 24 hours.
 
+### The five patterns — one diagram
+
+```mermaid
+mindmap
+  root((Opus 4.7<br/>behavioural))
+    Self-verifies
+      Proofs before starting
+      Designs own validation
+    Honesty
+      Reports missing data
+      Fewer hallucinated fallbacks
+    Pushes back
+      77.6% assertiveness
+      Imperatives not hedges
+    Literal instructions
+      Re-test 4.6 prompts
+      Surfaces inconsistencies
+    Persists
+      Through tool failures
+      Highest quality-per-tool-call
+```
+
 ### Migration checklist
 
 Before you ship 4.7 to production:
@@ -120,6 +209,29 @@ Before you ship 4.7 to production:
 There are now two complementary techniques for controlling Claude Code spend. Combined, expect **50–75% reduction** in token consumption.
 
 > **Deep reads:** [Cut Claude Code's output tokens by 75%]({{ site.baseurl }}/docs/news/caveman-75-percent-tokens/) (Dunlop) · [The New Claude Code Monitoring]({{ site.baseurl }}/docs/news/claude-code-monitoring/) (Rezvani) · [Graperoot "178x" — the honest reframe]({{ site.baseurl }}/docs/news/graperoot-178x/)
+
+### The two-lever model
+
+```mermaid
+flowchart LR
+    Prompt([Your prompt]) --> CC[Claude Code]
+    CC --> Model[Opus 4.7]
+    Model --> Response[Response]
+    Response --> Caveman{caveman<br/>plugin}
+    Caveman -->|compressed| Output([Output tokens -75%])
+    Telemetry[(OpenTelemetry)] -. metrics .- CC
+    Telemetry --> Dashboard[Grafana dashboard]
+    Dashboard --> Signals([Cache ratio<br/>Adoption<br/>Per-prompt cost])
+
+    classDef tool fill:#f4f7fb,stroke:#1a2b4a,color:#1a2b4a;
+    classDef runtime fill:#1a2b4a,stroke:#0f1a2e,color:#fff,rx:8,ry:8;
+    classDef gate fill:#ffd966,stroke:#a07800,color:#4d3800;
+    class Prompt,Output,Signals runtime;
+    class CC,Model,Response,Telemetry,Dashboard tool;
+    class Caveman gate;
+```
+
+*Illustration suggestion: "Split-screen flat illustration — left side shows bloated Claude Code response 'Certainly, I'd be happy to help…' with big red token counter 1,252. Right side shows caveman-compressed response 'Bug in auth. Fix:' with green counter 410. Nano-banana minimal palette."*
 
 ### Lever 1: Output compression — the `caveman` plugin
 
@@ -186,6 +298,38 @@ Three separate product launches in early April 2026 converged on the same archit
 
 > **Deep reads:** [I Ran Codex and Claude Side by Side]({{ site.baseurl }}/docs/news/codex-claude-side-by-side/) (Liu) · [Anthropic Managed Agents launch]({{ site.baseurl }}/docs/news/managed-agents-launch/) · [Building a first Managed Agent]({{ site.baseurl }}/docs/news/first-managed-agent/) (Njenga) · [The Orchestrator Was Missing]({{ site.baseurl }}/docs/news/orchestrator-was-missing/) (Rezvani)
 
+### Three architectures you should know
+
+```mermaid
+flowchart TB
+    subgraph Adv["Adversarial review (sequential)"]
+        A1[Claude drafts]
+        A1 --> A2[Codex reviews]
+        A2 --> A3([Findings])
+    end
+    subgraph Council["Model Council (parallel, transparent)"]
+        M1[Claude answers]
+        M2[Codex answers]
+        M1 --> MJ[Judge synthesises]
+        M2 --> MJ
+        MJ --> MO([Agreements + divergences])
+    end
+    subgraph Crit["Microsoft Critique (sequential, opaque)"]
+        C1[GPT drafts] --> C2[Claude audits]
+        C2 --> C3([Single final output<br/>attribution hidden])
+    end
+
+    classDef good fill:#ffd966,stroke:#a07800,color:#4d3800;
+    classDef opaque fill:#f4f7fb,stroke:#1a2b4a,color:#1a2b4a;
+    classDef gate fill:#d9534f,stroke:#8b2c2c,color:#fff;
+    class A1,A2,A3 opaque;
+    class M1,M2,MJ,MO good;
+    class C1,C2 opaque;
+    class C3 gate;
+```
+
+*Illustration suggestion: "Three panels — one showing two robots sequentially passing a scroll (Critique), one showing two robots working in parallel with a judge overseeing (Council), one showing a human engineer with two AI assistants flagging different things (Adversarial review). Flat illustrative style."*
+
 ### OpenAI Codex plugin for Claude Code (30 March 2026)
 
 Official OpenAI release. Repo: `github.com/openai/codex-plugin-cc`. Not a fork — OpenAI publishing a plugin that runs Codex inside their direct competitor's tool.
@@ -244,6 +388,29 @@ Commercial context: Microsoft stock fell 23% in Q1 2026 — worst quarter since 
 For any Harris / Constellation vertical touching regulated work (financial services, healthcare, utilities, public sector), Critique's attribution gap is the issue to raise before deployment.
 
 > **Deep reads:** [I Ran Codex and Claude Side by Side]({{ site.baseurl }}/docs/news/codex-claude-side-by-side/) — Liu's bank-employee analysis of the SR 11-7 attribution gap · [Claude Mythos preview]({{ site.baseurl }}/docs/news/claude-mythos-preview/) · [Glasswing & Claude Mythos for CTOs]({{ site.baseurl }}/docs/news/glasswing-mythos/)
+
+### The compliance decision tree
+
+```mermaid
+flowchart TB
+    A([Considering multi-model AI product]) --> B{Workload touches<br/>SR 11-7 or Annex III?}
+    B -- no --> C[Deploy normally]
+    B -- yes --> D{Vendor provides<br/>per-model attribution?}
+    D -- yes --> E{Notifies proactively<br/>on model updates?}
+    E -- yes --> F[Deploy with audit integration]
+    E -- no --> G[Require contractual SLA<br/>or decline]
+    D -- no --> H{Transparent alternative<br/>available?}
+    H -- yes --> I[Use Model Council<br/>or equivalent]
+    H -- no --> J[Decline until<br/>attribution exists]
+    classDef ok fill:#1a2b4a,stroke:#0f1a2e,color:#fff,rx:8,ry:8;
+    classDef gate fill:#ffd966,stroke:#a07800,color:#4d3800;
+    classDef bad fill:#d9534f,stroke:#8b2c2c,color:#fff;
+    class C,F,I ok;
+    class B,D,E,H gate;
+    class G,J bad;
+```
+
+*Illustration suggestion: "A compliance officer examining a chain of AI model outputs with a magnifying glass — each link labelled with a model version; some labels are visible, others missing and circled in red. Minimal flat style."*
 
 ### SR 11-7 (US Federal Reserve)
 
@@ -335,6 +502,20 @@ During the 4.7 migration window, audit every CLAUDE.md across your projects. Rep
 
 > **Deep reads:** [I ran Gemma 4 as a local model in Codex CLI]({{ site.baseurl }}/docs/news/gemma-4-local-codex/) (Vaughan) · [Gemma 4 — Google's open-source release]({{ site.baseurl }}/docs/news/gemma-4-release/) (Njenga)
 
+```mermaid
+flowchart LR
+    A([Gemma 3<br/>6.6% tau2-bench]) -->|local agentic coding| B([Broken])
+    C([Gemma 4<br/>86.4% tau2-bench]) -->|local agentic coding| D([Works])
+    classDef bad fill:#d9534f,stroke:#8b2c2c,color:#fff;
+    classDef good fill:#ffd966,stroke:#a07800,color:#4d3800;
+    classDef state fill:#1a2b4a,stroke:#0f1a2e,color:#fff,rx:8,ry:8;
+    class A bad;
+    class C good;
+    class B,D state;
+```
+
+*Illustration suggestion: "Split-screen flat illustration — left panel shows a laptop running an AI model with 'tool call failed' red notifications (Gemma 3). Right panel shows the same laptop running happily with green checkmarks and completed tasks (Gemma 4). Privacy shield icon overlay."*
+
 Apache 2.0 licensed, 256K context, self-hostable on Azure ML or on-prem.
 
 ### When it's worth it
@@ -387,6 +568,31 @@ Surprise finding: **the Mac generates tokens 5.1× faster than the GB10** despit
 The most useful architectural insight from the April 2026 research is [Reza Rezvani's per-integration decision framework]({{ site.baseurl }}/docs/news/cli-vs-mcp/). After 14 months running both in production, his team's split is roughly **70/30 CLI/MCP** — not by philosophy, by triage.
 
 > **Deep read:** [The CLI vs MCP Debate Is Asking the Wrong Question]({{ site.baseurl }}/docs/news/cli-vs-mcp/) (Rezvani)
+
+### The per-integration decision
+
+```mermaid
+flowchart TB
+    A([New integration]) --> B{Tool runs locally?}
+    B -- yes --> C{Has mature CLI?}
+    B -- no --> D{Has a CLI?}
+    C -- yes --> E[CLI]
+    C -- no --> F[Wrap in shell script]
+    D -- yes, ambient auth --> E
+    D -- yes, delegated OAuth --> G[MCP]
+    D -- no --> G
+    F --> H{Scales past 2 integrations?}
+    H -- yes --> E
+    H -- no --> G
+    classDef start fill:#1a2b4a,stroke:#0f1a2e,color:#fff,rx:8,ry:8;
+    classDef gate fill:#ffd966,stroke:#a07800,color:#4d3800;
+    classDef cli fill:#e8f1fa,stroke:#4a6fa5,color:#1a2b4a;
+    classDef mcp fill:#f4f7fb,stroke:#1a2b4a,color:#1a2b4a;
+    class A start;
+    class B,C,D,H gate;
+    class E,F cli;
+    class G mcp;
+```
 
 ### What broke at MCP-only
 
