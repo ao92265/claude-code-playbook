@@ -92,6 +92,8 @@ flowchart TB
 
 ## April 2026 Updates
 
+> **New: [April 2026 Briefing](docs/april-2026-briefing)** — a 20-minute read that summarises everything below into a single shareable document for tech leads and architects. Sits between the exec-focused Viva article and the dedicated reference pages. Covers the 10-item 30-day action list.
+
 The playbook now covers the Opus 4.7 release and the related ecosystem shifts:
 
 - **[Opus 4.7 Reference](docs/opus-4-7)** — the five behavioural patterns, `xhigh` default, `/ultrareview`, task budgets, 1M context, Cyber Verification Program, and the migration checklist
