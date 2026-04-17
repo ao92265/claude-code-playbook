@@ -84,11 +84,12 @@ $base-button-color: #1a2b4a;
 }
 
 // Divider below the pinned April 2026 Briefing (first nav item, nav_order: -1)
-.nav-list .nav-list-item:first-child {
+// Scoped to the top-level nav only so expanded section children don't inherit the divider.
+.site-nav > .nav-list > .nav-list-item:first-child {
   border-bottom: 2px solid #1a2b4a;
   padding-bottom: 6px;
   margin-bottom: 10px;
 }
-.nav-list .nav-list-item:first-child > .nav-list-link {
+.site-nav > .nav-list > .nav-list-item:first-child > .nav-list-link {
   font-weight: 600;
 }
