@@ -90,11 +90,13 @@ flowchart TB
 4. **Setting up a project?** Pick a [CLAUDE.md template](templates/CLAUDE) for your stack
 5. **Want custom commands?** Browse the [Skills Ecosystem](docs/skills-ecosystem)
 
-## April 2026 Updates
+## 🔖 April 2026 Briefing
 
-> **New: [April 2026 Briefing](docs/april-2026-briefing)** — a 20-minute read that summarises everything below into a single shareable document for tech leads and architects. Sits between the exec-focused Viva article and the dedicated reference pages. Covers the 10-item 30-day action list.
+> **The shareable 20-minute summary of this month's AI development shifts.** Covers Opus 4.7, cost optimisation, multi-model orchestration, regulated-AI compliance, and a 10-item 30-day action list for engineering leaders.
+>
+> **[→ Read the April 2026 Briefing](docs/april-2026-briefing)**
 
-> **New: [News & Research](docs/news/)** — deep-read article pages for every substantive source behind the briefing. Each page cross-linked to the reference documentation. Use this when you want to verify, go deeper, or share a specific article.
+Backed by [57 deep-read article pages in News & Research](docs/news/) across 9 categories — Models & Vendors, Cost & Performance, Multi-Model Orchestration, Prompting & Discipline, Knowledge Management, Local Inference, Claude Code Features & Updates, Industry Signals, and Adjacent & Off-Topic.
 
 The playbook now covers the Opus 4.7 release and the related ecosystem shifts:
 

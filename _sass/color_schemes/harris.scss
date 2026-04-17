@@ -21,3 +21,27 @@ $feedback-color: #1a2b4a;
 // Sidebar active / selected
 $sidebar-color: #f4f7fb;
 $base-button-color: #1a2b4a;
+
+// Active sidebar link: navy background, white text (no variable in just-the-docs v0.10.1 — raw CSS required)
+.nav-list-link.active,
+.nav-list-item.active > .nav-list-link {
+  background-color: #1a2b4a;
+  color: #fff !important;
+  border-radius: 4px;
+}
+.nav-list-link.active code {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+// Hover on non-active items
+.nav-list-link:hover {
+  background-color: #e8f1fa;
+  color: #1a2b4a;
+}
+
+// Breadcrumb: current page highlighted
+.breadcrumb-nav-list-item:last-child .breadcrumb-nav-list-link {
+  color: #1a2b4a;
+  font-weight: 600;
+}
