@@ -38,6 +38,32 @@ Skills install to `.agents/skills/` (universal) and symlink into `.claude/skills
 
 Skills are markdown files with frontmatter that teach agents specialized workflows. When installed, they appear as available context — Claude Code reads them when relevant to your task.
 
+```mermaid
+flowchart LR
+    Registry[(skills.sh<br/>registry)]
+    CLI["npx skills add<br/>package@skill"]
+    AgentDir[".agents/skills/<br/>universal store"]
+    ClaudeDir[".claude/skills/<br/>symlinks"]
+    CC[Claude Code]
+    Prompt([Your prompt])
+
+    Registry --> CLI
+    CLI --> AgentDir
+    AgentDir -. symlink .-> ClaudeDir
+    ClaudeDir --> CC
+    Prompt --> CC
+    CC --> Response([Response using skill])
+
+    classDef source fill:#e8f1fa,stroke:#4a6fa5,color:#1a2b4a;
+    classDef store fill:#f4f7fb,stroke:#1a2b4a,color:#1a2b4a;
+    classDef runtime fill:#1a2b4a,stroke:#0f1a2e,color:#fff,rx:8,ry:8;
+    class Registry,CLI source;
+    class AgentDir,ClaudeDir store;
+    class CC,Prompt,Response runtime;
+```
+
+One package → one directory on disk (universal), plus a symlink for Claude Code. Other agents (Cursor, Codex CLI, Gemini CLI) read the same `.agents/skills/` directory.
+
 ```
 your-project/
 ├── .agents/skills/          # Universal skills (all agents)

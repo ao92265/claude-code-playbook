@@ -29,9 +29,58 @@ Built by **Force Information Systems** · A **Harris Computer** Company · Part 
 
 Every successful Claude Code session follows the same rhythm:
 
-**Request** → **Implement** → **Verify** → **Close** → *(next task)*
+```mermaid
+flowchart LR
+    A([Request]) --> B[Implement]
+    B --> C{Verify}
+    C -- pass --> D([Close])
+    C -- fail --> B
+    D --> A
+    classDef start fill:#1a2b4a,stroke:#0f1a2e,color:#fff,rx:10,ry:10;
+    classDef action fill:#f4f7fb,stroke:#1a2b4a,color:#1a2b4a;
+    classDef gate fill:#ffd966,stroke:#a07800,color:#4d3800;
+    class A,D start;
+    class B action;
+    class C gate;
+```
 
 > **The cardinal rule:** Each step has a clear boundary. Don't blur them. Plan in one session, execute in another. Verify with real tests, not code inspection.
+
+## The Claude Code Harness
+
+The pieces that sit between you and the raw model — and how they work together:
+
+```mermaid
+flowchart TB
+    You([You])
+    CC[Claude Code CLI]
+    Model[Claude Opus 4.7]
+    CLAUDE[CLAUDE.md<br/>advisory context]
+    Skills["/slash-commands<br/>skills ecosystem"]
+    Hooks[Hooks<br/>deterministic enforcement]
+    MCP[MCP servers<br/>tools & data]
+    Sub[Sub-agents<br/>fresh contexts]
+
+    You --> CC
+    CC <--> Model
+    CLAUDE -.-> CC
+    Skills -.-> CC
+    Hooks --> CC
+    MCP <--> CC
+    CC --> Sub
+    Sub --> CC
+
+    classDef user fill:#1a2b4a,stroke:#0f1a2e,color:#fff,rx:10,ry:10;
+    classDef tool fill:#f4f7fb,stroke:#1a2b4a,color:#1a2b4a;
+    classDef config fill:#e8f1fa,stroke:#4a6fa5,color:#1a2b4a,stroke-dasharray:4 3;
+    classDef enforce fill:#ffd966,stroke:#a07800,color:#4d3800;
+    class You user;
+    class CC,Model,Sub tool;
+    class CLAUDE,Skills config;
+    class Hooks,MCP enforce;
+```
+
+**Read:** solid arrows = runtime data flow, dashed = advisory context loaded into prompts, MCP/Hooks = enforcement boundaries you control.
 
 ## Quick Start
 

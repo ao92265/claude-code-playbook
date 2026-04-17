@@ -7,6 +7,10 @@ baseurl: "/claude-code-playbook"
 
 permalink: pretty
 
+logo: "/assets/images/harris-logo.svg"
+
+favicon_ico: "/assets/images/favicon.ico"
+
 aux_links:
   "GitHub":
     - "https://github.com/ao92265/claude-code-playbook"
@@ -21,6 +25,9 @@ heading_anchor: true
 nav_sort: case_insensitive
 
 color_scheme: light
+
+mermaid:
+  version: "10.9.1"
 
 footer_content: "Built by Force Information Systems &middot; Harris Computer &middot; Constellation Software. Licensed under MIT."
 

@@ -13,6 +13,30 @@ How to use Claude Code's native Agent Teams for parallel, coordinated multi-agen
 
 Agent Teams (shipped February 2026, experimental) let you run multiple fully independent Claude Code sessions that coordinate via a shared task list and peer-to-peer messaging. Unlike sub-agents (which run inside your session), team agents are separate processes with their own context windows.
 
+```mermaid
+sequenceDiagram
+    participant You
+    participant Lead as Lead Agent
+    participant Tasks as Shared Task List
+    participant A as Agent A
+    participant B as Agent B
+
+    You->>Lead: goal + acceptance criteria
+    Lead->>Tasks: decompose into tasks 1..n
+    par parallel claim
+        A->>Tasks: claim task 1
+        B->>Tasks: claim task 2
+    end
+    A->>A: implement + test
+    B->>B: implement + test
+    A-->>Lead: task 1 done
+    A->>B: "I changed schema X — check your query"
+    B->>B: adjust
+    B-->>Lead: task 2 done
+    Lead->>Tasks: verify all tasks closed
+    Lead-->>You: goal complete + summary
+```
+
 | | Sub-agents | Agent Teams |
 |:--|:----------|:-----------|
 | **Context** | Shares parent context | Independent context per agent |

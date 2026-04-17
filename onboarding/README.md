@@ -8,6 +8,25 @@ permalink: /onboarding/
 
 Everything a new developer needs to go from "never used Claude Code" to productive in one day.
 
+## Your Learning Path
+
+```mermaid
+flowchart LR
+    A([Day 0<br/>Never used it]) --> B[01 Install<br/>15 min]
+    B --> C[02 First session<br/>30 min]
+    C --> D[03 Daily workflow<br/>15 min]
+    D --> E[04 Skills tour<br/>30 min]
+    E --> F[05 Advanced<br/>20 min]
+    F --> G[Checklist]
+    G --> H([Productive<br/>~2 hours later])
+    classDef start fill:#1a2b4a,stroke:#0f1a2e,color:#fff,rx:10,ry:10;
+    classDef step fill:#f4f7fb,stroke:#1a2b4a,color:#1a2b4a;
+    classDef check fill:#ffd966,stroke:#a07800,color:#4d3800;
+    class A,H start;
+    class B,C,D,E,F step;
+    class G check;
+```
+
 ---
 
 ## For the Onboarding Lead
