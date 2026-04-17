@@ -25,7 +25,7 @@ GitHub: [stephenleo/bmad-autonomous-development](https://github.com/stephenleo/b
 flowchart TB
     You([You])
     Plan[PRD / sprint-status.yml]
-    Bad[/bad coordinator/]
+    Bad["/bad coordinator"]
     Graph[Dependency graph<br/>parallelisable stories]
 
     subgraph "Per-story isolated execution"

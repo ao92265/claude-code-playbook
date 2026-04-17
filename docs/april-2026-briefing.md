@@ -67,7 +67,7 @@ flowchart TB
         G4[Gemma 4<br/>86.4% tau2-bench]
     end
     subgraph Loop["Autonomous loops"]
-        BAD[/bad BMad<br/>overnight sprint]
+        BAD["/bad BMad<br/>overnight sprint"]
     end
 
     O47 --> Cave
@@ -76,7 +76,6 @@ flowchart TB
     Cowork --> SR
     Cowork --> EU
     Managed -.-> BAD
-    G4 --> Local
 
     classDef hot fill:#ffd966,stroke:#a07800,color:#4d3800;
     classDef risk fill:#d9534f,stroke:#8b2c2c,color:#fff;
