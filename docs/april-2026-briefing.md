@@ -16,8 +16,15 @@ Over the past two weeks the AI-assisted development space moved enough that a su
 
 Target audience: engineering leaders inside Harris and Constellation companies who need to make model-selection, tooling, and architecture decisions in the next 30 days.
 
-If you're an exec or a non-technical reader, the [Viva article](./viva-article.md) is the short version.
-If you want the full research trail, the [digest](./digest.md) is the long version.
+### How to read this
+
+Three complementary layers across the Playbook:
+
+- **This briefing** (20 min) — what to do in the next 30 days
+- **[News & Research]({{ site.baseurl }}/docs/news/)** (39 pages) — per-article deep reads of every source cited below. Each page has headline → key takeaways → full notes → what to do → related Playbook pages
+- **Reference pages** (8 pages) — full technical depth on each topic: [Opus 4.7]({{ site.baseurl }}/docs/opus-4-7/), [Cost & Observability]({{ site.baseurl }}/docs/cost-and-observability/), [Multi-Model Orchestration]({{ site.baseurl }}/docs/multi-model-orchestration/), [Regulated AI]({{ site.baseurl }}/docs/regulated-ai/), [Prompt Discipline]({{ site.baseurl }}/docs/prompt-discipline/), [Local Models]({{ site.baseurl }}/docs/local-models/), [Knowledge & Context]({{ site.baseurl }}/docs/knowledge-and-context/), [BMad Autonomous Development]({{ site.baseurl }}/docs/bmad/)
+
+Every quote and number in this briefing traces back to a named primary source; inline links in each section go to the corresponding News page for full context.
 
 ---
 
@@ -42,9 +49,11 @@ Everything in this briefing is actionable in the next 30 days if you want it to 
 
 **Pricing:** Per-token price unchanged at $5 / $25 per million input/output. **Tokenizer shifted — same input now maps to 1.0–1.35× more tokens depending on content.** Real bills will shift even though the rate card didn't.
 
+> **Deep reads:** [Opus 4.7 — the behavioural release]({{ site.baseurl }}/docs/news/opus-4-7-behavioral-release/) (Rezvani) · [Opus 4.7 punishes bad prompting]({{ site.baseurl }}/docs/news/opus-4-7-punishes-bad-prompting/) (Njenga) · [Launch-day community reactions]({{ site.baseurl }}/docs/news/opus-4-7-reddit-reactions/)
+
 ### The five behavioural patterns
 
-Anthropic published 28 enterprise customer testimonials (Stripe, Replit, Cognition, Harvey, Hex, Vercel, Notion, GitHub, iGenius, Ramp, Genspark, and others). Reza Rezvani's analysis distils them into five recurring patterns:
+Anthropic published 28 enterprise customer testimonials (Stripe, Replit, Cognition, Harvey, Hex, Vercel, Notion, GitHub, iGenius, Ramp, Genspark, and others). [Reza Rezvani's analysis]({{ site.baseurl }}/docs/news/opus-4-7-behavioral-release/) distils them into five recurring patterns:
 
 1. **Self-verifies before reporting back.** Vercel's Joe Haddad reports 4.7 "does proofs on systems code before starting work." iGenius's Sean Ward watched 4.7 autonomously build a Rust TTS engine and design its own validation loop.
 2. **Honest about missing data.** Hex CTO: 4.7 "correctly reports when data is missing instead of providing plausible-but-incorrect fallbacks." For finance, legal, and healthcare this is the critical shift.
@@ -110,9 +119,11 @@ Before you ship 4.7 to production:
 
 There are now two complementary techniques for controlling Claude Code spend. Combined, expect **50–75% reduction** in token consumption.
 
+> **Deep reads:** [Cut Claude Code's output tokens by 75%]({{ site.baseurl }}/docs/news/caveman-75-percent-tokens/) (Dunlop) · [The New Claude Code Monitoring]({{ site.baseurl }}/docs/news/claude-code-monitoring/) (Rezvani) · [Graperoot "178x" — the honest reframe]({{ site.baseurl }}/docs/news/graperoot-178x/)
+
 ### Lever 1: Output compression — the `caveman` plugin
 
-Alex Dunlop measured it directly. Same bug, same fix:
+[Alex Dunlop measured it directly]({{ site.baseurl }}/docs/news/caveman-75-percent-tokens/). Same bug, same fix:
 - **Default Claude Code:** 1,252 tokens
 - **With `/caveman`:** 410 tokens
 
@@ -173,6 +184,8 @@ For Claude Code action in CI/CD this answers: *"that automated PR review took 45
 
 Three separate product launches in early April 2026 converged on the same architectural question: **when you have multiple AI models, how do you orchestrate them?**
 
+> **Deep reads:** [I Ran Codex and Claude Side by Side]({{ site.baseurl }}/docs/news/codex-claude-side-by-side/) (Liu) · [Anthropic Managed Agents launch]({{ site.baseurl }}/docs/news/managed-agents-launch/) · [Building a first Managed Agent]({{ site.baseurl }}/docs/news/first-managed-agent/) (Njenga) · [The Orchestrator Was Missing]({{ site.baseurl }}/docs/news/orchestrator-was-missing/) (Rezvani)
+
 ### OpenAI Codex plugin for Claude Code (30 March 2026)
 
 Official OpenAI release. Repo: `github.com/openai/codex-plugin-cc`. Not a fork — OpenAI publishing a plugin that runs Codex inside their direct competitor's tool.
@@ -230,6 +243,8 @@ Commercial context: Microsoft stock fell 23% in Q1 2026 — worst quarter since 
 
 For any Harris / Constellation vertical touching regulated work (financial services, healthcare, utilities, public sector), Critique's attribution gap is the issue to raise before deployment.
 
+> **Deep reads:** [I Ran Codex and Claude Side by Side]({{ site.baseurl }}/docs/news/codex-claude-side-by-side/) — Liu's bank-employee analysis of the SR 11-7 attribution gap · [Claude Mythos preview]({{ site.baseurl }}/docs/news/claude-mythos-preview/) · [Glasswing & Claude Mythos for CTOs]({{ site.baseurl }}/docs/news/glasswing-mythos/)
+
 ### SR 11-7 (US Federal Reserve)
 
 Applies to every model a bank uses in a consequential decision. Requires:
@@ -268,7 +283,9 @@ If the answers are vague or deferred, that is the answer. It doesn't mean don't 
 
 ## 5. Prompt discipline — the Cialdini playbook for LLMs
 
-Rick Hightower's April 2026 analysis lands on a finding worth internalising: **LLMs don't just hallucinate — they rationalise, cut corners, and abandon plans under pressure, in patterns measurably similar to tired human developers.**
+[Rick Hightower's April 2026 analysis]({{ site.baseurl }}/docs/news/superpowers-cialdini/) lands on a finding worth internalising: **LLMs don't just hallucinate — they rationalise, cut corners, and abandon plans under pressure, in patterns measurably similar to tired human developers.**
+
+> **Deep read:** [Superpowers: Cialdini's Psychology Hack for LLMs]({{ site.baseurl }}/docs/news/superpowers-cialdini/)
 
 ### The Wharton study
 
@@ -315,6 +332,8 @@ During the 4.7 migration window, audit every CLAUDE.md across your projects. Rep
 ## 6. Local models — Gemma 4 is viable
 
 **Gemma 4 scores 86.4% on the tau2-bench function-calling benchmark.** Gemma 3 scored 6.6%. The gap that makes local agentic coding practical.
+
+> **Deep reads:** [I ran Gemma 4 as a local model in Codex CLI]({{ site.baseurl }}/docs/news/gemma-4-local-codex/) (Vaughan) · [Gemma 4 — Google's open-source release]({{ site.baseurl }}/docs/news/gemma-4-release/) (Njenga)
 
 Apache 2.0 licensed, 256K context, self-hostable on Azure ML or on-prem.
 
@@ -365,7 +384,9 @@ Surprise finding: **the Mac generates tokens 5.1× faster than the GB10** despit
 
 ## 7. CLI vs MCP — choose per integration, not per system
 
-The most useful architectural insight from the April 2026 research is Reza Rezvani's per-integration decision framework. After 14 months running both in production, his team's split is roughly **70/30 CLI/MCP** — not by philosophy, by triage.
+The most useful architectural insight from the April 2026 research is [Reza Rezvani's per-integration decision framework]({{ site.baseurl }}/docs/news/cli-vs-mcp/). After 14 months running both in production, his team's split is roughly **70/30 CLI/MCP** — not by philosophy, by triage.
+
+> **Deep read:** [The CLI vs MCP Debate Is Asking the Wrong Question]({{ site.baseurl }}/docs/news/cli-vs-mcp/) (Rezvani)
 
 ### What broke at MCP-only
 
@@ -406,6 +427,8 @@ The most useful architectural insight from the April 2026 research is Reza Rezva
 
 Andrej Karpathy dropped a GitHub Gist titled simply "LLM Wiki" in April. It's not an app or a library — it's a design pattern for putting **an LLM-maintained, compounding layer of markdown files between you and your raw source material.**
 
+> **Deep read:** [Why Karpathy's "LLM Wiki" is the Future]({{ site.baseurl }}/docs/news/karpathy-llm-wiki/) (evoailabs)
+
 ### Why this matters
 
 - **RAG has no memory of prior questions.** Ask the same compound question tomorrow — it redoes the synthesis from scratch.
@@ -437,6 +460,8 @@ For any Harris internal knowledge base (customer support, engineering onboarding
 ## 9. Autonomous overnight development — `/bad`
 
 **`/bad` (BMad Autonomous Development)** is a coordinator-only skill that takes over the moment your planning is done and runs sprint execution autonomously.
+
+> **Deep read:** [/bad: BMad Autonomous Development]({{ site.baseurl }}/docs/news/bad-autonomous-sprint/)
 
 GitHub: `stephenleo/bmad-autonomous-development`
 Install: `npx skills add https://github.com/stephenleo/bmad-autonomous-development` (BMAD must already be installed)
@@ -492,27 +517,33 @@ If you read nothing else, do this:
 
 ## Links and references
 
-**Playbook pages** (full technical detail):
-- [Claude Opus 4.7 Reference](https://ao92265.github.io/claude-code-playbook/docs/opus-4-7/)
-- [Cost & Observability](https://ao92265.github.io/claude-code-playbook/docs/cost-and-observability/)
-- [Multi-Model Orchestration](https://ao92265.github.io/claude-code-playbook/docs/multi-model-orchestration/)
-- [Regulated AI](https://ao92265.github.io/claude-code-playbook/docs/regulated-ai/)
-- [Prompt Discipline](https://ao92265.github.io/claude-code-playbook/docs/prompt-discipline/)
-- [Local Models](https://ao92265.github.io/claude-code-playbook/docs/local-models/)
-- [Knowledge & Context](https://ao92265.github.io/claude-code-playbook/docs/knowledge-and-context/)
-- [BMad Autonomous Development](https://ao92265.github.io/claude-code-playbook/docs/bmad/)
+### Reference pages (full technical depth)
 
-**Primary sources**:
-- Reza Rezvani, *All About Claude Opus 4.7 Features* — behavioural release thesis
-- Joe Njenga, *Claude Opus 4.7 Is Here* — feature breakdown
-- Alex Dunlop, *I Cut Claude Code's Output Tokens by 75%* — caveman plugin
-- Reza Rezvani, *The New Claude Code Monitoring* — OpenTelemetry stack
-- Yanli Liu, *I Ran Codex and Claude Side by Side* — multi-model orchestration + compliance
-- Daniel Vaughan, *I ran Gemma 4 as a local model in Codex CLI* — local setup
-- Rick Hightower, *Superpowers: The Psychology Hack* — Cialdini prompting
-- evoailabs, *Why Andrej Karpathy's "LLM Wiki" is the Future of Personal Knowledge*
-- Reza Rezvani, *The CLI vs MCP Debate Is Asking the Wrong Question*
-- Anthropic, *Introducing Claude Managed Agents* (public beta announcement)
+- [Claude Opus 4.7 Reference]({{ site.baseurl }}/docs/opus-4-7/)
+- [Cost & Observability]({{ site.baseurl }}/docs/cost-and-observability/)
+- [Multi-Model Orchestration]({{ site.baseurl }}/docs/multi-model-orchestration/)
+- [Regulated AI]({{ site.baseurl }}/docs/regulated-ai/)
+- [Prompt Discipline]({{ site.baseurl }}/docs/prompt-discipline/)
+- [Local Models]({{ site.baseurl }}/docs/local-models/)
+- [Knowledge & Context]({{ site.baseurl }}/docs/knowledge-and-context/)
+- [BMad Autonomous Development]({{ site.baseurl }}/docs/bmad/)
+
+### News & Research deep reads (39 articles)
+
+The [News & Research]({{ site.baseurl }}/docs/news/) section has a dedicated per-article page for every substantive source cited above, with thematic and chronological browsing. Each page links the primary source and the related Playbook reference pages.
+
+Key sources linked inline in each section above:
+
+- Reza Rezvani, [All About Claude Opus 4.7 Features]({{ site.baseurl }}/docs/news/opus-4-7-behavioral-release/) — behavioural release thesis
+- Joe Njenga, [Claude Opus 4.7 Is Here]({{ site.baseurl }}/docs/news/opus-4-7-punishes-bad-prompting/) — feature breakdown
+- Alex Dunlop, [I Cut Claude Code's Output Tokens by 75%]({{ site.baseurl }}/docs/news/caveman-75-percent-tokens/) — caveman plugin
+- Reza Rezvani, [The New Claude Code Monitoring]({{ site.baseurl }}/docs/news/claude-code-monitoring/) — OpenTelemetry stack
+- Yanli Liu, [I Ran Codex and Claude Side by Side]({{ site.baseurl }}/docs/news/codex-claude-side-by-side/) — multi-model + compliance
+- Daniel Vaughan, [I ran Gemma 4 as a local model in Codex CLI]({{ site.baseurl }}/docs/news/gemma-4-local-codex/) — local setup
+- Rick Hightower, [Superpowers: The Psychology Hack]({{ site.baseurl }}/docs/news/superpowers-cialdini/) — Cialdini prompting
+- evoailabs, [Why Karpathy's "LLM Wiki" is the Future]({{ site.baseurl }}/docs/news/karpathy-llm-wiki/)
+- Reza Rezvani, [The CLI vs MCP Debate Is Asking the Wrong Question]({{ site.baseurl }}/docs/news/cli-vs-mcp/)
+- Anthropic, [Introducing Claude Managed Agents]({{ site.baseurl }}/docs/news/managed-agents-launch/) — public beta
 
 **Contact:** Alex O'Reilly, Force Information Systems, aoreilly@harriscomputer.com
 
