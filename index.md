@@ -97,6 +97,11 @@ The playbook now covers the Opus 4.7 release and the related ecosystem shifts:
 - **[Opus 4.7 Reference](docs/opus-4-7)** — the five behavioural patterns, `xhigh` default, `/ultrareview`, task budgets, 1M context, Cyber Verification Program, and the migration checklist
 - **[Cost & Observability](docs/cost-and-observability)** — the `caveman` output-compression plugin (75% reduction) and Rezvani's OpenTelemetry monitoring stack (Docker Compose + 8 metrics)
 - **[Regulated AI](docs/regulated-ai)** — SR 11-7 and EU AI Act Article 12 implications for multi-model AI pipelines (Critique vs Model Council), with the three vendor questions to ask before signing
+- **[Multi-Model Orchestration](docs/multi-model-orchestration)** — the official OpenAI Codex plugin for Claude Code, the CLI-vs-MCP 70/30 decision framework, Anthropic Managed Agents, and the loop-breaker heuristic
+- **[Prompt Discipline](docs/prompt-discipline)** — Cialdini persuasion principles applied to CLAUDE.md, rationalisation tables, 13 red flags, and pressure-testing as TDD-for-prompts
+- **[Knowledge & Context](docs/knowledge-and-context)** — Karpathy's LLM Wiki pattern and the 5-project ecosystem (Waykee Cortex, Sage-Wiki, Thinking-MCP, ELF, qmd)
+- **[Local Models](docs/local-models)** — Gemma 4 (Apache 2.0) as a local alternative in Codex CLI via llama.cpp or Ollama
+- **[BMad Autonomous Development](docs/bmad)** — the `/bad` coordinator for overnight sprint execution with git-worktree-per-story isolation
 
 ## Why This Exists
 
