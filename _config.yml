@@ -24,7 +24,7 @@ heading_anchor: true
 
 nav_sort: case_insensitive
 
-color_scheme: light
+color_scheme: harris
 
 mermaid:
   version: "10.9.1"
