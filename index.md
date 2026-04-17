@@ -90,6 +90,14 @@ flowchart TB
 4. **Setting up a project?** Pick a [CLAUDE.md template](templates/CLAUDE) for your stack
 5. **Want custom commands?** Browse the [Skills Ecosystem](docs/skills-ecosystem)
 
+## April 2026 Updates
+
+The playbook now covers the Opus 4.7 release and the related ecosystem shifts:
+
+- **[Opus 4.7 Reference](docs/opus-4-7)** — the five behavioural patterns, `xhigh` default, `/ultrareview`, task budgets, 1M context, Cyber Verification Program, and the migration checklist
+- **[Cost & Observability](docs/cost-and-observability)** — the `caveman` output-compression plugin (75% reduction) and Rezvani's OpenTelemetry monitoring stack (Docker Compose + 8 metrics)
+- **[Regulated AI](docs/regulated-ai)** — SR 11-7 and EU AI Act Article 12 implications for multi-model AI pipelines (Critique vs Model Council), with the three vendor questions to ask before signing
+
 ## Why This Exists
 
 Most Claude Code guides tell you how to install it. This one tells you how to *use it well*.
