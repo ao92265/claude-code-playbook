@@ -173,7 +173,17 @@ claude-code-playbook/
 │   ├── path-scoped-rules.md   # Directory-scoped CLAUDE.md rules and overrides
 │   ├── auto-mode.md           # Auto Mode: skip-permissions for autonomous sessions
 │   ├── skills-v2.md           # Skills 2.0: context fork, dynamic injection, agent frontmatter
-│   └── code-container.md      # Docker sandboxing for autonomous Claude Code work
+│   ├── code-container.md      # Docker sandboxing for autonomous Claude Code work
+│   ├── april-2026-briefing.md # 20-min tech-lead briefing: Opus 4.7, caveman, Codex plugin, compliance
+│   ├── opus-4-7.md            # Claude Opus 4.7 reference: 5 behavioural patterns, xhigh, /ultrareview
+│   ├── cost-and-observability.md # caveman plugin + OpenTelemetry stack (Docker Compose, 8 metrics)
+│   ├── multi-model-orchestration.md # Codex plugin, CLI-vs-MCP 70/30, Managed Agents, loop-breaker
+│   ├── regulated-ai.md        # SR 11-7, EU AI Act Article 12, Critique-vs-Council, 3 vendor questions
+│   ├── prompt-discipline.md   # Cialdini authority/commitment, rationalisation tables, 13 red flags
+│   ├── local-models.md        # Gemma 4 (Apache 2.0) in Codex CLI via llama.cpp / Ollama
+│   ├── knowledge-and-context.md # Karpathy LLM Wiki pattern + 5-project ecosystem
+│   ├── bmad.md                # /bad autonomous sprint orchestrator deep dive
+│   └── news/                  # News & Research — 39 deep-read article pages (April 2026 research)
 ├── examples/
 │   ├── bug-fix-session.md     # Annotated bug fix session transcript
 │   ├── feature-session.md     # Annotated new feature session transcript
@@ -650,6 +660,16 @@ Never append to shared context files. Always replace the entire content and keep
 | **[Security Remediation](docs/security-remediation.md)** | Guide | Scanner-to-fix pipeline: OWASP patterns, Checkmarx/Snyk, batch remediation |
 | **[Legacy Modernization](docs/legacy-modernization.md)** | Guide | AI-assisted tech debt reduction, characterisation tests, incremental migration |
 | **[Plugin Authoring](docs/plugin-authoring.md)** | Guide | Build and distribute plugins: skills, hooks, MCP servers bundled |
+| **[April 2026 Briefing](docs/april-2026-briefing.md)** | 20-min read | Shareable tech-lead summary of the April 2026 AI ecosystem shifts |
+| **[Opus 4.7 Reference](docs/opus-4-7.md)** | Reference | Full Opus 4.7 reference: 5 behavioural patterns, xhigh, /ultrareview, migration checklist |
+| **[Cost & Observability](docs/cost-and-observability.md)** | Guide | `caveman` plugin (75% output-token reduction) + OpenTelemetry Docker stack |
+| **[Multi-Model Orchestration](docs/multi-model-orchestration.md)** | Guide | Official OpenAI Codex plugin, CLI-vs-MCP 70/30 framework, Managed Agents, loop-breaker |
+| **[Regulated AI](docs/regulated-ai.md)** | Guide | SR 11-7, EU AI Act Article 12, Critique-vs-Council, 3 vendor questions |
+| **[Prompt Discipline](docs/prompt-discipline.md)** | Guide | Cialdini playbook: authority, commitment, rationalisation tables, 13 red flags |
+| **[Local Models](docs/local-models.md)** | Guide | Gemma 4 (Apache 2.0) as local model in Codex CLI (llama.cpp, Ollama) |
+| **[Knowledge & Context](docs/knowledge-and-context.md)** | Guide | Karpathy's LLM Wiki pattern + 5-project ecosystem (Waykee, Sage-Wiki, qmd) |
+| **[BMad Autonomous Development](docs/bmad.md)** | Guide | `/bad` overnight sprint orchestrator with git-worktree isolation |
+| **[News & Research](docs/news/)** | 39 articles | Per-article deep reads of every substantive source behind the April 2026 briefing |
 | **[Article](article.md)** | Article | The original article that inspired this playbook |
 
 <br/>
