@@ -8,8 +8,9 @@ description: >
   Do NOT use this skill for: pre-commit review, reviewing code that isn't ready to push,
   non-GitHub repositories, or general code review not tied to a specific GitHub issue number.
   Don't trigger for in-progress work — only use when implementation is complete and push is imminent.
+title: "Codex Pre-Push Review"
+parent: Skills & Extensibility
 ---
-
 # Codex Pre-Push Review
 
 Use this skill when instructed by the user, typically when finished with implementing an issue.

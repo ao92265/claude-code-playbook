@@ -18,8 +18,9 @@ metadata:
   slash-command: null
   model: default
   proactive: true
+title: "Brainstorming"
+parent: Skills & Extensibility
 ---
-
 # Brainstorming
 
 ## Step 1: Assess Trigger Conditions

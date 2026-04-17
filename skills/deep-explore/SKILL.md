@@ -11,8 +11,9 @@ description: >
   Don't trigger when OMC's built-in Explore agent would suffice for a 1-3 file lookup.
 context: fork
 agent: Explore
+title: "deep-explore"
+parent: Skills & Extensibility
 ---
-
 Research the following question thoroughly:
 
 $ARGUMENTS

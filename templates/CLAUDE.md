@@ -1,6 +1,6 @@
 ---
 title: Templates
-nav_order: 17
+nav_order: 31
 has_children: true
 permalink: /templates/
 ---

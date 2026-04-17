@@ -11,8 +11,9 @@ metadata:
   user-invocable: true
   slash-command: /explain
   proactive: false
+title: "Explain Code"
+parent: Skills & Extensibility
 ---
-
 # Explain Code
 
 Provide a layered explanation that starts simple and goes deeper on request.

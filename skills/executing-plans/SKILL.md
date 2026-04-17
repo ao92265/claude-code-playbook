@@ -16,8 +16,9 @@ metadata:
   slash-command: /execute
   model: default
   proactive: false
+title: "Executing Plans"
+parent: Skills & Extensibility
 ---
-
 # Executing Plans
 
 Implement written plans through structured batches with review checkpoints.

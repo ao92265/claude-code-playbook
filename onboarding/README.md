@@ -1,6 +1,6 @@
 ---
 title: Onboarding
-nav_order: 14
+nav_order: 2
 has_children: true
 permalink: /onboarding/
 ---

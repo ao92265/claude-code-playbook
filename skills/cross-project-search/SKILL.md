@@ -10,8 +10,9 @@ description: >
   Don't trigger when you already know which project contains the answer.
 context: fork
 agent: Explore
+title: "cross-project-search"
+parent: Skills & Extensibility
 ---
-
 Search across all projects in /path/to/repos/ for:
 
 $ARGUMENTS

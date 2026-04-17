@@ -11,8 +11,9 @@ metadata:
   user-invocable: true
   slash-command: /check-env
   proactive: false
+title: "Check Environment"
+parent: Skills & Extensibility
 ---
-
 # Check Environment
 
 Pre-flight environment check before starting dev work. Run this at the start of a session to avoid wasting time on infrastructure issues.

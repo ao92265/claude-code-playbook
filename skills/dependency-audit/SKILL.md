@@ -10,8 +10,9 @@ description: >
 context: fork
 agent: general-purpose
 disable-model-invocation: true
+title: "dependency-audit"
+parent: Skills & Extensibility
 ---
-
 Run a comprehensive dependency audit for the current project.
 
 ## Steps

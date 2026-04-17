@@ -1,6 +1,6 @@
 ---
 title: Awesome Claude Code
-nav_order: 13
+nav_order: 43
 ---
 # Awesome Claude Code
 

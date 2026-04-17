@@ -16,8 +16,9 @@ metadata:
   slash-command: null
   model: default
   proactive: true
+title: "Verification Before Completion"
+parent: Skills & Extensibility
 ---
-
 # Verification Before Completion
 
 **Core Rule:** NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE.

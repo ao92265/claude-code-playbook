@@ -11,8 +11,9 @@ metadata:
   user-invocable: true
   slash-command: /git-cleanup
   proactive: false
+title: "Git Cleanup"
+parent: Skills & Extensibility
 ---
-
 # Git Cleanup
 
 Tidy up your git repository by removing stale branches and pruning remotes.

@@ -12,8 +12,9 @@ metadata:
   user-invocable: true
   slash-command: /refactor
   proactive: false
+title: "Focused Refactor"
+parent: Skills & Extensibility
 ---
-
 # Focused Refactor
 
 Improve code structure without changing behavior. Zero behavior change is non-negotiable.

@@ -1,6 +1,6 @@
 ---
 title: Tool Comparison
-nav_order: 12
+nav_order: 42
 ---
 # Claude Code vs Other AI Coding Tools
 

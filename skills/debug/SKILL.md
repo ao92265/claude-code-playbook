@@ -11,8 +11,9 @@ metadata:
   user-invocable: true
   slash-command: /debug
   proactive: false
+title: "Structured Debugging"
+parent: Skills & Extensibility
 ---
-
 # Structured Debugging
 
 Systematic debugging using the scientific method. No more random changes hoping something works.

@@ -12,8 +12,9 @@ metadata:
   user-invocable: true
   slash-command: /deploy
   proactive: false
+title: "Deploy Workflow"
+parent: Skills & Extensibility
 ---
-
 # Deploy Workflow
 
 Safe deployment checklist. Runs pre-deploy verification before any deployment action.

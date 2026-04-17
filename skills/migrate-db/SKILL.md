@@ -10,8 +10,9 @@ metadata:
   user-invocable: true
   slash-command: /migrate-db
   proactive: false
+title: "Safe Database Migration"
+parent: Skills & Extensibility
 ---
-
 # Safe Database Migration
 
 Execute database schema migrations with safety checks at every step.

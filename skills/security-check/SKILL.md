@@ -11,8 +11,9 @@ metadata:
   user-invocable: true
   slash-command: /security-check
   proactive: false
+title: "Security Check"
+parent: Skills & Extensibility
 ---
-
 # Security Check
 
 Quick security scan focused on recent changes. Checks for OWASP Top 10 patterns.

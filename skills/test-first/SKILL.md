@@ -11,8 +11,9 @@ metadata:
   user-invocable: true
   slash-command: /test-first
   proactive: false
+title: "Test-First Development"
+parent: Skills & Extensibility
 ---
-
 # Test-First Development
 
 Enforce the Red-Green-Refactor cycle. Tests define the contract before implementation begins.

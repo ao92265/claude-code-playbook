@@ -1,5 +1,6 @@
 ---
 title: April 2026 Briefing
+parent: News & Research
 nav_order: 0
 ---
 # AI Engineering Briefing — April 2026

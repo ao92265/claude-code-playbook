@@ -11,8 +11,9 @@ metadata:
   user-invocable: true
   slash-command: /api-test
   proactive: false
+title: "API Endpoint Testing"
+parent: Skills & Extensibility
 ---
-
 # API Endpoint Testing
 
 Interactive testing of API endpoints with validation of responses.

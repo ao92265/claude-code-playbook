@@ -11,8 +11,9 @@ metadata:
   user-invocable: true
   slash-command: /docker-check
   proactive: false
+title: "Docker Environment Check"
+parent: Skills & Extensibility
 ---
-
 # Docker Environment Check
 
 Validate Docker environment health before starting or debugging containerized services.

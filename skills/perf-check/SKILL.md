@@ -11,8 +11,9 @@ metadata:
   user-invocable: true
   slash-command: /perf-check
   proactive: false
+title: "Performance Investigation"
+parent: Skills & Extensibility
 ---
-
 # Performance Investigation
 
 Systematic approach to finding and fixing performance issues. Profile first, optimize second.

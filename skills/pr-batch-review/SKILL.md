@@ -8,8 +8,9 @@ metadata:
   user-invocable: true
   slash-command: /pr-batch-review
   proactive: false
+title: "PR Batch Review"
+parent: Skills & Extensibility
 ---
-
 # PR Batch Review
 
 Review and manage multiple open PRs in a single consolidated pass.

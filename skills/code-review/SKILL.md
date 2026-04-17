@@ -11,8 +11,9 @@ metadata:
   user-invocable: true
   slash-command: /code-review
   proactive: false
+title: "Code Review"
+parent: Skills & Extensibility
 ---
-
 # Code Review
 
 Structured review of recent code changes with severity ratings and actionable feedback.

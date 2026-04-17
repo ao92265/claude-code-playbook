@@ -11,8 +11,9 @@ metadata:
   user-invocable: true
   slash-command: /handoff
   proactive: false
+title: "Session Handoff"
+parent: Skills & Extensibility
 ---
-
 # Session Handoff
 
 Create a structured handoff document so the next Claude Code session (or another developer) can pick up exactly where you left off.

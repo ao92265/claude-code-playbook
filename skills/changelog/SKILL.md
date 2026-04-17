@@ -11,8 +11,9 @@ metadata:
   user-invocable: true
   slash-command: /changelog
   proactive: false
+title: "Changelog Generation"
+parent: Skills & Extensibility
 ---
-
 # Changelog Generation
 
 Generate a formatted changelog entry from recent git commits.

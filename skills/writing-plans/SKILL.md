@@ -17,8 +17,9 @@ metadata:
   slash-command: /plan
   model: default
   proactive: true
+title: "Writing Plans"
+parent: Skills & Extensibility
 ---
-
 # Writing Plans
 
 Generate comprehensive, actionable implementation plans before coding.

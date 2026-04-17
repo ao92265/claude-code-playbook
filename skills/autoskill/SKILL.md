@@ -17,8 +17,9 @@ metadata:
   slash-command: /autoskill
   model: default
   proactive: false
+title: "Autoskill: Learn from This Session"
+parent: Skills & Extensibility
 ---
-
 # Autoskill: Learn from This Session
 
 ## Step 1: Resolve Project Context
