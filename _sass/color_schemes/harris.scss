@@ -34,10 +34,17 @@ $base-button-color: #1a2b4a;
   background-color: rgba(255, 255, 255, 0.15);
 }
 
-// Hover on non-active items
-.nav-list-link:hover {
-  background-color: #e8f1fa;
-  color: #1a2b4a;
+// Hover on non-active items: navy background + white text (matches active state)
+.nav-list-link:hover,
+.nav-list-link:focus {
+  background-color: #1a2b4a;
+  color: #fff !important;
+  border-radius: 4px;
+}
+.nav-list-link:hover code,
+.nav-list-link:focus code {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 // Breadcrumb: current page highlighted
