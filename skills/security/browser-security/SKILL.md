@@ -1,3 +1,8 @@
+---
+title: Browser Security Hardening Skill
+nav_exclude: true
+search_exclude: true
+---
 # Browser Security Hardening Skill
 
 <!-- TODO: This skill will be contributed by William Taylor's colleague at Altera Health. -->

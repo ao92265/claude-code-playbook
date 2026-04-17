@@ -47,6 +47,36 @@ $base-button-color: #1a2b4a;
   background-color: rgba(255, 255, 255, 0.15);
 }
 
+// Expander chevron: white on hover/active so it reads against the navy background
+.nav-list-item:hover > .nav-list-expander,
+.nav-list-item:focus-within > .nav-list-expander,
+.nav-list-item.active > .nav-list-expander,
+.nav-list-link:hover ~ .nav-list-expander,
+.nav-list-link:focus ~ .nav-list-expander,
+.nav-list-link.active ~ .nav-list-expander,
+.nav-list-link:hover .nav-list-expander,
+.nav-list-link:focus .nav-list-expander,
+.nav-list-link.active .nav-list-expander {
+  color: #fff;
+}
+.nav-list-item:hover > .nav-list-expander svg,
+.nav-list-item:focus-within > .nav-list-expander svg,
+.nav-list-item.active > .nav-list-expander svg,
+.nav-list-link:hover ~ .nav-list-expander svg,
+.nav-list-link:focus ~ .nav-list-expander svg,
+.nav-list-link.active ~ .nav-list-expander svg,
+.nav-list-link:hover .nav-list-expander svg,
+.nav-list-link:focus .nav-list-expander svg,
+.nav-list-link.active .nav-list-expander svg,
+.nav-list-item:hover > .nav-list-expander svg use,
+.nav-list-item.active > .nav-list-expander svg use,
+.nav-list-link:hover ~ .nav-list-expander svg use,
+.nav-list-link.active ~ .nav-list-expander svg use {
+  fill: #fff;
+  color: #fff;
+  stroke: #fff;
+}
+
 // Breadcrumb: current page highlighted
 .breadcrumb-nav-list-item:last-child .breadcrumb-nav-list-link {
   color: #1a2b4a;

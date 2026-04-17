@@ -1,3 +1,8 @@
+---
+title: Node.js Browser Security Reference
+nav_exclude: true
+search_exclude: true
+---
 # Node.js Browser Security Reference
 
 <!-- Framework-specific browser security implementation for Node.js / Express -->
