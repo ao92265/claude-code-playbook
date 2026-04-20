@@ -87,7 +87,7 @@ flowchart TB
     class SR,EU risk;
 ```
 
-*Illustration suggestion (generate separately with nano-banana or similar): "Single landscape image showing an engineering operations centre in April 2026 — central monitor shows Opus 4.7 behavioural metrics, adjacent panels show OpenTelemetry dashboards, regulatory document overlays, and a local Gemma 4 workstation."*
+![April 2026 briefing — engineer and assistant robot back-to-back, Opus 4.7 behavioural release]({{ site.baseurl }}/assets/images/briefing/landscape-behavioural-release.jpeg)
 
 ---
 
@@ -115,7 +115,7 @@ flowchart LR
     class O47O strong;
 ```
 
-*Illustration suggestion: "Side-by-side AI responses — the 4.6 output is verbose with filler; the 4.7 output is terse, self-verified, and includes a 'pushing back' annotation. Nano-banana style, minimal flat illustration."*
+![Opus 4.6 vs 4.7 — verbose filler on the left, terse self-verified response on the right]({{ site.baseurl }}/assets/images/briefing/opus-verbose-vs-terse.jpeg)
 
 ### The five behavioural patterns
 
@@ -230,7 +230,7 @@ flowchart LR
     class Caveman gate;
 ```
 
-*Illustration suggestion: "Split-screen flat illustration — left side shows bloated Claude Code response 'Certainly, I'd be happy to help…' with big red token counter 1,252. Right side shows caveman-compressed response 'Bug in auth. Fix:' with green counter 410. Nano-banana minimal palette."*
+![Caveman plugin compression — bloated 1,252-token response vs terse 410-token response]({{ site.baseurl }}/assets/images/briefing/caveman-compression.jpeg)
 
 ### Lever 1: Output compression — the `caveman` plugin
 
@@ -327,7 +327,7 @@ flowchart TB
     class C3 gate;
 ```
 
-*Illustration suggestion: "Three panels — one showing two robots sequentially passing a scroll (Critique), one showing two robots working in parallel with a judge overseeing (Council), one showing a human engineer with two AI assistants flagging different things (Adversarial review). Flat illustrative style."*
+![Three review patterns — Critique, Council, and Adversarial]({{ site.baseurl }}/assets/images/briefing/review-patterns-triptych.jpeg)
 
 ### OpenAI Codex plugin for Claude Code (30 March 2026)
 
@@ -409,7 +409,7 @@ flowchart TB
     class G,J bad;
 ```
 
-*Illustration suggestion: "A compliance officer examining a chain of AI model outputs with a magnifying glass — each link labelled with a model version; some labels are visible, others missing and circled in red. Minimal flat style."*
+![Compliance audit — officer inspecting an AI model chain with gaps circled in red]({{ site.baseurl }}/assets/images/briefing/compliance-audit-chain.jpeg)
 
 ### SR 11-7 (US Federal Reserve)
 
@@ -513,7 +513,7 @@ flowchart LR
     class B,D state;
 ```
 
-*Illustration suggestion: "Split-screen flat illustration — left panel shows a laptop running an AI model with 'tool call failed' red notifications (Gemma 3). Right panel shows the same laptop running happily with green checkmarks and completed tasks (Gemma 4). Privacy shield icon overlay."*
+![Gemma 3 vs Gemma 4 — red error badges on the left, green checkmarks on the right with a privacy shield overlay]({{ site.baseurl }}/assets/images/briefing/gemma-3-vs-4-split.jpeg)
 
 Apache 2.0 licensed, 256K context, self-hostable on Azure ML or on-prem.
 
