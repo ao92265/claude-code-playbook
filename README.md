@@ -74,7 +74,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 
 **Use**
 - [29 production-ready skills](skills/) (custom `/commands`) you can drop into any project
-- [11 CLAUDE.md templates](templates/) — TypeScript, React, Node, Python, Full-stack, Go, Rust, Mobile, DevOps, Java, C#
+- [11 CLAUDE.md templates + 1 team onboarding template](templates/) — TypeScript, React, Node, Python, Full-stack, Go, Rust, Mobile, DevOps, Java, C#, Team Onboarding
 - [9 hook scripts](hooks/) that catch errors before they reach your commits
 - [3 annotated example sessions](examples/) showing real workflows in action
 - [MCP server guide](docs/mcp-servers.md), [skills ecosystem](docs/skills-ecosystem.md), [model comparison](docs/model-comparison.md), [workflow decision tree](docs/workflows.md), and [20 anti-patterns](docs/anti-patterns.md)
@@ -199,7 +199,8 @@ claude-code-playbook/
 │   ├── CLAUDE-mobile.md       # React Native / Mobile
 │   ├── CLAUDE-devops.md       # DevOps / Infrastructure
 │   ├── CLAUDE-java.md         # Java / Spring Boot
-│   └── CLAUDE-csharp.md       # C# / .NET
+│   ├── CLAUDE-csharp.md       # C# / .NET
+│   └── ONBOARDING-TEAM.md     # Team onboarding guide (paste into Claude for guided setup)
 ├── skills/                    # 29 ready-to-use custom slash commands
 │   ├── api-test/              # API endpoint testing
 │   ├── autoskill/             # Self-learning from sessions
@@ -691,6 +692,7 @@ Never append to shared context files. Always replace the entire content and keep
 | **[CLAUDE-devops.md](templates/CLAUDE-devops.md)** | DevOps / IaC | Terraform, Docker, CI/CD, secrets management, monitoring |
 | **[CLAUDE-java.md](templates/CLAUDE-java.md)** | Java / Spring Boot | DI, JPA, error handling, Flyway migrations, testing |
 | **[CLAUDE-csharp.md](templates/CLAUDE-csharp.md)** | C# / .NET | EF Core, async patterns, minimal APIs, xUnit testing |
+| **[ONBOARDING-TEAM.md](templates/ONBOARDING-TEAM.md)** | Team onboarding | New teammate pastes it into Claude Code for a guided setup tour (repos, MCPs, skills, team tips) |
 
 <details>
 <summary><strong>Template architecture</strong> — each section addresses a specific failure mode</summary>
