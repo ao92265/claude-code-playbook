@@ -15,6 +15,7 @@ The fastest-shipping category in the research. Every slash command, every skill-
 - **Skill ecosystem** — 9 repos Njenga tried, ClawHub's official OpenClaw registry, the viral Codex plugin
 - **Autonomous patterns** — the Vikas Sah autonomous code-review bot blueprint
 - **Agent modes** — the feature McHenry ignored for months and now can't work without
+- **Routines** — scheduled cloud automation (research preview, 14 April 2026)
 
 ## Featured in this category
 

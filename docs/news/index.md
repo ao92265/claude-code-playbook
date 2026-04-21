@@ -74,6 +74,7 @@ flowchart TB
 - [Claude Code /ultraplan launched]({{ site.baseurl }}/docs/news/ultraplan-launched/)
 - [Claude Code /skillify — the internal skill]({{ site.baseurl }}/docs/news/skillify-hidden-skill/)
 - [Claude Code agents — the feature I ignored for months]({{ site.baseurl }}/docs/news/agents-mode/)
+- [Claude Code Routines — scheduled cloud automation]({{ site.baseurl }}/docs/news/routines/)
 - [Claude Managed Agents — building from scratch]({{ site.baseurl }}/docs/news/first-managed-agent/)
 - [6 Claude Code new commands & variables]({{ site.baseurl }}/docs/news/six-new-commands/)
 - [Claude Code Unpacked — visual walkthrough]({{ site.baseurl }}/docs/news/claude-code-unpacked/)
@@ -108,6 +109,7 @@ From most recent to oldest:
 | 2026-04-16 | [Opus 4.7 punishes bad prompting]({{ site.baseurl }}/docs/news/opus-4-7-punishes-bad-prompting/) | Model |
 | 2026-04-15 | [Superpowers: Cialdini's Psychology Hack]({{ site.baseurl }}/docs/news/superpowers-cialdini/) | Prompting |
 | 2026-04-15 | [Forbes: Vibe coding goes mainstream]({{ site.baseurl }}/docs/news/forbes-vibe-coding/) | Industry |
+| 2026-04-14 | [Claude Code Routines — scheduled cloud automation]({{ site.baseurl }}/docs/news/routines/) | Feature |
 | 2026-04-14 | [7 Homebrew Tools That Replace GUI Apps]({{ site.baseurl }}/docs/news/homebrew-cli-tools/) | Off-topic |
 | 2026-04-14 | [Opus 4.7 leaks — Geeky Gadgets]({{ site.baseurl }}/docs/news/opus-4-7-leaks-geeky-gadgets/) | Model |
 | 2026-04-13 | [I Ran Codex and Claude Side by Side]({{ site.baseurl }}/docs/news/codex-claude-side-by-side/) | Multi-model |
