@@ -203,6 +203,42 @@ Disable servers you haven't used in the last 3 sessions.
 | "Make the code better" | "Extract the validation into a separate function" |
 | Iterating 5 times on vague specs | Using reverse prompting once |
 
+### 6. Block Redundant File Reads (Saves 60-90% of Read Tool Tokens)
+
+Claude Code re-reads the same files repeatedly within a session — `main.ts` is read, edited, then read again to verify, then read again when working on a related file. Each re-read pays the full token cost of the file. On hot-path files (large pages, central configs), this dominates session token usage.
+
+The **read-once** hook (open source, MIT) tracks files read per session and either blocks or warns on re-reads of unchanged files within a TTL window. Default mode is `warn` — the read still happens but with an advisory message — which avoids breaking the Edit tool (Edit requires a prior Read) and parallel-read cascades.
+
+**Install (global, all projects):**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Bande-a-Bonnot/Boucle-framework/main/tools/read-once/install.sh | bash
+```
+
+The installer drops `hook.sh` and `compact.sh` into `~/.claude/read-once/` and merges hook entries into `~/.claude/settings.json` via `jq` (existing hooks are preserved). Requires `jq` at runtime.
+
+**Configuration (env vars):**
+
+| Variable | Default | Purpose |
+|:---------|:--------|:--------|
+| `READ_ONCE_MODE` | `warn` | `warn` allows re-read with advisory; `deny` hard-blocks (faster savings, breaks Edit tool) |
+| `READ_ONCE_TTL` | `1200` | Seconds before cache expires (re-read allowed after — accounts for compaction) |
+| `READ_ONCE_DIFF` | `0` | When `1`, returns only the diff for changed files instead of full re-read |
+| `READ_ONCE_DIFF_MAX` | `40` | Max diff lines before falling back to full re-read |
+| `READ_ONCE_DISABLED` | `0` | Set to `1` to disable the hook entirely |
+
+**Verify install:**
+
+```bash
+~/.claude/read-once/read-once stats
+```
+
+**Caveats.**
+- Only affects the `Read` tool — Bash `cat`, Grep, and MCP file reads are not deduplicated.
+- Partial reads (with `offset`/`limit`) bypass the cache by design.
+- `deny` mode saves more tokens but breaks the Edit-after-Read contract; stick with `warn` unless you accept the tradeoff.
+- Source: [github.com/Bande-a-Bonnot/Boucle-framework/tree/main/tools/read-once](https://github.com/Bande-a-Bonnot/Boucle-framework/tree/main/tools/read-once)
+
 ---
 
 ## Cost by Hook

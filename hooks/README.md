@@ -240,6 +240,27 @@ Prevents Claude from editing or writing to sensitive files (`.env`, lockfiles, P
 
 ---
 
+## External Hooks Worth Installing
+
+### read-once (token savings on Read tool)
+
+Third-party hook that prevents redundant `Read` tool calls within a session. Tracks file mtime + last-read timestamp and either blocks or warns on re-reads of unchanged files. Claims 60-90% reduction in Read tool tokens for sessions with hot-path files.
+
+| Property | Value |
+|----------|-------|
+| **Hook point** | `PreToolUse` + `PostCompact` |
+| **Matcher** | `Read` |
+| **Mode** | `warn` (default — allow with advisory) or `deny` (hard block) |
+| **TTL** | 20 minutes (re-read allowed after, accounts for compaction) |
+| **Source** | [github.com/Bande-a-Bonnot/Boucle-framework](https://github.com/Bande-a-Bonnot/Boucle-framework/tree/main/tools/read-once) |
+| **Install** | `curl -fsSL https://raw.githubusercontent.com/Bande-a-Bonnot/Boucle-framework/main/tools/read-once/install.sh \| bash` |
+
+The installer merges into existing `~/.claude/settings.json` via `jq` — existing hooks are preserved. Requires `jq` at runtime. See [cost-guide.md §6](../docs/cost-guide.md) for configuration env vars and tradeoffs.
+
+**Stick with `warn` mode** unless you've audited that no skill or agent in your stack relies on the Edit-after-Read contract. `deny` mode saves more tokens but causes Edit to fail with "must Read first" and breaks parallel-read cascades.
+
+---
+
 ## Creating Custom Hooks
 
 Hooks receive JSON on stdin with the tool input. Parse it with `jq`:
