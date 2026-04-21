@@ -37,6 +37,45 @@ Pin this next to your monitor.
 
 ---
 
+## Marathon Task Safety
+
+| Signal | Action |
+|--------|--------|
+| Task expected to exceed ~20 min autonomous | Break into explicit phases with a verification checkpoint between each |
+| 60+ min unattended on a single prompt | Don't. Errors accumulate silently and only surface at the end |
+| 3 failed correction rounds in one session | `/clear` and rewrite the prompt incorporating what you learned |
+
+---
+
+## Compaction Preservation
+
+Before running `/compact`, make sure the summary will preserve:
+
+- Full list of files modified this session
+- Any failing tests with the exact error text
+- Architectural decisions made this session (not just the code)
+- Current migration or schema state if DB changes are in progress
+
+Use `/compact <instructions>` to force it:
+```
+/compact preserve failing test names, files modified, and the migration state
+```
+
+---
+
+## CLAUDE.md Maintenance Budget
+
+| Rule | Threshold |
+|------|-----------|
+| Total instructions across all CLAUDE.md layers | under ~150 |
+| Rule ignored after 3 sessions | delete it or convert to a hook |
+| Rule Claude keeps asking questions about | phrasing is ambiguous — rewrite |
+| Code snippets in CLAUDE.md | avoid — use `path:line` references (snippets rot) |
+
+Past ~150 instructions, compliance degrades uniformly across rules. Prune monthly.
+
+---
+
 ## CLAUDE.md Setup (5 Steps)
 
 ```bash
