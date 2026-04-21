@@ -44,8 +44,14 @@ Walks the new developer through a structured checklist interactively. The comman
 - The [Playbook's `onboarding/` section]({{ site.baseurl }}/onboarding/) — the structured Day 0 → productive path
 - Any team-scoped hooks — run them in the first session so the new engineer sees what deterministic enforcement looks like
 
+## Regenerated with real 30-day usage
+
+The Playbook ships a [Team Onboarding template]({{ site.baseurl }}/templates/ONBOARDING-TEAM/) pre-filled with Alex's actual past-30-day usage: 2,228 sessions across 320+ repos, top commands `/mcp` `/effort` `/bad` (10× each), top MCPs `computer-use` + `chrome-devtools`. See the full field report in [30-Day Usage Insights]({{ site.baseurl }}/docs/usage-insights/) — numbers in the template are reproducible with the commands on that page against your own `~/.claude/projects/` logs.
+
 ## Related Playbook pages
 
+- [Team Onboarding template]({{ site.baseurl }}/templates/ONBOARDING-TEAM/) — the copy-paste guide with real usage stats
+- [30-Day Usage Insights]({{ site.baseurl }}/docs/usage-insights/) — what actually gets used across 2,228 sessions
 - [Onboarding]({{ site.baseurl }}/onboarding/) — Day 0 to productive path
 - [Agent Harness]({{ site.baseurl }}/docs/news/agent-harness/) — the concept this command operationalises
 - [Prompt Discipline]({{ site.baseurl }}/docs/prompt-discipline/) — hardening the CLAUDE.md files the new engineer will read

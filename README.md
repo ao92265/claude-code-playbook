@@ -77,7 +77,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 - [11 CLAUDE.md templates + 1 team onboarding template](templates/) — TypeScript, React, Node, Python, Full-stack, Go, Rust, Mobile, DevOps, Java, C#, Team Onboarding
 - [9 hook scripts](hooks/) that catch errors before they reach your commits
 - [3 annotated example sessions](examples/) showing real workflows in action
-- [MCP server guide](docs/mcp-servers.md), [skills ecosystem](docs/skills-ecosystem.md), [model comparison](docs/model-comparison.md), [workflow decision tree](docs/workflows.md), and [20 anti-patterns](docs/anti-patterns.md)
+- [MCP server guide](docs/mcp-servers.md), [skills ecosystem](docs/skills-ecosystem.md), [model comparison](docs/model-comparison.md), [workflow decision tree](docs/workflows.md), [20 anti-patterns](docs/anti-patterns.md), and [30-day usage insights](docs/usage-insights.md)
 - [CI/CD automation](docs/github-actions.md), [enterprise governance](docs/enterprise-governance.md), [agent teams](docs/agent-teams.md), [security remediation](docs/security-remediation.md), and [legacy modernization](docs/legacy-modernization.md)
 - [Skills 2.0](docs/skills-v2.md) (context fork, dynamic injection, agent frontmatter), [Code Container](docs/code-container.md) (Docker sandboxing), [auto mode](docs/auto-mode.md), [path-scoped rules](docs/path-scoped-rules.md), and [channels](docs/channels.md)
 - **One-line installer** for skills, hooks, and templates
@@ -157,6 +157,7 @@ claude-code-playbook/
 │   ├── model-comparison.md    # Claude model comparison: Haiku vs Sonnet vs Opus
 │   ├── workflows.md           # Decision tree: which skill to use when
 │   ├── anti-patterns.md       # 20 things that go wrong and how to avoid them
+│   ├── usage-insights.md      # 30-day field report: 2,228 sessions, top tools/MCPs/commands
 │   ├── awesome-claude-code.md # Curated list of tools, plugins, and resources
 │   ├── skills-ecosystem.md    # Agent skills package manager (skills.sh)
 │   ├── faq.md                 # Frequently asked questions
