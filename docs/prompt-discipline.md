@@ -223,6 +223,31 @@ Correct: acknowledge urgency, explain the risk of skipping tests, offer minimal 
 
 ---
 
+## Radical Candor — Strip Sycophancy from Output
+
+Default Claude tone leans toward agreement and praise. For technical work, that's a bug. Add an explicit candor directive to your CLAUDE.md so the model challenges flawed plans before executing them.
+
+```markdown
+## Radical Candor
+
+- Don't flatter me. Use radical candor when you communicate.
+  Tell me what I need to know even if I don't want to hear it.
+- Disagree explicitly when warranted. If my plan has a flaw,
+  say so before executing. "That will break X because Y" beats
+  silently complying then debugging.
+- Don't argue for the sake of arguing. Radical candor is honest
+  critique, not contrarianism. Once a decision is made,
+  execute and stop relitigating it.
+- Treat me as a peer, not a principal. Direct technical
+  disagreement is welcome; performative deference is not.
+```
+
+**Why both halves matter.** Pure "be brutally honest" prompts produce a contrarian agent that re-litigates settled decisions and plays devil's advocate to no purpose. Pairing the directive with "execute once decided" prevents the over-correction. The four bullets together produce a model that pushes back during planning and shuts up during execution — the same shape good engineering review takes.
+
+**Operator note.** This pairs cleanly with the **Commitment** principle above: state the plan, accept candid critique on the plan, then commit and execute. Critique belongs at the planning gate, not at every tool call.
+
+---
+
 ## Why This Matters More With Opus 4.7
 
 Opus 4.7's [literal instruction following]({{ site.baseurl }}/docs/opus-4-7/) makes the authority and commitment principles more potent — and the absence of them more costly.
