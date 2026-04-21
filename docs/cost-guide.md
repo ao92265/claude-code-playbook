@@ -256,3 +256,45 @@ ROI: 30-60x
 2. **Monthly:** Check your Anthropic dashboard for usage breakdown
 3. **Per-project:** Track sessions per project to identify high-cost areas
 4. **Optimize:** Review model routing monthly — are you using Opus where Sonnet would suffice?
+
+---
+
+## Context Pruning Routine
+
+Every session pays a fixed tax at startup for the skills registry, MCP tool schemas, slash commands, and hook output. That tax compounds as you install more plugins, MCP servers, and skills. Run a prune audit every 4-6 weeks to recover context budget.
+
+### What To Audit
+
+| Target | Command | What to look for |
+|:-------|:--------|:-----------------|
+| Skills registry size | Count `- <name>:` lines in the "The following skills are available" block | Above ~120 entries = regressed; investigate plugin sprawl |
+| Top-level MCP servers | `jq -r '.mcpServers \| keys[]' ~/.claude.json` | Remove servers you no longer use — each one injects tool schemas (~200-5,000 tokens) |
+| Per-project MCP servers | `jq -r '.projects \| to_entries[] \| select(.value.mcpServers) \| "\(.key): \(.value.mcpServers \| keys \| join(","))"' ~/.claude.json` | Same — scoped to project cwd, but still worth trimming |
+| Loose skills | `ls ~/.claude/skills/` | Archive unused skill directories to `~/.claude/_archive-prune-<date>/` |
+| Duplicate slash commands | `ls ~/.claude/commands/` | Delete user commands that duplicate installed plugin skills (e.g. `/commit` vs `commit-commands:commit`) |
+| SessionStart hooks | `jq '.hooks.SessionStart' ~/.claude/settings.json` | Every SessionStart hook runs on every new session — remove hooks whose script was archived |
+| Stale CC processes | `ps -eo pid,etime,command \| grep 'claude --allow-dangerously'` | Any session older than 4 hours MUST be `/clear`-ed or killed — sessions leak usage and orphan MCP subprocesses |
+| Claude.ai web connectors | `claude.ai/settings/connectors` | Disconnect integrations you don't actively use (Gmail, Calendar, Drive, Gamma, Excalidraw) |
+
+### What NOT to Prune
+
+Some context costs earn their keep. Do **not** archive the following in a routine prune:
+
+- **oh-my-claudecode (OMC).** OMC is the multi-agent orchestration backbone — its agent catalog, team runtime, skill registry, and hook/state wiring are load-bearing for any project using ralph, ultrawork, team, autopilot, or the `executor`/`planner`/`reviewer` subagent routing. Disabling OMC silently breaks orchestration skills that other playbook guidance assumes are available. Keep the plugin enabled globally; scope per-project via `enabledPlugins` in `~/.claude.json` only when you are certain no OMC-driven skill is invoked in that project.
+- **Your team's workflow hooks.** `ts-check.sh`, `pre-commit-verify.sh`, `codex-prepush-review.sh`, and equivalents catch regressions before they ship. Their per-run cost is negligible (see *Cost by Hook* above).
+- **CLAUDE.md layers.** Global, project, and local CLAUDE.md files are shared across every session — keep them tight (<150 instructions total across layers) but do not delete rules you still rely on.
+
+### Expected Savings
+
+A routine prune typically recovers **8-15k tokens per session start** in main contexts, plus the bigger win: killing stale >4-hour CC sessions that were burning API quota with no active work.
+
+### Archive Pattern
+
+Never delete outright. Move candidates to a dated archive so you can recover:
+
+```bash
+mkdir -p ~/.claude/_archive-prune-$(date +%Y%m%d)/{skills,commands,hooks}
+mv ~/.claude/skills/<unused-skill> ~/.claude/_archive-prune-$(date +%Y%m%d)/skills/
+```
+
+Keep archives for one review cycle, then delete if nothing was recovered.
