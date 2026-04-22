@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # audit-log.sh — append every user prompt to a compliance log.
 #
 # Wire as UserPromptSubmit hook in .claude/settings.json:
