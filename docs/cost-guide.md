@@ -163,6 +163,24 @@ Agent(model: "sonnet", ...)  # implementation
 Agent(model: "opus", ...)    # architecture only
 ```
 
+#### Subagent model resolution order (verified against the claude binary)
+
+Prose rules are not enough. The binary resolves the subagent model in this order:
+
+1. `CLAUDE_CODE_SUBAGENT_MODEL` env var — overrides everything
+2. `model` param at `Agent`/`Task` invocation
+3. Agent frontmatter `model:` field
+4. Parent conversation model (default when nothing else is set)
+
+The footgun is step 4: when the model param is omitted and the agent has no frontmatter, the subagent inherits the parent (usually Opus). Every spawn silently multiplies the bill.
+
+Two enforcement paths (pick one or both):
+
+- **PreToolUse hook** (recommended — preserves per-agent overrides). Block `Agent`/`Task` calls that omit `model`. Reference implementation lives in [`hooks/require-agent-model.sh`](https://github.com/ao92265/claude-code-playbook/blob/main/hooks/require-agent-model.sh) in this repo. Wire it into `~/.claude/settings.json` under `hooks.PreToolUse` with matcher `"Agent|Task"`. The hook exits non-zero with an actionable error when `model` is missing, forcing Claude to retry with an explicit value. Set `REQUIRE_AGENT_MODEL_DISABLED=1` for an emergency bypass.
+- **Global env var floor.** Export `CLAUDE_CODE_SUBAGENT_MODEL=sonnet` in your shell profile. This overrides everything — simpler, impossible to bypass from the model side, but it erases per-agent overrides (an `opus` architect or `haiku` writer all collapse to sonnet).
+
+If you see subagents drift back to Opus after a week, the prose rule is being ignored in practice and the hook is the real fix. CLAUDE.md maintenance principle: if a rule is ignored across three sessions, delete it or convert it to a hook.
+
 ### 2. Context Management (Saves 10-20%)
 
 Polluted context = wasted tokens on irrelevant information.

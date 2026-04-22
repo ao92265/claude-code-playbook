@@ -85,6 +85,17 @@ Add hook configurations to `~/.claude/settings.json`. Here's a complete example 
             "statusMessage": "Checking for protected files..."
           }
         ]
+      },
+      {
+        "matcher": "Agent|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/require-agent-model.sh",
+            "timeout": 5,
+            "statusMessage": "Checking subagent model..."
+          }
+        ]
       }
     ],
     "PostToolUse": [
@@ -237,6 +248,20 @@ Prevents Claude from editing or writing to sensitive files (`.env`, lockfiles, P
 | **Matcher** | `Edit\|Write` |
 | **Catches** | Modifications to `.env*`, `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`, `prisma/schema.prisma` |
 | **Customizable** | Edit the `PROTECTED` array to add/remove paths |
+
+---
+
+### require-agent-model.sh
+
+Blocks `Agent`/`Task` tool calls that omit an explicit `model` field. Prevents subagents from silently inheriting the parent conversation model (usually Opus) and multiplying token spend. See [cost-guide.md → Smart Model Routing](../docs/cost-guide.md) for the full resolution order and rationale.
+
+| Property | Value |
+|----------|-------|
+| **Hook point** | `PreToolUse` |
+| **Matcher** | `Agent\|Task` |
+| **Catches** | `Agent(...)` / `Task(...)` invocations missing `model: "haiku\|sonnet\|opus"` |
+| **Requires** | `jq` on `PATH` (fails open if absent so it never bricks a session) |
+| **Bypass** | Export `REQUIRE_AGENT_MODEL_DISABLED=1` for a one-off, or set `CLAUDE_CODE_SUBAGENT_MODEL` globally to pin a model and short-circuit the hook |
 
 ---
 
