@@ -23,7 +23,7 @@
 
 <img src="https://img.shields.io/badge/29-Skills-8B5CF6?style=flat-square" alt="29 Skills"/>
 <img src="https://img.shields.io/badge/11-Templates-F97316?style=flat-square" alt="11 Templates"/>
-<img src="https://img.shields.io/badge/9-Hooks-EF4444?style=flat-square" alt="9 Hooks"/>
+<img src="https://img.shields.io/badge/10-Hooks-EF4444?style=flat-square" alt="10 Hooks"/>
 <img src="https://img.shields.io/badge/25-Docs-0078D4?style=flat-square" alt="25 Docs"/>
 <img src="https://img.shields.io/badge/3-Examples-22C55E?style=flat-square" alt="3 Examples"/>
 <img src="https://img.shields.io/badge/20-Anti--Patterns-EC4899?style=flat-square" alt="20 Anti-Patterns"/>
@@ -75,7 +75,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 **Use**
 - [29 production-ready skills](skills/) (custom `/commands`) you can drop into any project
 - [11 CLAUDE.md templates + 1 team onboarding template](templates/) — TypeScript, React, Node, Python, Full-stack, Go, Rust, Mobile, DevOps, Java, C#, Team Onboarding
-- [9 hook scripts](hooks/) that catch errors before they reach your commits
+- [10 hook scripts](hooks/) that catch errors before they reach your commits
 - [3 annotated example sessions](examples/) showing real workflows in action
 - [MCP server guide](docs/mcp-servers.md), [skills ecosystem](docs/skills-ecosystem.md), [model comparison](docs/model-comparison.md), [workflow decision tree](docs/workflows.md), [20 anti-patterns](docs/anti-patterns.md), and [30-day usage insights](docs/usage-insights.md)
 - [CI/CD automation](docs/github-actions.md), [enterprise governance](docs/enterprise-governance.md), [agent teams](docs/agent-teams.md), [security remediation](docs/security-remediation.md), and [legacy modernization](docs/legacy-modernization.md)
@@ -184,6 +184,8 @@ claude-code-playbook/
 │   ├── local-models.md        # Gemma 4 (Apache 2.0) in Codex CLI via llama.cpp / Ollama
 │   ├── knowledge-and-context.md # Karpathy LLM Wiki pattern + 5-project ecosystem
 │   ├── bmad.md                # /bad autonomous sprint orchestrator deep dive
+│   ├── harness.md             # Harness vs model vs rules — what to build, what to use
+│   ├── audit-log-hook.md      # Raw-prompt compliance logging (aidlc-workflows pattern)
 │   └── news/                  # News & Research — 39 deep-read article pages (April 2026 research)
 ├── examples/
 │   ├── bug-fix-session.md     # Annotated bug fix session transcript
@@ -246,6 +248,7 @@ claude-code-playbook/
 │   ├── session-start-check.sh # Environment validation
 │   ├── firewall.sh            # Dangerous command blocker
 │   ├── protect-paths.sh       # Protected file guard
+│   ├── audit-log.sh           # Raw-prompt compliance log (UserPromptSubmit)
 │   └── README.md              # Hook setup guide
 ├── config/
 │   ├── settings-example.json  # Example settings.json
@@ -671,6 +674,8 @@ Never append to shared context files. Always replace the entire content and keep
 | **[Local Models](docs/local-models.md)** | Guide | Gemma 4 (Apache 2.0) as local model in Codex CLI (llama.cpp, Ollama) |
 | **[Knowledge & Context](docs/knowledge-and-context.md)** | Guide | Karpathy's LLM Wiki pattern + 5-project ecosystem (Waykee, Sage-Wiki, qmd) |
 | **[BMad Autonomous Development](docs/bmad.md)** | Guide | `/bad` overnight sprint orchestrator with git-worktree isolation |
+| **[Harness](docs/harness.md)** | Guide | Harness vs model vs rules: Claude Code, Agent SDK, and when to write rules instead |
+| **[Audit Log Hook](docs/audit-log-hook.md)** | Guide | Raw-prompt compliance logging adapted from awslabs/aidlc-workflows |
 | **[News & Research](docs/news/)** | 39 articles | Per-article deep reads of every substantive source behind the April 2026 briefing |
 | **[Article](article.md)** | Article | The original article that inspired this playbook |
 
@@ -763,9 +768,9 @@ sequenceDiagram
     Claude-->>You: "Bug fixed, types clean"
 ```
 
-**9 included hooks:** [ts-check.sh](hooks/ts-check.sh) (type errors) | [lint-check.sh](hooks/lint-check.sh) (ESLint) | [pre-commit-guard.sh](hooks/pre-commit-guard.sh) (debug statements) | [format-check.sh](hooks/format-check.sh) (Prettier) | [env-guard.sh](hooks/env-guard.sh) (secrets) | [build-check.sh](hooks/build-check.sh) (OOM-safe builds) | [session-start-check.sh](hooks/session-start-check.sh) (environment validation) | [firewall.sh](hooks/firewall.sh) (dangerous command blocker) | [protect-paths.sh](hooks/protect-paths.sh) (protected file guard)
+**10 included hooks:** [ts-check.sh](hooks/ts-check.sh) (type errors) | [lint-check.sh](hooks/lint-check.sh) (ESLint) | [pre-commit-guard.sh](hooks/pre-commit-guard.sh) (debug statements) | [format-check.sh](hooks/format-check.sh) (Prettier) | [env-guard.sh](hooks/env-guard.sh) (secrets) | [build-check.sh](hooks/build-check.sh) (OOM-safe builds) | [session-start-check.sh](hooks/session-start-check.sh) (environment validation) | [firewall.sh](hooks/firewall.sh) (dangerous command blocker) | [protect-paths.sh](hooks/protect-paths.sh) (protected file guard) | [audit-log.sh](hooks/audit-log.sh) (raw-prompt compliance log)
 
-> See **[hooks/README.md](hooks/README.md)** for setup and **[config/hooks-example.json](config/hooks-example.json)** for a complete configuration with all 9 hooks wired up.
+> See **[hooks/README.md](hooks/README.md)** for setup and **[config/hooks-example.json](config/hooks-example.json)** for a complete configuration with all 10 hooks wired up.
 
 <br/>
 
