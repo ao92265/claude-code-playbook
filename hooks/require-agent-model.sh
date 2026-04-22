@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # PreToolUse hook: block Agent tool calls missing an explicit `model` field.
 # Install by adding a PreToolUse matcher for "Agent" in settings.json that
 # points to this script. Without it, Claude inherits the parent model
