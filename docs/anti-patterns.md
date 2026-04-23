@@ -229,6 +229,18 @@ These are the most common mistakes from 900+ sessions. Each one has burned real 
 
 ---
 
+## Document Anti-Patterns
+
+### 22. Silent Conflict Resolution
+
+**Don't:** Quietly pick one number when the appendix table and the prose disagree.
+
+**Why it fails:** When two data sources in the same artefact disagree, the model's default is to pick one and normalise. That erases a real conflict the author needs to resolve. "Trust the appendix table" is a specific rule the author can choose to apply. "Silently use the smaller number" is a rule nobody chose. The written-document equivalent of "the tests pass so it's fine" — the output looks coherent, which is precisely why the bug survives review.
+
+**Do instead:** Flag the conflict, state which source you used and why, and surface the decision in the closeout under "what needs your eyes" (see [prompt-patterns.md §22 The Closeout Trio](prompt-patterns.md#22-the-closeout-trio)). Leave the resolution visible so the author can choose — don't resolve it on their behalf.
+
+---
+
 ## Quick Reference
 
 | # | Anti-Pattern | Fix |
@@ -254,3 +266,4 @@ These are the most common mistakes from 900+ sessions. Each one has burned real 
 | 19 | No CLAUDE.md | Copy a template from this playbook |
 | 20 | Stale lessons | Review and prune monthly |
 | 21 | Cognitive debt | Spec → scoped tasks → PR review → test. Governance is the product |
+| 22 | Silent conflict resolution | Flag the conflict, don't resolve it. Surface in the Closeout Trio |

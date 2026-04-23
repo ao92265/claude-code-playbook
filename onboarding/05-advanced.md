@@ -116,10 +116,10 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md) for the format.
 | Topic | Resource |
 |:------|:---------|
 | All 27 skills | [Workflow decision tree](../docs/workflows.md) |
-| Common mistakes | [20 anti-patterns](../docs/anti-patterns.md) |
+| Common mistakes | [22 anti-patterns](../docs/anti-patterns.md) |
 | Model selection | [Model comparison](../docs/model-comparison.md) |
 | MCP servers | [MCP guide](../docs/mcp-servers.md) |
-| Prompt patterns | [20 prompt patterns](../docs/prompt-patterns.md) |
+| Prompt patterns | [22 prompt patterns](../docs/prompt-patterns.md) |
 | Full reference | [Power user guide (667 lines)](../docs/guide.md) |
 | Agent Teams | [Agent Teams guide](../docs/agent-teams.md) |
 | CI/CD automation | [GitHub Actions guide](../docs/github-actions.md) |
