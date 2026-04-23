@@ -24,9 +24,9 @@
 <img src="https://img.shields.io/badge/29-Skills-8B5CF6?style=flat-square" alt="29 Skills"/>
 <img src="https://img.shields.io/badge/11-Templates-F97316?style=flat-square" alt="11 Templates"/>
 <img src="https://img.shields.io/badge/10-Hooks-EF4444?style=flat-square" alt="10 Hooks"/>
-<img src="https://img.shields.io/badge/25-Docs-0078D4?style=flat-square" alt="25 Docs"/>
+<img src="https://img.shields.io/badge/27-Docs-0078D4?style=flat-square" alt="27 Docs"/>
 <img src="https://img.shields.io/badge/3-Examples-22C55E?style=flat-square" alt="3 Examples"/>
-<img src="https://img.shields.io/badge/20-Anti--Patterns-EC4899?style=flat-square" alt="20 Anti-Patterns"/>
+<img src="https://img.shields.io/badge/22-Anti--Patterns-EC4899?style=flat-square" alt="22 Anti-Patterns"/>
 
 </div>
 
@@ -65,7 +65,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 
 **Learn**
 - A [667-line power user guide](docs/guide.md) covering session management to multi-agent orchestration
-- [20 prompt engineering patterns](docs/prompt-patterns.md) with copy-paste examples and a decision tree
+- [22 prompt engineering patterns](docs/prompt-patterns.md) with copy-paste examples and a decision tree
 - [Quick-reference cheat sheet](docs/cheat-sheet.md) for commands, model routing, and session management
 - [Troubleshooting guide](docs/troubleshooting.md) with 15 common issues and diagnostic flowcharts
 
@@ -77,7 +77,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 - [11 CLAUDE.md templates + 1 team onboarding template](templates/) — TypeScript, React, Node, Python, Full-stack, Go, Rust, Mobile, DevOps, Java, C#, Team Onboarding
 - [10 hook scripts](hooks/) that catch errors before they reach your commits
 - [3 annotated example sessions](examples/) showing real workflows in action
-- [MCP server guide](docs/mcp-servers.md), [skills ecosystem](docs/skills-ecosystem.md), [model comparison](docs/model-comparison.md), [workflow decision tree](docs/workflows.md), [20 anti-patterns](docs/anti-patterns.md), and [30-day usage insights](docs/usage-insights.md)
+- [MCP server guide](docs/mcp-servers.md), [skills ecosystem](docs/skills-ecosystem.md), [model comparison](docs/model-comparison.md), [workflow decision tree](docs/workflows.md), [22 anti-patterns](docs/anti-patterns.md), and [30-day usage insights](docs/usage-insights.md)
 - [CI/CD automation](docs/github-actions.md), [enterprise governance](docs/enterprise-governance.md), [agent teams](docs/agent-teams.md), [security remediation](docs/security-remediation.md), and [legacy modernization](docs/legacy-modernization.md)
 - [Skills 2.0](docs/skills-v2.md) (context fork, dynamic injection, agent frontmatter), [Code Container](docs/code-container.md) (Docker sandboxing), [auto mode](docs/auto-mode.md), [path-scoped rules](docs/path-scoped-rules.md), and [channels](docs/channels.md)
 - **One-line installer** for skills, hooks, and templates
@@ -150,13 +150,13 @@ graph TB
 claude-code-playbook/
 ├── docs/
 │   ├── guide.md               # The complete power user guide (667 lines)
-│   ├── prompt-patterns.md     # 20 prompt engineering patterns with examples
+│   ├── prompt-patterns.md     # 22 prompt engineering patterns with examples
 │   ├── cheat-sheet.md         # Quick-reference card for commands & workflows
 │   ├── troubleshooting.md     # 15 common issues with diagnostic flowcharts
 │   ├── mcp-servers.md         # MCP server guide: setup, token impact, troubleshooting
 │   ├── model-comparison.md    # Claude model comparison: Haiku vs Sonnet vs Opus
 │   ├── workflows.md           # Decision tree: which skill to use when
-│   ├── anti-patterns.md       # 20 things that go wrong and how to avoid them
+│   ├── anti-patterns.md       # 22 things that go wrong and how to avoid them
 │   ├── usage-insights.md      # 30-day field report: 2,228 sessions, top tools/MCPs/commands
 │   ├── awesome-claude-code.md # Curated list of tools, plugins, and resources
 │   ├── skills-ecosystem.md    # Agent skills package manager (skills.sh)
@@ -185,6 +185,8 @@ claude-code-playbook/
 │   ├── knowledge-and-context.md # Karpathy LLM Wiki pattern + 5-project ecosystem
 │   ├── bmad.md                # /bad autonomous sprint orchestrator deep dive
 │   ├── harness.md             # Harness vs model vs rules — what to build, what to use
+│   ├── harness-pattern.md     # The Harness Pattern — why vibe coding fails; three checks
+│   ├── steering-files.md      # Enforceable house rules for AI-generated code
 │   ├── audit-log-hook.md      # Raw-prompt compliance logging (aidlc-workflows pattern)
 │   └── news/                  # News & Research — 39 deep-read article pages (April 2026 research)
 ├── examples/
@@ -217,6 +219,7 @@ claude-code-playbook/
 │   ├── deep-explore/          # Deep codebase exploration
 │   ├── dependency-audit/      # Vulnerability & update audit
 │   ├── deploy/                # Safe deployment checklist
+│   ├── doc-finalise/          # Finalise .docx deliverables with embedded visuals + PDF regen
 │   ├── docker-check/          # Docker environment validation
 │   ├── executing-plans/       # Execute plans with checkpoints
 │   ├── explain/               # Layered code explanations
@@ -515,6 +518,7 @@ Every skill is a drop-in `/command` that teaches Claude a specific workflow. Cop
 | Skill | What It Does | When To Use |
 |:------|:------------|:------------|
 | **[changelog](skills/changelog/)** | Generates formatted changelog from recent commits (Keep a Changelog style) | Before releases or version tags |
+| **[doc-finalise](skills/doc-finalise/)** | Finalise .docx deliverables: integrity inventory, embedded PNG visuals, style normalisation, PDF regen, Closeout Trio summary | Board packs, exec status reports, compliance documents |
 | **[migrate-db](skills/migrate-db/)** | Safe database migration with backup verification, dry-run, and rollback plan | Running schema changes |
 | **[handoff](skills/handoff/)** | Structured session summary: what's done, what's left, decisions, gotchas | End of every session |
 | **[git-cleanup](skills/git-cleanup/)** | Clean up stale branches, prune remotes, tidy repository state | Periodic repo maintenance |
@@ -641,13 +645,13 @@ Never append to shared context files. Always replace the entire content and keep
 | | Doc | What It Covers |
 |:--|:----|:---------------|
 | **[Power User Guide](docs/guide.md)** | 667 lines | Full lifecycle: sessions, context, plugins, multi-agent, production lessons |
-| **[Prompt Patterns](docs/prompt-patterns.md)** | 459 lines | 20 patterns: Reverse Prompting, Constraint-First, Scope Lock, and more |
+| **[Prompt Patterns](docs/prompt-patterns.md)** | 531 lines | 22 patterns: Reverse Prompting, Constraint-First, Scope Lock, SOURCE FACTS / CHANGE LIST, The Closeout Trio, and more |
 | **[Cheat Sheet](docs/cheat-sheet.md)** | 192 lines | Quick-reference: commands, model routing, session management, troubleshooting |
 | **[Troubleshooting](docs/troubleshooting.md)** | 311 lines | 15 issues in Symptoms/Cause/Fix format with 3 diagnostic flowcharts |
 | **[MCP Servers](docs/mcp-servers.md)** | Guide | Setup, token impact, recommended servers, when to disable |
 | **[Model Comparison](docs/model-comparison.md)** | Guide | Haiku vs Sonnet vs Opus: routing, cost optimization, decision flowchart |
 | **[Workflows](docs/workflows.md)** | Guide | Decision tree: which skill to use for any situation |
-| **[Anti-Patterns](docs/anti-patterns.md)** | 20 items | The "don't do this" guide with real examples of what goes wrong |
+| **[Anti-Patterns](docs/anti-patterns.md)** | 22 items | The "don't do this" guide with real examples of what goes wrong |
 | **[Awesome Claude Code](docs/awesome-claude-code.md)** | List | Curated tools, plugins, MCP servers, and community resources |
 | **[Tribune](https://github.com/ao92265/tribune)** | Companion CLI | Convene a three-voice panel (Proposer / Skeptic / Red Team) on a hard decision and commit an ADR — uses your Claude Code / Codex / Gemini subscriptions, no API keys |
 | **[FAQ](docs/faq.md)** | Q&A | Quick answers to the most common questions |
@@ -676,6 +680,8 @@ Never append to shared context files. Always replace the entire content and keep
 | **[Knowledge & Context](docs/knowledge-and-context.md)** | Guide | Karpathy's LLM Wiki pattern + 5-project ecosystem (Waykee, Sage-Wiki, qmd) |
 | **[BMad Autonomous Development](docs/bmad.md)** | Guide | `/bad` overnight sprint orchestrator with git-worktree isolation |
 | **[Harness](docs/harness.md)** | Guide | Harness vs model vs rules: Claude Code, Agent SDK, and when to write rules instead |
+| **[Harness Pattern](docs/harness-pattern.md)** | Play | Why vibe coding fails: three checks (steering, content store, comprehension), anti-patterns, agent hardening |
+| **[Steering Files](docs/steering-files.md)** | Guide | Writing enforceable house rules: good-vs-bad rule test, nested CLAUDE.md, minimum viable checklist |
 | **[Audit Log Hook](docs/audit-log-hook.md)** | Guide | Raw-prompt compliance logging adapted from awslabs/aidlc-workflows |
 | **[News & Research](docs/news/)** | 39 articles | Per-article deep reads of every substantive source behind the April 2026 briefing |
 | **[Article](article.md)** | Article | The original article that inspired this playbook |

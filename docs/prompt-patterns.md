@@ -18,6 +18,7 @@ graph TD
     START --> REFACTOR{"Refactoring?"}
     START --> ARCH{"Architecture?"}
     START --> UI{"UI work?"}
+    START --> DOC{"Document?"}
 
     BUG --> |"Yes"| B1["Smallest Failing Test"]
     BUG --> |"Complex"| B2["Rubber Duck Debugging"]
@@ -35,6 +36,9 @@ graph TD
     UI --> |"Mockup"| U1["Screenshot-Driven UI"]
     UI --> |"From scratch"| U2["Reference Implementation"]
 
+    DOC --> |"Finalise"| D1["SOURCE FACTS / CHANGE LIST"]
+    DOC --> |"Handoff deliverable"| D2["The Closeout Trio"]
+
     style START fill:#4A90D9,stroke:#357ABD,color:#fff
     style B1 fill:#50C878,stroke:#3CB371,color:#fff
     style B2 fill:#50C878,stroke:#3CB371,color:#fff
@@ -47,6 +51,8 @@ graph TD
     style A2 fill:#FF6B6B,stroke:#EE5A5A,color:#fff
     style U1 fill:#DDA0DD,stroke:#BA55D3,color:#333
     style U2 fill:#DDA0DD,stroke:#BA55D3,color:#333
+    style D1 fill:#14B8A6,stroke:#0F766E,color:#fff
+    style D2 fill:#14B8A6,stroke:#0F766E,color:#fff
 ```
 
 ---
@@ -388,6 +394,67 @@ Save this to SESSION_NOTES.md so the next session can pick up cleanly.
 ```
 
 **Why it works:** Context doesn't survive between sessions. A structured handoff preserves decisions, progress, and warnings that would otherwise be lost, preventing the next session from repeating work or making contradictory choices.
+
+---
+
+### 21. SOURCE FACTS / CHANGE LIST
+
+**When to use:** Finalising a document where factual accuracy and preservation both matter — executive status reports, regulatory and compliance documents, second-pass edits where "tighten this up" has historically rephrased a number into an inaccuracy.
+
+```
+You are finalising [artefact type] for [audience].
+
+Rewrite the DRAFT to apply every item in CHANGE LIST,
+preserving every substantive fact in SOURCE FACTS.
+
+OUTPUT RULES
+- [style, length, tone, forbidden constructs]
+
+CHANGE LIST, fix every one of these
+1. [specific directive]
+2. [specific directive]
+...
+
+SOURCE FACTS, use these, do not round them
+[structured authoritative data, tables, counts]
+
+DRAFT
+[current draft, or state "no draft, build from facts"]
+```
+
+**Why it works:** The model treats the current draft as authoritative by default and preserves its language patterns, including the inaccuracies. Separating facts from instructions prevents rounding drift, lost caveats, and hallucinated middle-ground values where `SOURCE FACTS` has the exact number.
+
+**Gotcha:** if the draft placeholder is empty, say so explicitly. The model will silently proceed from `SOURCE FACTS` alone, which is usually fine but occasionally loses phrasing that had already been socialised. Distinct from [Constraint-First (§2)](#2-constraint-first) — that locks scope; this locks facts.
+
+---
+
+### 22. The Closeout Trio
+
+**When to use:** Handing back any substantive deliverable — written document, mixed output, research note. Per-deliverable, not per-session.
+
+```
+End every substantive deliverable with three sections:
+
+1. What I did
+   Concrete, checkable facts. Paragraph counts before and after.
+   File sizes. Page counts. Not "I updated the document" but
+   "98 paragraphs became 108 paragraphs, +10 from two five-element chart blocks."
+
+2. What I could not do and why
+   Explicit capability boundaries. "I cannot reach your local repo,
+   so I produced the four files and a paste-ready commit block."
+   This is where you catch the model trying to hide a gap.
+
+3. What needs your eyes
+   Things the model cannot adjudicate: pre-existing data tension between
+   two sources, cosmetic layout questions, numbers that look right but
+   need a human ticking them off, anything that touched a
+   "don't change X" constraint.
+```
+
+**Why it works:** Without this closeout, the model optimises for appearing-done. With it, the model optimises for being-reliable. The numeric specifics in "what I did" make it harder to fabricate completion. "What I could not do" normalises admitting capability gaps so the model stops papering over them. Paired with [Silent Conflict Resolution anti-pattern (§22)](anti-patterns.md#22-silent-conflict-resolution) for the written-deliverable equivalent of "the tests pass so it's fine".
+
+**Scope vs related material:** [skills/verification-before-completion/](../skills/verification-before-completion/) is the code-side equivalent — run the tests, paste the output. This is the version for writing and mixed outputs where "does it compile" is not the check. [skills/handoff/](../skills/handoff/) is session-end summary; this is per-deliverable — different scope.
 
 ---
 
