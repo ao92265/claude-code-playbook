@@ -21,6 +21,14 @@ A curated list of tools, plugins, MCP servers, and resources for Claude Code.
 | **[PR Review Toolkit](https://github.com/anthropics/claude-code-plugins)** | Comprehensive PR review with specialized analysis agents |
 | **[Commit Commands](https://github.com/anthropics/claude-code-plugins)** | Streamlined git commit, push, and PR workflows |
 
+## Companion CLIs
+
+CLI tools that wrap Claude Code (and sometimes Codex / Gemini) to extend its reach beyond a single session.
+
+| Tool | What It Does |
+|:-----|:------------|
+| **[Tribune](https://github.com/ao92265/tribune)** | Convenes three advocates — Proposer, Skeptic, Red Team — on a hard decision and commits the argument as an ADR. Runs off your Claude Code / Codex / Gemini CLI subscriptions, no API keys. Ships a `/tribune` slash command for Claude Code sessions. |
+
 ## MCP Servers
 
 See [docs/mcp-servers.md](mcp-servers.md) for detailed setup and configuration.

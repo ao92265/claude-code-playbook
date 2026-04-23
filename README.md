@@ -649,6 +649,7 @@ Never append to shared context files. Always replace the entire content and keep
 | **[Workflows](docs/workflows.md)** | Guide | Decision tree: which skill to use for any situation |
 | **[Anti-Patterns](docs/anti-patterns.md)** | 20 items | The "don't do this" guide with real examples of what goes wrong |
 | **[Awesome Claude Code](docs/awesome-claude-code.md)** | List | Curated tools, plugins, MCP servers, and community resources |
+| **[Tribune](https://github.com/ao92265/tribune)** | Companion CLI | Convene a three-voice panel (Proposer / Skeptic / Red Team) on a hard decision and commit an ADR — uses your Claude Code / Codex / Gemini subscriptions, no API keys |
 | **[FAQ](docs/faq.md)** | Q&A | Quick answers to the most common questions |
 | **[Getting Started](docs/getting-started.md)** | Guide | Zero to productive in 10 minutes |
 | **[Team Setup](docs/team-setup.md)** | Guide | How to roll out the playbook to your team |
