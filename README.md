@@ -23,8 +23,8 @@
 
 <img src="https://img.shields.io/badge/29-Skills-8B5CF6?style=flat-square" alt="29 Skills"/>
 <img src="https://img.shields.io/badge/11-Templates-F97316?style=flat-square" alt="11 Templates"/>
-<img src="https://img.shields.io/badge/10-Hooks-EF4444?style=flat-square" alt="10 Hooks"/>
-<img src="https://img.shields.io/badge/27-Docs-0078D4?style=flat-square" alt="27 Docs"/>
+<img src="https://img.shields.io/badge/16-Hooks-EF4444?style=flat-square" alt="16 Hooks"/>
+<img src="https://img.shields.io/badge/57-Docs-0078D4?style=flat-square" alt="57 Docs"/>
 <img src="https://img.shields.io/badge/3-Examples-22C55E?style=flat-square" alt="3 Examples"/>
 <img src="https://img.shields.io/badge/22-Anti--Patterns-EC4899?style=flat-square" alt="22 Anti-Patterns"/>
 
@@ -75,7 +75,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 **Use**
 - [29 production-ready skills](skills/) (custom `/commands`) you can drop into any project
 - [11 CLAUDE.md templates + 1 team onboarding template](templates/) — TypeScript, React, Node, Python, Full-stack, Go, Rust, Mobile, DevOps, Java, C#, Team Onboarding
-- [10 hook scripts](hooks/) that catch errors before they reach your commits
+- [16 hook scripts](hooks/) that catch errors before they reach your commits
 - [3 annotated example sessions](examples/) showing real workflows in action
 - [MCP server guide](docs/mcp-servers.md), [skills ecosystem](docs/skills-ecosystem.md), [model comparison](docs/model-comparison.md), [workflow decision tree](docs/workflows.md), [22 anti-patterns](docs/anti-patterns.md), and [30-day usage insights](docs/usage-insights.md)
 - [CI/CD automation](docs/github-actions.md), [enterprise governance](docs/enterprise-governance.md), [agent teams](docs/agent-teams.md), [security remediation](docs/security-remediation.md), and [legacy modernization](docs/legacy-modernization.md)
@@ -777,7 +777,7 @@ sequenceDiagram
 
 **10 included hooks:** [ts-check.sh](hooks/ts-check.sh) (type errors) | [lint-check.sh](hooks/lint-check.sh) (ESLint) | [pre-commit-guard.sh](hooks/pre-commit-guard.sh) (debug statements) | [format-check.sh](hooks/format-check.sh) (Prettier) | [env-guard.sh](hooks/env-guard.sh) (secrets) | [build-check.sh](hooks/build-check.sh) (OOM-safe builds) | [session-start-check.sh](hooks/session-start-check.sh) (environment validation) | [firewall.sh](hooks/firewall.sh) (dangerous command blocker) | [protect-paths.sh](hooks/protect-paths.sh) (protected file guard) | [audit-log.sh](hooks/audit-log.sh) (raw-prompt compliance log)
 
-> See **[hooks/README.md](hooks/README.md)** for setup and **[config/hooks-example.json](config/hooks-example.json)** for a complete configuration with all 10 hooks wired up.
+> See **[hooks/README.md](hooks/README.md)** for setup and **[config/hooks-example.json](config/hooks-example.json)** for a complete configuration with all included hooks wired up.
 
 <br/>
 
