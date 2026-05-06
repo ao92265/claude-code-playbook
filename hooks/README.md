@@ -83,6 +83,24 @@ Add hook configurations to `~/.claude/settings.json`. Here's a complete example 
             "command": "~/.claude/hooks/protect-paths.sh",
             "timeout": 5,
             "statusMessage": "Checking for protected files..."
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/secret-scanner.py",
+            "timeout": 5,
+            "statusMessage": "Scanning for secrets..."
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/tdd-gate.sh",
+            "timeout": 5,
+            "statusMessage": "Checking for tests..."
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/plan-gate.sh",
+            "timeout": 5,
+            "statusMessage": "Checking for active plan..."
           }
         ]
       },
@@ -262,6 +280,50 @@ Blocks `Agent`/`Task` tool calls that omit an explicit `model` field. Prevents s
 | **Catches** | `Agent(...)` / `Task(...)` invocations missing `model: "haiku\|sonnet\|opus"` |
 | **Requires** | `jq` on `PATH` (fails open if absent so it never bricks a session) |
 | **Bypass** | Export `REQUIRE_AGENT_MODEL_DISABLED=1` for a one-off, or set `CLAUDE_CODE_SUBAGENT_MODEL` globally to pin a model and short-circuit the hook |
+
+---
+
+### secret-scanner.py
+
+Regex-scans the content of every `Edit`/`Write`/`MultiEdit`/`NotebookEdit` for 30+ credential patterns (AWS, Anthropic, OpenAI, GitHub PATs, Stripe, Google, Slack, Supabase, Vercel, HuggingFace, Replicate, Groq, Databricks, Azure, DigitalOcean, Linear, Notion, JWT, private keys, DB connection strings with creds, hardcoded passwords). Wider net than `env-guard.sh`, which only catches secrets at `git add`/`git commit` time.
+
+| Property | Value |
+|----------|-------|
+| **Hook point** | `PreToolUse` |
+| **Matcher** | `Edit\|Write\|MultiEdit\|NotebookEdit` |
+| **Catches** | Credential patterns being written into any file |
+| **Requires** | Python 3 (stdlib only — no pip deps) |
+| **Severity** | Critical/high → exit 2 (blocks). Medium → exit 1 (warns). |
+| **Bypass** | Export `SECRET_SCANNER_DISABLED=1` |
+
+---
+
+### tdd-gate.sh
+
+Warns when Claude edits a production source file that has no matching test file. Pairs with the [test-first skill](../skills/test-first/). Soft-default (warn-only); set `TDD_GATE_BLOCK=1` to make it block. Recognises TS, JS, Python, Go, Rust, Java, Kotlin, C#. Skips test files, fixtures, migrations, generated code, infra/config, and docs.
+
+| Property | Value |
+|----------|-------|
+| **Hook point** | `PreToolUse` |
+| **Matcher** | `Edit\|Write` |
+| **Catches** | Source files without a co-located or `tests/`-located test file |
+| **Requires** | `jq` |
+| **Modes** | Warn (default, exit 1) or Block (`TDD_GATE_BLOCK=1`, exit 2) |
+| **Bypass** | Export `TDD_GATE_DISABLED=1` |
+
+---
+
+### plan-gate.sh
+
+Warns (never blocks) when Claude edits source code without a recent plan/spec on disk. Looks for any `*.spec.md`, `tasks/*.md`, `plans/*.md`, `.omc/plans/**/*.md`, `PLAN.md`, or `SPEC.md` modified within `PLAN_GATE_WINDOW_DAYS` (default 14). Encourages spec-first development without getting in the way of quick fixes.
+
+| Property | Value |
+|----------|-------|
+| **Hook point** | `PreToolUse` |
+| **Matcher** | `Edit\|Write` |
+| **Catches** | Source edits with no plan/spec touched in the last N days |
+| **Configurable** | `PLAN_GATE_WINDOW_DAYS=N` (default 14) |
+| **Bypass** | Export `PLAN_GATE_DISABLED=1` |
 
 ---
 
