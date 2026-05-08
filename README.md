@@ -184,6 +184,7 @@ claude-code-playbook/
 │   ├── local-models.md        # Gemma 4 (Apache 2.0) in Codex CLI via llama.cpp / Ollama
 │   ├── knowledge-and-context.md # Karpathy LLM Wiki pattern + 5-project ecosystem
 │   ├── bmad.md                # /bad autonomous sprint orchestrator deep dive
+│   ├── spec-driven-stack.md   # Big 5 + GS stack: SpecKit, BMAD, GSD, BART, Claude Code, GStack
 │   ├── harness.md             # Harness vs model vs rules — what to build, what to use
 │   ├── harness-pattern.md     # The Harness Pattern — why vibe coding fails; three checks
 │   ├── steering-files.md      # Enforceable house rules for AI-generated code
@@ -679,6 +680,7 @@ Never append to shared context files. Always replace the entire content and keep
 | **[Local Models](docs/local-models.md)** | Guide | Gemma 4 (Apache 2.0) as local model in Codex CLI (llama.cpp, Ollama) |
 | **[Knowledge & Context](docs/knowledge-and-context.md)** | Guide | Karpathy's LLM Wiki pattern + 5-project ecosystem (Waykee, Sage-Wiki, qmd) |
 | **[BMad Autonomous Development](docs/bmad.md)** | Guide | `/bad` overnight sprint orchestrator with git-worktree isolation |
+| **[Spec-Driven Stack 2026](docs/spec-driven-stack.md)** | Guide | Big 5 + GS: SpecKit, BMAD, GSD, BART mode, Claude Code, GStack — one operating model |
 | **[Harness](docs/harness.md)** | Guide | Harness vs model vs rules: Claude Code, Agent SDK, and when to write rules instead |
 | **[Harness Pattern](docs/harness-pattern.md)** | Play | Why vibe coding fails: three checks (steering, content store, comprehension), anti-patterns, agent hardening |
 | **[Steering Files](docs/steering-files.md)** | Guide | Writing enforceable house rules: good-vs-bad rule test, nested CLAUDE.md, minimum viable checklist |

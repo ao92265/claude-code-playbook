@@ -140,9 +140,20 @@ Use this structure for a 10-minute pitch to management:
 
 ---
 
+## Spec-Driven Dev (2026 update)
+
+The community has crystallised a six-tool stack — Big 5 + GS — that replaces ad-hoc prompting with a verifiable spec → plan → tasks → code pipeline. `specify` CLI is installed globally on this machine; start there.
+
+- Read: [Spec-Driven Stack 2026](spec-driven-stack.md)
+- Pilot: run `specify init` on one Wraith ticket. Compare cycle time vs. baseline.
+- Layer existing playbook hooks (TS check, env-guard, security-reviewer subagent) on top — the stacks are complementary, not exclusive.
+
+---
+
 ## Resources
 
 - [Getting Started Guide](getting-started.md) — 10-minute setup
+- [Spec-Driven Stack 2026](spec-driven-stack.md) — Big 5 + GS overview
 - [Team Setup Guide](team-setup.md) — Detailed rollout plan
 - [Case Studies](case-studies.md) — Real results from real teams
 - [FAQ](faq.md) — Common questions answered
