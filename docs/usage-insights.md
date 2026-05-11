@@ -118,6 +118,38 @@ ls -d -- ~/.claude/projects/-Users-*-Repos-* \
 
 Every command above runs read-only against JSONL session logs Claude Code already writes. No extra tooling required.
 
+## May 2026 follow-up — friction-driven skill additions
+
+*Snapshot: 2026-04-15 → 2026-05-11, 116 sessions analyzed, 296 commits.*
+
+Second `/insights` run surfaced a different shape of friction than the March snapshot. Top categories:
+
+- **Wrong initial approach (47)** + **buggy first code (40)** — Claude takes a wrong-headed first pass and needs redirection. Tradeoff: faster than writing detailed specs upfront, but loses an iteration per task.
+- **Hook & permission blocks (~15)** — `prisma/schema.prisma` and protect-paths repeatedly halted long autonomous runs. One borderline incident: Claude tried to bypass the hook via Bash before backing off.
+- **CI/local typecheck mismatch** — local `tsc --noEmit` passed while CI `tsc -b` (project build mode) failed. Forced post-merge re-runs.
+- **Wrong-branch commits** — fixup commits landed on feature PR branches multiple times, requiring cherry-pick recovery.
+- **Tone rework on non-technical drafts** — first-pass Slack/email drafts to non-technical recipients consistently bulleted + too technical, requiring a second pass.
+
+### Concrete fixes shipped
+
+Four user-level skills + one hook upgrade addressing each friction category:
+
+| Skill / Hook | What it does | Friction it kills |
+|---|---|---|
+| `~/.claude/hooks/pre-commit-verify.sh` | Echoes current branch + runs `tsc -b` (CI parity) before any commit; blocks on type error unless `[wip]`/`[skip-verify]` | Wrong-branch commits + tsc mismatch |
+| `/pr-merge-queue` skill | Batched merge loop (5 PRs/batch), checkpoint summaries, branch verify, protected-path skip | Ralph-loop overruns + usage-limit mid-merge |
+| `/pr-fleet` skill + headless `pr-fleet.sh` cron wrapper | Coordinator + 3-concurrent worker subagents, one worktree per PR, escalation list for schema/migrations | Sequential merge marathons (35+ PRs/session) |
+| `/tdd-fix` skill | RED→GREEN→SHIP loop, full CI parity (`tsc -b && npm test && npm run lint`) before PR | Wrong-approach + buggy-first-pass on bug fixes |
+| `/draft-reply` skill | Audience-first checklist (recipient/level/tone/action) before drafting | Tone rework on non-technical replies |
+| CLAUDE.md "Insights-Learned Rules" section | Branch discipline, typecheck parity, protected paths, attribution verification | Codifies the above so it survives a fresh session |
+
+### Lessons that generalize
+
+1. **Friction analytics beat introspection.** A second monthly `/insights` run surfaced patterns I had not noticed manually — particularly the typecheck-mismatch and tone-rework loops. The numbers (47 + 40 + 15) are the prioritization signal.
+2. **Convert recurring corrections into hooks, recurring workflows into skills.** Hooks are deterministic gates; skills are probabilistic playbooks. Branch verification belongs in a hook because forgetting it is silent. Audience framing belongs in a skill because it is judgment-driven.
+3. **Parallelism is a friction fix, not just a speedup.** The sequential ralph-loop pattern was hitting usage limits mid-batch, which forced restart with stale context. `/pr-fleet` with 3 concurrent worker subagents per worktree finishes inside a single context window and only escalates protected-path PRs to the operator.
+4. **Pre-authorize protected paths at planning time, not edit time.** The schema-protect hook is correct; the workflow around it was wrong. New rule: Claude must surface "this requires schema changes" during the plan, not after attempting an edit and getting blocked.
+
 ## Methodology notes
 
 - Counts are aggregated from `~/.claude/projects/*/*.jsonl` files with `mtime` ≤ 30 days.
