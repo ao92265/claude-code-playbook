@@ -1,0 +1,15 @@
+[project]
+name = "cctools"
+version = "0.1.0"
+description = "Claude Code self-improvement CLI suite: cost-ledger, cache-radar, md-lint"
+requires-python = ">=3.10"
+
+[project.scripts]
+cctools = "cctools.__main__:main"
+cost-ledger = "cctools.cost_ledger:main"
+cache-radar = "cctools.cache_radar:main"
+md-lint = "cctools.md_lint:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
