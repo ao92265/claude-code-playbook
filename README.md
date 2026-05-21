@@ -189,6 +189,7 @@ claude-code-playbook/
 │   ├── harness-pattern.md     # The Harness Pattern — why vibe coding fails; three checks
 │   ├── steering-files.md      # Enforceable house rules for AI-generated code
 │   ├── audit-log-hook.md      # Raw-prompt compliance logging (aidlc-workflows pattern)
+│   ├── verify-gate-hook.md    # Stop hook that blocks until tsc/tests pass (baseline-diffed)
 │   └── news/                  # News & Research — 39 deep-read article pages (April 2026 research)
 ├── examples/
 │   ├── bug-fix-session.md     # Annotated bug fix session transcript
@@ -685,6 +686,7 @@ Never append to shared context files. Always replace the entire content and keep
 | **[Harness Pattern](docs/harness-pattern.md)** | Play | Why vibe coding fails: three checks (steering, content store, comprehension), anti-patterns, agent hardening |
 | **[Steering Files](docs/steering-files.md)** | Guide | Writing enforceable house rules: good-vs-bad rule test, nested CLAUDE.md, minimum viable checklist |
 | **[Audit Log Hook](docs/audit-log-hook.md)** | Guide | Raw-prompt compliance logging adapted from awslabs/aidlc-workflows |
+| **[Verify Gate Hook](docs/verify-gate-hook.md)** | Guide | Stop hook with baseline-diffed tsc/test verification — forces Claude to keep working until regressions are fixed |
 | **[News & Research](docs/news/)** | 39 articles | Per-article deep reads of every substantive source behind the April 2026 briefing |
 | **[Article](article.md)** | Article | The original article that inspired this playbook |
 
@@ -777,7 +779,7 @@ sequenceDiagram
     Claude-->>You: "Bug fixed, types clean"
 ```
 
-**10 included hooks:** [ts-check.sh](hooks/ts-check.sh) (type errors) | [lint-check.sh](hooks/lint-check.sh) (ESLint) | [pre-commit-guard.sh](hooks/pre-commit-guard.sh) (debug statements) | [format-check.sh](hooks/format-check.sh) (Prettier) | [env-guard.sh](hooks/env-guard.sh) (secrets) | [build-check.sh](hooks/build-check.sh) (OOM-safe builds) | [session-start-check.sh](hooks/session-start-check.sh) (environment validation) | [firewall.sh](hooks/firewall.sh) (dangerous command blocker) | [protect-paths.sh](hooks/protect-paths.sh) (protected file guard) | [audit-log.sh](hooks/audit-log.sh) (raw-prompt compliance log)
+**11 included hooks:** [ts-check.sh](hooks/ts-check.sh) (type errors) | [lint-check.sh](hooks/lint-check.sh) (ESLint) | [pre-commit-guard.sh](hooks/pre-commit-guard.sh) (debug statements) | [format-check.sh](hooks/format-check.sh) (Prettier) | [env-guard.sh](hooks/env-guard.sh) (secrets) | [build-check.sh](hooks/build-check.sh) (OOM-safe builds) | [session-start-check.sh](hooks/session-start-check.sh) (environment validation) | [firewall.sh](hooks/firewall.sh) (dangerous command blocker) | [protect-paths.sh](hooks/protect-paths.sh) (protected file guard) | [audit-log.sh](hooks/audit-log.sh) (raw-prompt compliance log) | [verify-gate.sh](hooks/verify-gate.sh) (Stop-blocking verify gate with baseline diffing)
 
 > See **[hooks/README.md](hooks/README.md)** for setup and **[config/hooks-example.json](config/hooks-example.json)** for a complete configuration with all included hooks wired up.
 
