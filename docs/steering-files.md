@@ -76,6 +76,28 @@ Claude Code reads the closest `CLAUDE.md` first, then walks up. See [path-scoped
 
 ---
 
+## Why Size Matters — The Down-Weighting Mechanism
+
+Steering files do not fail because they exceed a token budget. They fail because **bloated instruction sets cause the harness to down-weight all instructions uniformly** — including the critical ones. A 400-line `CLAUDE.md` does not give the model "more guidance"; it dilutes the weight of every rule in the file.
+
+This is the mechanical reason behind keeping the root file lean. It is not about cost. It is about whether the rule you actually need the model to follow is given enough attention relative to the noise around it.
+
+Practical implication: every line should prevent a real, observed mistake. If you cannot point to the incident that justified the rule, the rule is paying tax against the rules that can.
+
+---
+
+## Linter-Conflict Check
+
+Before merging any change to `CLAUDE.md`, confirm no instruction contradicts what the linter or formatter already enforces. The classic failure:
+
+> CLAUDE.md says "always use semicolons" while Prettier is configured to strip them.
+
+The model now spends every session re-adding semicolons that the formatter immediately removes — fighting the tooling on every save. Either delete the CLAUDE.md rule (linter wins) or fix the linter config (style preference wins) — never both.
+
+This applies to any deterministically-enforced rule: import order, quote style, trailing commas, line length, naming conventions covered by ESLint plugins, etc. **If the linter enforces it, do not also write it in `CLAUDE.md`.** Duplicated rules dilute signal; conflicting rules waste tokens on a fight the agent cannot win.
+
+---
+
 ## Keeping Steering Files Alive
 
 A steering file that nobody updates rots. Rot manifests as: the model ignores rules that no longer match the codebase; reviewers stop quoting the file in PR comments; new team members ask questions the file was supposed to answer.

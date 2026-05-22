@@ -115,6 +115,45 @@ Notice the pattern: **specific error + scope constraint + clear goal**.
 
 ---
 
+## Working in Large Codebases
+
+Three small habits make Claude Code dramatically more useful in monorepos and large polyglot repos. None require new tooling.
+
+**1. Start Claude in a subdirectory, not the repo root.**
+
+Claude Code walks up the directory tree automatically to find `CLAUDE.md` and project context. Starting at the root pulls every nested `CLAUDE.md`, every skills folder, and every irrelevant doc into your initial context. Starting inside the area you actually intend to change scopes the context to what is relevant.
+
+```bash
+# Bad — root of a 40-package monorepo
+cd ~/repos/big-monorepo && claude
+
+# Good — the package you're actually working in
+cd ~/repos/big-monorepo/packages/payments && claude
+```
+
+**2. Add a `.claudeignore` file at the repo root.**
+
+Same role as `.gitignore`, but for what Claude reads when exploring the codebase. Exclude generated code, build artifacts, vendored dependencies, fixtures, and snapshots. A minimal example:
+
+```
+node_modules/
+dist/
+build/
+.next/
+coverage/
+**/__snapshots__/
+**/generated/
+vendor/
+```
+
+The smaller the scannable surface, the more accurate `Grep`/`Glob` answers will be — and the less likely Claude is to confidently quote a stale generated file.
+
+**3. Prefer LSP over `grep` for symbol navigation.**
+
+If you have the OMC LSP tools (or any MCP server exposing `goto_definition` / `find_references` / `workspace_symbols`), use them for symbol lookups in typed codebases. `grep "handleAuth"` returns every comment, log line, and unrelated function with the same name. `lsp_find_references` returns only the actual call sites — which is what you almost always want.
+
+---
+
 ## The 5 Rules That Matter Most
 
 If you remember nothing else from this playbook:

@@ -31,10 +31,11 @@ Enforce the Red-Green-Refactor cycle. Tests define the contract before implement
    - Include happy path, edge cases, and error cases
    - Tests should be specific and descriptive — test names explain the contract
 
-3. **Confirm tests fail for the right reason:**
+3. **Confirm tests fail for the right reason (NON-NEGOTIABLE):**
    - Run the test suite: `npm test`, `pytest`, `go test`, etc.
    - Verify failures are "function not found" or "wrong return value" — not syntax errors
    - If tests fail for the wrong reason, fix the test first
+   - **Never skip this step.** Tests that go green on first run are tautological or mocked the behavior under test. A test you never watched fail is theater, not verification.
 
 4. **Implement minimum code to pass (GREEN):**
    - Write the simplest code that makes all tests pass

@@ -223,6 +223,44 @@ Correct: acknowledge urgency, explain the risk of skipping tests, offer minimal 
 
 ---
 
+## Long-Session Hygiene — Surviving Compaction
+
+Authority and commitment principles cover one prompt. Long autonomous loops (ralph, ultrawork, overnight queues) face a different failure mode: **compaction destroys context, and the agent drifts from work into narration**. Three patterns hold the line.
+
+### 1. YAML state block
+
+Keep a compact running-state header at the top of working notes. Survives partial context loss far better than prose.
+
+```yaml
+current_task: "Fix 401 in /api/users on token refresh"
+last_action: "Added refresh-token guard in middleware/auth.ts:42"
+last_verification: "vitest run auth.test.ts → 12 passing"
+open_blockers: []
+next_action: "Wire guard into /admin route and re-run integration tests"
+```
+
+### 2. Session continuity documents
+
+Every N cycles (or before any planned compaction), generate a detailed handoff doc into `.omc/state/sessions/` or `docs/retros/`. Include a one-paragraph diff against the previous version. After ~3 compactions, start a fresh session and bootstrap from the latest doc — don't try to push through context rot.
+
+### 3. Per-cycle ship/blocker/update rule
+
+Add to ralph/ultrawork/loop skills:
+
+```markdown
+Every iteration you MUST do exactly one of:
+  - ship a diff,
+  - name a concrete blocker,
+  - update the plan with what you learned this cycle.
+
+Pure narration is a protocol violation. If you cannot do one of the
+three, stop the loop and ask the user.
+```
+
+This is the anti-rot guard. Without it, long loops degrade into thoughtful essays *about* the work instead of *doing* the work.
+
+---
+
 ## Why This Matters More With Opus 4.7
 
 Opus 4.7's [literal instruction following]({{ site.baseurl }}/docs/opus-4-7/) makes the authority and commitment principles more potent — and the absence of them more costly.
