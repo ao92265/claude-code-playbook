@@ -98,6 +98,33 @@ This applies to any deterministically-enforced rule: import order, quote style, 
 
 ---
 
+## Anti-Pattern: CLAUDE.md As Session Memory
+
+A popular online recipe — repeated across Medium posts and Reddit threads through 2026 — recommends ending every session with the instruction:
+
+> "Update `CLAUDE.md` with everything you learned today."
+
+**Do not do this.** It directly contradicts the down-weighting mechanism above. A `CLAUDE.md` that accumulates a month of session learnings is a steering file in name only; in practice it has become a memory dump where the critical rules are buried under transcript-grade observations. Every rule in the file is now read with less weight.
+
+End-of-session learnings belong somewhere else:
+
+| Type of learning | Where it goes |
+|:--|:--|
+| Reusable pattern across projects | A new or updated skill |
+| Mistake the agent made + the fix that worked | `tasks/lessons.md` or `docs/retros/YYYY-MM-DD-<slug>.md` |
+| Personal preference about how to work | Auto-memory system (`~/.claude/projects/.../memory/`) |
+| House rule a reviewer would quote in a PR | `CLAUDE.md` — but only if it passes the three-strike test below |
+
+A new line earns a place in `CLAUDE.md` only when **all three** of these are true:
+
+1. The mistake the line prevents has happened at least three times.
+2. The line, if it had existed earlier, would have prevented all three.
+3. No existing line already covers it.
+
+Otherwise, the learning is real and worth keeping — just not here.
+
+---
+
 ## Keeping Steering Files Alive
 
 A steering file that nobody updates rots. Rot manifests as: the model ignores rules that no longer match the codebase; reviewers stop quoting the file in PR comments; new team members ask questions the file was supposed to answer.

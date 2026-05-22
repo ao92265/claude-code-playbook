@@ -231,6 +231,16 @@ These are the most common mistakes from 900+ sessions. Each one has burned real 
 
 ## Document Anti-Patterns
 
+### 23. CLAUDE.md As Session Memory
+
+**Don't:** End every session with "Update CLAUDE.md with everything you learned today."
+
+**Why it fails:** This advice circulates widely on Medium and Reddit but contradicts how the harness weights instructions. A bloated `CLAUDE.md` causes uniform down-weighting of **every** rule in the file — including the critical ones. A month of session learnings turns a steering file into a memory dump, and the rules that prevent real bugs lose attention to transcript-grade observations. The lean root file is lean because lean files get read with weight.
+
+**Do instead:** Route end-of-session learnings to where they belong — skills (reusable patterns), `tasks/lessons.md` or `docs/retros/` (mistakes and fixes), the auto-memory system (personal preferences). A new line earns a place in `CLAUDE.md` only when (1) the mistake recurred ≥3 times, (2) the line would have prevented all three, and (3) no existing line already covers it. See [steering-files.md §Anti-Pattern: CLAUDE.md As Session Memory](steering-files.md#anti-pattern-claudemd-as-session-memory).
+
+---
+
 ### 22. Silent Conflict Resolution
 
 **Don't:** Quietly pick one number when the appendix table and the prose disagree.
@@ -267,3 +277,4 @@ These are the most common mistakes from 900+ sessions. Each one has burned real 
 | 20 | Stale lessons | Review and prune monthly |
 | 21 | Cognitive debt | Spec → scoped tasks → PR review → test. Governance is the product |
 | 22 | Silent conflict resolution | Flag the conflict, don't resolve it. Surface in the Closeout Trio |
+| 23 | CLAUDE.md as session memory | Learnings → skills/lessons.md/auto-memory. Three-strike test for any new line |
