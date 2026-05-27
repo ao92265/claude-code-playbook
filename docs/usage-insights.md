@@ -150,6 +150,38 @@ Four user-level skills + one hook upgrade addressing each friction category:
 3. **Parallelism is a friction fix, not just a speedup.** The sequential ralph-loop pattern was hitting usage limits mid-batch, which forced restart with stale context. `/pr-fleet` with 3 concurrent worker subagents per worktree finishes inside a single context window and only escalates protected-path PRs to the operator.
 4. **Pre-authorize protected paths at planning time, not edit time.** The schema-protect hook is correct; the workflow around it was wrong. New rule: Claude must surface "this requires schema changes" during the plan, not after attempting an edit and getting blocked.
 
+## May 2026 follow-up #2 — third `/insights` run, horizon items shipped
+
+*Snapshot: 2026-04-22 → 2026-05-27, 62 sessions analyzed, 148 commits.*
+
+Third pass surfaced two new friction shapes plus three "on the horizon" workflows the report nominated. Six concrete additions shipped same-day:
+
+| Change | Type | Friction it kills |
+|---|---|---|
+| `~/.claude/read-once/hook.sh` — Read-before-Edit guard | PreToolUse hook | The "File must be read first" error class that interrupted batch PR sweeps. Records every Read into a per-session list; blocks Edit/Write/MultiEdit on un-Read existing files. Bypass: `OMC_SKIP_HOOKS=read-once` |
+| CLAUDE.md "Pre-completion checklist" rule | Prompt-level directive | "Why stop, keep going" stalls. Before declaring multi-task work done, MUST enumerate every original ask + paste verify command + exit code + flag deferred items |
+| `/pr-fleet` extension — shared state + pre-flight | Skill upgrade | Workers stalling silently when one hits a firewall/hook block. Adds `.omc/state/pr-swarm.json` with atomic mkdir-mutex claim/release, plus a `preflight` step that hard-fails on missing `gh`/`jq`/auth/fetch before any worker spawns |
+| `/refactor-loop` skill | New skill | Half-baked refactors shipping regressions. Generates Playwright/Vitest characterization tests pinning current behavior, commits them on a baseline branch, then iterates the refactor until tests stay green (max 20 iterations) |
+| `/critic` skill | New skill | Plans approved without adversarial second-opinion. Wraps the OMC critic agent for a one-shot review covering scope creep, symptom-vs-root-cause, missing tests, fabricated facts, unverified assumptions |
+| pr-fleet state-helpers CLI | New script | `state-helpers.sh init|claim|done|block|report|preflight` for worker subagents to read/write shared state without race conditions |
+
+### What the report got wrong
+
+The `/insights` recommendation list assumed several gaps that turned out to already be filled:
+
+- "Firewall blocks `--force-with-lease`" — `firewall.sh:33` already allows the safe variant; the friction was a stale workflow assumption, not a hook bug.
+- "Add anti-sycophancy rule" / "plain-English rule" — both already in CLAUDE.md ("Epistemic + Candor" and "Communication Register" sections).
+- "Build a /pr-fix skill" — covered by existing `pr-fleet` / `pr-merge-queue` / `wraith-pr-review`.
+
+Gap analysis BEFORE building saved roughly 4 hours of duplicate-work effort. The pattern: every `/insights` recommendation needs a "does this already exist?" pass before it goes on the build list.
+
+### Lessons that generalize
+
+1. **A no-op stub hook is worse than no hook.** `~/.claude/read-once/hook.sh` had been a `exit 0` placeholder for months. The slot was reserved but the enforcement was zero, so the friction the hook was supposed to kill kept appearing. Audit your `settings.json` for hooks whose script body is a stub.
+2. **Worker swarms need shared state OR they're sequential cosplay.** Pre-state-file, three `pr-fleet` workers running in parallel could each claim the same PR; in practice they didn't, but only because triage filtered to disjoint queues. With explicit `claim`/`done`/`block` semantics the swarm survives partial failures and overlapping triage, which is the whole point.
+3. **Refactor-first ≠ TDD.** Existing `tdd-fix` is bug-fix-first: write the failing test, then fix. `refactor-loop` is the inverse: pin behavior FIRST with characterization tests, then refactor without changing behavior. Conflating them led to the Centurion redesign shipping regressions.
+4. **Horizon items are usually one-day builds.** The report framed self-healing swarms and TDD refactor loops as "as models get stronger." Both shipped same-day as small extensions to existing skills. Don't defer ambitious-sounding workflows until you've checked whether they're actually 200 lines on top of what already exists.
+
 ## Methodology notes
 
 - Counts are aggregated from `~/.claude/projects/*/*.jsonl` files with `mtime` ≤ 30 days.
