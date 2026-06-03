@@ -82,9 +82,13 @@ sequenceDiagram
 # verify-gate.sh — Stop hook + baseline arming.
 #
 # Modes:
-#   --arm   : capture current tsc error count as baseline, set flag, exit 0.
-#   (none)  : Stop-hook mode. Block stop (exit 2) only if errors REGRESSED.
-#             Flag absent → exit 0 (no-op).
+#   --arm       : capture current tsc error count as baseline, set flag, exit 0.
+#   --auto-arm  : PreToolUse(Edit|Write) mode. Reads tool_input JSON from stdin.
+#                 If the edited file is source + in a JS/TS repo + not already
+#                 armed, set the flag and capture baseline in the BACKGROUND.
+#                 Always exits 0 — never blocks an edit. "Set and forget" arming.
+#   (none)      : Stop-hook mode. Block stop (exit 2) only if errors REGRESSED.
+#                 Flag absent → exit 0 (no-op).
 #
 # Files (under repo's .claude/state/):
 #   needs-verify       — empty marker
@@ -126,6 +130,26 @@ count_tsc_errors() {
   echo "$out" | grep -cE 'error TS[0-9]+'
 }
 
+# --auto-arm: PreToolUse(Edit|Write). Non-blocking — always exits 0.
+if [ "${1:-}" = "--auto-arm" ]; then
+  INPUT=$(cat)
+  FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty' 2>/dev/null)
+  [ -z "$FILE_PATH" ] && exit 0
+  case "$FILE_PATH" in
+    *.ts|*.tsx|*.js|*.jsx|*.mjs|*.cjs|*.vue|*.svelte) ;;   # source files only
+    *) exit 0 ;;
+  esac
+  REPO=$(find_repo) || exit 0
+  [ -f "$REPO/package.json" ] || exit 0                      # JS/TS repos only
+  [ -f "$REPO/.claude/state/needs-verify" ] && exit 0        # already armed
+  mkdir -p "$REPO/.claude/state"
+  touch "$REPO/.claude/state/needs-verify"                   # arm immediately (race-free)
+  # PreToolUse fires before the edit lands, so baseline ≈ pre-edit state.
+  # Run it backgrounded so the edit is never delayed.
+  ( N=$(count_tsc_errors "$REPO"); echo "tsc_errors=$N" > "$REPO/.claude/state/verify-baseline" ) >/dev/null 2>&1 &
+  exit 0
+fi
+
 if [ "${1:-}" = "--arm" ]; then
   REPO=$(find_repo) || { echo "verify-gate: no repo found from $PWD" >&2; exit 1; }
   mkdir -p "$REPO/.claude/state"
@@ -142,8 +166,15 @@ BASELINE="$REPO_ROOT/.claude/state/verify-baseline"
 FLAG="$REPO_ROOT/.claude/state/needs-verify"
 mkdir -p "$(dirname "$LOG")"
 
-BASE=0
-[ -f "$BASELINE" ] && BASE=$(grep -oE 'tsc_errors=[0-9]+' "$BASELINE" | cut -d= -f2)
+# No baseline yet → auto-arm's background capture hasn't finished (or never ran).
+# Without a trusted baseline we can't tell a regression from a pre-existing error,
+# so clear the flag and pass rather than block falsely.
+if [ ! -f "$BASELINE" ]; then
+  echo "[verify-gate] $(date '+%F %T') no baseline — pass" >> "$LOG"
+  rm -f "$FLAG"
+  exit 0
+fi
+BASE=$(grep -oE 'tsc_errors=[0-9]+' "$BASELINE" | cut -d= -f2)
 BASE=${BASE:-0}
 CUR=$(count_tsc_errors "$REPO_ROOT")
 
@@ -206,6 +237,31 @@ Add a `Stop` entry in `~/.claude/settings.json`:
 
 `timeout` should be generous enough for a full `tsc -b` on the largest repo you'll arm.
 
+### Optional: auto-arm on every code edit
+
+If you'd rather never think about arming, wire `--auto-arm` as a `PreToolUse` hook on `Edit|Write`. The first time Claude edits a source file in a JS/TS repo, the gate arms itself (baseline captured in the background) and the Stop hook takes over from there:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/verify-gate.sh --auto-arm",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+The hook is non-blocking (always exits 0) and the baseline capture is backgrounded, so it adds no latency to the edit itself. It only fires for source extensions (`.ts/.tsx/.js/.jsx/.mjs/.cjs/.vue/.svelte`) in repos with a `package.json`, and arms at most once per session. See the [design note](#design-notes) on the tradeoff vs. explicit arming.
+
 ---
 
 ## Daily Workflow
@@ -231,10 +287,12 @@ rm .claude/state/needs-verify
 
 **Why baseline diffing instead of strict pass?** Most enterprise codebases have at least some pre-existing tsc noise. A strict gate punishes Claude for things that were already broken, and you get infinite loops on every Stop. Baseline diffing enforces "don't make it worse" — which is the actual contract you want.
 
-**Why an explicit arm step instead of triggering on every Edit?** Two reasons:
+**Explicit arm vs. auto-arm — which to use?** The original design favored an explicit `--arm` for two reasons:
 
 1. **Cost.** A full `tsc -b` on a large monorepo is 30–120s. Running it on every Stop, including non-code chats, is wasteful.
 2. **Intent.** The arm step is a deliberate signal: "I am about to give Claude a task where regressions matter." Chat sessions, exploration, and doc edits don't get armed.
+
+The `--auto-arm` mode keeps both properties while removing the manual step: it only fires for **source-file** edits in a **JS/TS repo** (so docs/chat/exploration never arm), and it captures the baseline **in the background** at the first edit (so the edit itself pays no latency cost). The cost objection moves entirely to Stop time — where you wanted the check anyway. The remaining tradeoff is *intent*: auto-arm assumes "if Claude is editing source, regressions matter," which is true for almost every coding session but does mean you can't cheaply opt a single session out (delete `.claude/state/needs-verify` to abort). Use explicit `--arm` when you want per-task control; use `--auto-arm` when you want a standing safety net you never have to remember.
 
 **Why exit 2, not just a message?** Claude Code interprets exit 2 from a Stop hook as "you must continue." Any other exit (including 1) is treated as a non-blocking warning and the session ends. This is the only reliable way to force iteration.
 
@@ -253,6 +311,7 @@ rm .claude/state/needs-verify
 | Stops without verifying | Flag absent (forgot to arm) | Expected — gate is opt-in per task |
 | Tests run on docs-only repos | `package.json` has a real test script | Move the test script behind a separate package, or skip arming for that repo |
 | Times out | `tsc -b` exceeds hook timeout on large monorepo | Increase `timeout` in settings.json; consider `--noEmit` instead of `-b` |
+| Auto-arm session stops without verifying | Stopped before the background baseline finished writing | Expected — the no-baseline guard passes rather than block falsely. Longer sessions (the ones that matter) always catch up. |
 
 ---
 
