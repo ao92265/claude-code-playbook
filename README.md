@@ -187,6 +187,7 @@ claude-code-playbook/
 │   ├── spec-driven-stack.md   # Big 5 + GS stack: SpecKit, BMAD, GSD, BART, Claude Code, GStack
 │   ├── harness.md             # Harness vs model vs rules — what to build, what to use
 │   ├── harness-pattern.md     # The Harness Pattern — why vibe coding fails; three checks
+│   ├── planning-blueprint.md  # 7 subagents (1 role/1 artifact/1 lane) → parallel → merge → adversarial QA
 │   ├── steering-files.md      # Enforceable house rules for AI-generated code
 │   ├── audit-log-hook.md      # Raw-prompt compliance logging (aidlc-workflows pattern)
 │   ├── verify-gate-hook.md    # Stop hook that blocks until tsc/tests pass (baseline-diffed)
@@ -684,6 +685,7 @@ Never append to shared context files. Always replace the entire content and keep
 | **[Spec-Driven Stack 2026](docs/spec-driven-stack.md)** | Guide | Big 5 + GS: SpecKit, BMAD, GSD, BART mode, Claude Code, GStack — one operating model |
 | **[Harness](docs/harness.md)** | Guide | Harness vs model vs rules: Claude Code, Agent SDK, and when to write rules instead |
 | **[Harness Pattern](docs/harness-pattern.md)** | Play | Why vibe coding fails: three checks (steering, content store, comprehension), anti-patterns, agent hardening |
+| **[Planning Blueprint](docs/planning-blueprint.md)** | Play | Seven subagents (one role / one artifact / one lane) run in parallel, merged by hand, then attacked by an adversarial read-only QA reviewer |
 | **[Steering Files](docs/steering-files.md)** | Guide | Writing enforceable house rules: good-vs-bad rule test, nested CLAUDE.md, minimum viable checklist |
 | **[Audit Log Hook](docs/audit-log-hook.md)** | Guide | Raw-prompt compliance logging adapted from awslabs/aidlc-workflows |
 | **[Verify Gate Hook](docs/verify-gate-hook.md)** | Guide | Stop hook with baseline-diffed tsc/test verification — forces Claude to keep working until regressions are fixed |
