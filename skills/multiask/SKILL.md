@@ -1,6 +1,6 @@
 ---
 name: multiask
-description: "Cross-check answer across 5 AI CLIs (claude/codex/gemini/copilot/kiro) in parallel + adversarial review. Auto-trigger only for high-stakes: security-critical code, prod incidents, scale architecture (>1k RPS), irreversible decisions (DB migrations, breaking API changes). Or explicit /multiask. Cost ~1M tokens + 30-65s per call. Skip for normal coding, bug fixes, lookups, refactors."
+description: "Cross-check answer across 5 AI CLIs (claude/codex/gemini/copilot/kiro) in parallel + adversarial review. Auto-trigger only for high-stakes: security-critical code, prod incidents, scale architecture (over 1k RPS), irreversible decisions (DB migrations, breaking API changes). Or explicit /multiask. Cost ~1M tokens + 30-65s per call. Skip for normal coding, bug fixes, lookups, refactors."
 ---
 
 # /multiask — Parallel multi-CLI fan-out with adversarial review

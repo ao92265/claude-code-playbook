@@ -1,6 +1,6 @@
 ---
 name: loom-analyze
-description: Download a Loom video share URL and produce an audio transcript (whisper) plus optional keyframes for visual analysis. Triggers on any loom.com share URL the user provides, or on phrases "transcribe this loom", "analyze this loom", "watch this loom", "/loom-analyze <url>".
+description: Download a Loom video share URL and produce an audio transcript (whisper) plus optional keyframes for visual analysis. Triggers on any loom.com share URL the user provides, or on phrases "transcribe this loom", "analyze this loom", "watch this loom", or "/loom-analyze" followed by a URL.
 ---
 
 # Loom Analyze
@@ -46,3 +46,5 @@ bash ${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/loom-analyze/setup.sh
 ```
 
 Installs `yt-dlp`, `ffmpeg`, `openai-whisper` via Homebrew + pip. Idempotent.
+
+For machine requirements, model disk sizes, troubleshooting, and limitations, see `references/usage.md`.

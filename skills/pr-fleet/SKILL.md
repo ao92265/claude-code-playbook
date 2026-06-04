@@ -1,6 +1,6 @@
 ---
 name: pr-fleet
-description: Overnight parallel PR processing via subagent fleet + git worktrees. Coordinator triages backlog, spawns one worker per PR (capped at 3 concurrent), only escalates protected-path or non-trivial conflicts to user. Triggers "/pr-fleet", "overnight pr fleet", "parallel pr merge".
+description: Overnight parallel PR processing via subagent fleet + git worktrees. Coordinator triages backlog, spawns one worker per PR (capped at 3 concurrent), only escalates protected-path or non-trivial conflicts to user. Triggers "/pr-fleet", "overnight pr fleet", "parallel pr merge". Do NOT use for: a single PR (merge it directly), non-GitHub repos, or when you need interactive per-PR review rather than autonomous clearing.
 ---
 
 # PR Fleet — Parallel Overnight PR Orchestrator

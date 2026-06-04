@@ -1,6 +1,6 @@
 ---
 name: pr-merge-queue
-description: Batched PR merge loop with checkpoints. Use when triaging/merging open PR backlog across a repo. Triggers "merge queue", "pr backlog", "/pr-merge-queue", or autonomous ralph-style PR clearing sessions.
+description: Batched PR merge loop with checkpoints. Use when triaging/merging open PR backlog across a repo. Triggers "merge queue", "pr backlog", "/pr-merge-queue", or autonomous ralph-style PR clearing sessions. Do NOT use for: a single PR, fully autonomous overnight clearing (use pr-fleet), or non-PR git work.
 ---
 
 # PR Merge Queue
