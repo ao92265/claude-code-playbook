@@ -36,6 +36,42 @@ Rules to delete AI tells aren't enough. You also have to write like a person who
 ### Closers
 "I hope this helps", "Let me know if you have any questions", "Looking forward to your thoughts", "Cheers!", "Stay tuned", "Until next time".
 
+## Register-neutral tells (detection pass)
+
+The patterns above target casual voice. These fire in **any** register — casual *and*
+formal (Viva, blog, professional). Run this pass before the casual rewrite; on formal
+drafts where lowercase/profanity don't apply, this pass is the whole job. Each is **detect → fix**.
+
+1. **Significance inflation.** "stands as / serves as a testament", "a pivotal moment", "plays a vital/crucial role", "marked a turning point", "reflects a broader shift". → State the plain fact. Cut the importance claim.
+2. **"-ing" analysis tails.** Trailing participial clauses that editorialize: "..., highlighting its impact", "..., underscoring the need", "..., reflecting a shift", "..., ensuring success". → Delete the tail, or make it a separate concrete sentence.
+3. **Copulative avoidance.** "serves as", "stands as", "boasts", "features", "acts as" where "is/has" would do. → Use "is" / "has".
+4. **"Despite its X, faces challenges..." conclusion.** Formulaic challenge-then-future-outlook wrap-up. → Cut it. End on a fact.
+5. **Vague attributions.** "Industry reports", "Observers have noted", "Experts argue", "Critics say", "It is widely regarded". → Name the source or delete the claim.
+6. **Elegant variation.** Swapping synonyms for the same noun to dodge repetition ("the tool" → "the solution" → "the platform"). → Repeat the plain word.
+7. **Negative parallelism (extends the "It's not just X, it's Y" rule above).** Also: "not a mirror but a portal", "not A, not B, just C". → One positive statement.
+8. **Travel-brochure words.** "nestled", "in the heart of", "vibrant", "rich tapestry", "boasts a thriving", "breathtaking". → Plain description.
+9. **Rule-of-three padding (see "Parallel triplets" above).** Three-adjective or three-clause runs faking comprehensiveness. → Keep the strongest, cut the rest.
+10. **Smart quotes & curly apostrophes.** `“ ” ‘ ’` from AI / word-processor paste. → Straight `"` and `'`.
+11. **Title Case Headings.** Capitalizing Every Word In A Heading. → Sentence case.
+12. **AI vocabulary cluster (extends the Hype list above).** "delve", "intricate", "interplay", "landscape", "meticulous", "underscore", "tapestry", "testament", "garner", "bolster", "align with", "showcasing", "fostering". → Cut or use a plain word.
+
+Quick scan:
+
+| Tell | Smells like | Fix |
+|---|---|---|
+| Significance inflation | "stands as a testament to innovation" | state the fact, drop the claim |
+| "-ing" tail | "..., highlighting its impact" | delete or split out |
+| Copulative avoidance | "serves as the hub" | "is the hub" |
+| Despite/challenges wrap-up | "Despite its success, it faces challenges" | cut, end on a fact |
+| Vague attribution | "Experts argue" | name the source or cut |
+| Elegant variation | tool → solution → platform | repeat "tool" |
+| Negative parallelism | "not a mirror but a portal" | one positive statement |
+| Travel-brochure | "nestled in the heart of" | plain description |
+| Rule-of-three | "fast, reliable, scalable" | pick one |
+| Smart quotes | `“ ” ‘ ’` | `" '` |
+| Title Case Heading | "Key Benefits And Features" | "Key benefits and features" |
+| AI vocab | "delve into the intricate landscape" | cut / plain words |
+
 ## Voice model: r/programming + HN + dev Twitter
 
 Read this. This is what real people write like:
