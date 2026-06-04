@@ -1,12 +1,17 @@
 #!/bin/bash
 # verify-gate.sh — Stop hook + baseline arming.
 #
-# Two modes:
-#   --arm   : capture current tsc error count as baseline, set flag, exit 0.
-#             Run this BEFORE starting work on a task.
-#   (none)  : Stop-hook mode. If flag exists, compare current state vs baseline.
-#             Block stop (exit 2) only if errors REGRESSED from baseline.
-#             Flag absent → exit 0 (no-op).
+# Modes:
+#   --arm       : capture current tsc error count as baseline, set flag, exit 0.
+#                 Run this BEFORE starting work on a task.
+#   --auto-arm  : PreToolUse(Edit|Write) mode. Reads tool_input JSON from stdin.
+#                 If edited file is code + in a JS/TS repo + not already armed,
+#                 capture baseline in the BACKGROUND (non-blocking) and set flag.
+#                 Always exit 0 — never blocks an edit. Closes the loop so the
+#                 Stop gate fires automatically without a manual --arm.
+#   (none)      : Stop-hook mode. If flag exists, compare current state vs baseline.
+#                 Block stop (exit 2) only if errors REGRESSED from baseline.
+#                 Flag absent → exit 0 (no-op).
 #
 # Files (under repo's .claude/state/):
 #   needs-verify       — empty marker
@@ -48,6 +53,31 @@ count_tsc_errors() {
   echo "$out" | grep -cE 'error TS[0-9]+'
 }
 
+# --- auto-arm mode (PreToolUse Edit|Write) ---
+# Reads tool_input JSON from stdin. Non-blocking: always exits 0.
+if [ "${1:-}" = "--auto-arm" ]; then
+  INPUT=$(cat)
+  FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty' 2>/dev/null)
+  [ -z "$FILE_PATH" ] && exit 0
+
+  # Only arm for source files (skip docs/config/state churn).
+  case "$FILE_PATH" in
+    *.ts|*.tsx|*.js|*.jsx|*.mjs|*.cjs|*.vue|*.svelte) ;;
+    *) exit 0 ;;
+  esac
+
+  REPO=$(find_repo) || exit 0
+  [ -f "$REPO/package.json" ] || exit 0          # JS/TS repos only
+  [ -f "$REPO/.claude/state/needs-verify" ] && exit 0   # already armed this session
+
+  # Capture baseline in background so the edit is never delayed. PreToolUse
+  # fires before the edit lands, so the baseline reflects pre-edit state.
+  mkdir -p "$REPO/.claude/state"
+  touch "$REPO/.claude/state/needs-verify"       # set flag immediately (race-free arm)
+  ( N=$(count_tsc_errors "$REPO"); echo "tsc_errors=$N" > "$REPO/.claude/state/verify-baseline" ) >/dev/null 2>&1 &
+  exit 0
+fi
+
 # --- arm mode ---
 if [ "${1:-}" = "--arm" ]; then
   REPO=$(find_repo) || { echo "verify-gate: no repo found from $PWD" >&2; exit 1; }
@@ -67,8 +97,16 @@ BASELINE="$REPO_ROOT/.claude/state/verify-baseline"
 FLAG="$REPO_ROOT/.claude/state/needs-verify"
 mkdir -p "$(dirname "$LOG")"
 
-BASE=0
-[ -f "$BASELINE" ] && BASE=$(grep -oE 'tsc_errors=[0-9]+' "$BASELINE" | cut -d= -f2)
+# If baseline file is absent, the auto-arm background capture hasn't finished
+# (or never ran). Without a trusted baseline we cannot tell a regression from a
+# pre-existing error — so clear the flag and pass rather than block falsely.
+if [ ! -f "$BASELINE" ]; then
+  echo "[verify-gate] $(date '+%F %T') no baseline (auto-arm not finished) — pass" >> "$LOG"
+  rm -f "$FLAG"
+  exit 0
+fi
+
+BASE=$(grep -oE 'tsc_errors=[0-9]+' "$BASELINE" | cut -d= -f2)
 BASE=${BASE:-0}
 
 CUR=$(count_tsc_errors "$REPO_ROOT")

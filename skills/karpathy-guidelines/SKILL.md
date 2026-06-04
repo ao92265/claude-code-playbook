@@ -13,9 +13,8 @@ metadata:
   user-invocable: true
   slash-command: /karpathy
   proactive: false
-title: "Karpathy Guidelines"
-parent: Skills & Extensibility
 ---
+
 # Karpathy Guidelines
 
 Behavioral guidelines to reduce common LLM coding mistakes, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding pitfalls.
@@ -35,7 +34,7 @@ Execute all steps before writing any code. For trivial single-line changes, step
    - If inferred and consequential: state it aloud and ask for confirmation before proceeding.
    - If inferred and obvious: note it briefly, then continue.
 3. Check whether multiple valid interpretations of the request exist.
-   - If yes: present them as numbered another-projectns. Do not pick silently. Wait for the user to select one.
+   - If yes: present them as numbered options. Do not pick silently. Wait for the user to select one.
    - If no: continue.
 4. Check whether a simpler approach exists than what was asked for.
    - If yes: surface it. Push back if warranted. Do not silently implement the more complex path.

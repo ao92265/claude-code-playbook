@@ -1,0 +1,14 @@
+{
+  "name": "claude-code-playbook",
+  "owner": {
+    "name": "ao92265",
+    "url": "https://github.com/ao92265"
+  },
+  "plugins": [
+    {
+      "name": "playbook",
+      "source": "./",
+      "description": "Battle-tested Claude Code skills, hooks, and verification gates for working engineers"
+    }
+  ]
+}

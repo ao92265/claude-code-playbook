@@ -21,7 +21,7 @@ Local pipeline (no API key, no third-party MCP) that turns a Loom share URL into
 The shell wrapper lives next to this file: `loom-analyze.sh`. Always call it through Bash.
 
 ```bash
-~/.claude/skills/loom-analyze/loom-analyze.sh <URL> [--model M] [--frames N] [--keep]
+${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/loom-analyze/loom-analyze.sh <URL> [--model M] [--frames N] [--keep]
 ```
 
 Flags:
@@ -37,12 +37,12 @@ Output goes to `~/Downloads/loom-transcripts/<id>/`. The transcript is printed t
 - **Transcript-only is the fast default.** Don't request frames unless the user asks about visuals, UI, screen content, or a demo walkthrough.
 - **Long videos (>10 min):** stick to `--model base`. `--model small` or larger only when the user specifically complains about transcript accuracy.
 - **When frames are extracted:** read the PNGs from `~/Downloads/loom-transcripts/<id>/frames/` via the Read tool when the user asks what's on screen at a given time. Don't bulk-read every frame; pick the ones that match the question.
-- **First-time setup:** if the script exits with "Missing dep", run `~/.claude/skills/loom-analyze/setup.sh` once, then retry.
+- **First-time setup:** if the script exits with "Missing dep", run `${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/loom-analyze/setup.sh` once, then retry.
 
 ## Setup (per-machine, one-time)
 
 ```bash
-bash ~/.claude/skills/loom-analyze/setup.sh
+bash ${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/loom-analyze/setup.sh
 ```
 
 Installs `yt-dlp`, `ffmpeg`, `openai-whisper` via Homebrew + pip. Idempotent.

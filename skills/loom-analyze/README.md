@@ -4,10 +4,10 @@ Turn a Loom share URL into a transcript (and optional keyframes) locally — no 
 
 ## Install
 
-1. Copy this entire folder to `~/.claude/skills/loom-analyze/` on the target machine.
+1. Copy this entire folder to `${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/loom-analyze/` on the target machine.
 2. Run the one-time setup:
    ```bash
-   bash ~/.claude/skills/loom-analyze/setup.sh
+   bash ${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/loom-analyze/setup.sh
    ```
    Installs Homebrew packages `yt-dlp` + `ffmpeg` and pip package `openai-whisper`.
 3. Restart Claude Code. The skill is auto-discovered from the `SKILL.md` frontmatter.
@@ -23,10 +23,10 @@ Claude will call the shell wrapper and inline the transcript.
 
 Direct CLI use:
 ```bash
-~/.claude/skills/loom-analyze/loom-analyze.sh <URL>                 # transcript only
-~/.claude/skills/loom-analyze/loom-analyze.sh <URL> --frames 10     # +PNG every 10s
-~/.claude/skills/loom-analyze/loom-analyze.sh <URL> --model small   # better accuracy
-~/.claude/skills/loom-analyze/loom-analyze.sh <URL> --keep          # don't delete MP3/MP4
+${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/loom-analyze/loom-analyze.sh <URL>                 # transcript only
+${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/loom-analyze/loom-analyze.sh <URL> --frames 10     # +PNG every 10s
+${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/loom-analyze/loom-analyze.sh <URL> --model small   # better accuracy
+${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/loom-analyze/loom-analyze.sh <URL> --keep          # don't delete MP3/MP4
 ```
 
 Output: `~/Downloads/loom-transcripts/<id>/`

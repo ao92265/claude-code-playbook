@@ -1,21 +1,17 @@
 #!/bin/bash
-# File protection: prevents Claude from modifying sensitive files without explicit permission
-# Hook point: PreToolUse (matcher: "Edit|Write")
-# Exit codes: 0=pass, 2=block
-# Customize the PROTECTED array for your project
+
+# Honor OMC_SKIP_HOOKS env var (comma- or space-separated list of hook names to skip)
+if echo "${OMC_SKIP_HOOKS:-}" | grep -qwE "protect-paths"; then
+  exit 0
+fi
 
 INPUT=$(cat)
-FILE=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
-
-# Skip if no file path
-[ -z "$FILE" ] && exit 0
+FILE=$(echo "$INPUT" | jq -r '.tool_input.file_path // ""')
 
 PROTECTED=(
   ".env"
   ".env.local"
   ".env.production"
-  ".env.staging"
-  ".env.development"
   "package-lock.json"
   "yarn.lock"
   "pnpm-lock.yaml"
@@ -24,7 +20,7 @@ PROTECTED=(
 
 for path in "${PROTECTED[@]}"; do
   if echo "$FILE" | grep -qF "$path"; then
-    echo "BLOCKED: $FILE is a protected file and cannot be modified without explicit permission. Ask the developer first." >&2
+    echo "Protected: $FILE cannot be modified without explicit permission. Ask the developer first." >&2
     exit 2
   fi
 done

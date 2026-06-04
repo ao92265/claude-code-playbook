@@ -8,9 +8,8 @@ description: >
   Do NOT use this skill for: pre-commit review, reviewing code that isn't ready to push,
   non-GitHub repositories, or general code review not tied to a specific GitHub issue number.
   Don't trigger for in-progress work — only use when implementation is complete and push is imminent.
-title: "Codex Pre-Push Review"
-parent: Skills & Extensibility
 ---
+
 # Codex Pre-Push Review
 
 Use this skill when instructed by the user, typically when finished with implementing an issue.
@@ -28,10 +27,10 @@ When instructed by the user, e.g.:
 
 ## How to invoke
 
-Run the script at `~/.claude/skills/codex-prepush-review/run.sh` with the issue number as the sole argument:
+Run the script at `${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/codex-prepush-review/run.sh` with the issue number as the sole argument:
 
 ```bash
-bash ~/.claude/skills/codex-prepush-review/run.sh <issue-number>
+bash ${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/codex-prepush-review/run.sh <issue-number>
 ```
 
 The script:
@@ -44,7 +43,7 @@ The script:
 
 1. **Blockers** (must-fix before push)
 2. **Important** (should-fix)
-3. **Nits** (another-projectnal)
+3. **Nits** (optional)
 4. **Missing tests** (specific test cases)
 5. **Questions for the author** (only if truly needed)
 
