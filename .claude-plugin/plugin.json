@@ -1,0 +1,11 @@
+{
+  "name": "playbook",
+  "description": "Claude Code playbook — battle-tested skills, hooks, and verification gates for working engineers",
+  "version": "1.0.0",
+  "author": {
+    "name": "ao92265",
+    "url": "https://github.com/ao92265/claude-code-playbook"
+  },
+  "homepage": "https://github.com/ao92265/claude-code-playbook",
+  "license": "MIT"
+}

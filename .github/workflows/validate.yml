@@ -68,9 +68,9 @@ jobs:
             clean=$(mktemp)
             tr -d '\r' < "$hook" > "$clean"
 
-            # Check shebang
-            if ! head -1 "$clean" | grep -q "^#!/bin/bash"; then
-              echo "ERROR: $hook missing #!/bin/bash shebang"
+            # Check shebang (accept both /bin/bash and portable env bash)
+            if ! head -1 "$clean" | grep -qE "^#!(/bin/bash|/usr/bin/env bash)"; then
+              echo "ERROR: $hook missing bash shebang (#!/bin/bash or #!/usr/bin/env bash)"
               errors=$((errors + 1))
             fi
 

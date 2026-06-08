@@ -17,14 +17,13 @@ metadata:
   slash-command: /autoskill
   model: default
   proactive: false
-title: "Autoskill: Learn from This Session"
-parent: Skills & Extensibility
 ---
+
 # Autoskill: Learn from This Session
 
 ## Step 1: Resolve Project Context
 
-1. Extract the project name from `$CWD` (e.g., `/path/to/your/project` → `example-project`).
+1. Extract the project name from `$CWD` (e.g., `/path/to/your-project` → `wraith`).
 2. Check whether `.claude/skills/` exists in the project root. If yes, project-local skills are available.
 3. Note the three possible skill destinations:
    - Project-local: `.claude/skills/{project}-{category}.md`

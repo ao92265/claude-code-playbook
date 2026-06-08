@@ -1,4 +1,5 @@
 #!/bin/bash
+case ",${OMC_SKIP_HOOKS:-}," in *,tdd-gate,*) exit 0 ;; esac
 # PreToolUse hook: warn (or block, if TDD_GATE_BLOCK=1) when Claude edits a
 # production source file that has no matching test file. Pairs with the
 # `test-first` skill — soft default is warn-only so it does not get in the
