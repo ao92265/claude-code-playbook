@@ -689,6 +689,7 @@ Never append to shared context files. Always replace the entire content and keep
 | **[Steering Files](docs/steering-files.md)** | Guide | Writing enforceable house rules: good-vs-bad rule test, nested CLAUDE.md, minimum viable checklist |
 | **[Audit Log Hook](docs/audit-log-hook.md)** | Guide | Raw-prompt compliance logging adapted from awslabs/aidlc-workflows |
 | **[Verify Gate Hook](docs/verify-gate-hook.md)** | Guide | Stop hook with baseline-diffed tsc/test verification — forces Claude to keep working until regressions are fixed |
+| **[Auditing & Hardening Your Setup](docs/setup-audit.md)** | Play | Worked case study: one firewall hook as the real Bash deny-layer (bypass voids hard_deny), env-indirected secrets, research-only Bash gate, scheduling orphaned scripts via launchd, and testing variant bypasses |
 | **[News & Research](docs/news/)** | 39 articles | Per-article deep reads of every substantive source behind the April 2026 briefing |
 | **[Article](article.md)** | Article | The original article that inspired this playbook |
 
