@@ -221,6 +221,28 @@ Correct: acknowledge urgency, explain the risk of skipping tests, offer minimal 
    after each model update.
 ```
 
+### Factual Guardrails — the anti-hallucination block
+
+Authority and commitment keep the agent honest about *process*. These three rules keep it honest about *facts*. Paste alongside the block above:
+
+```markdown
+## Factual Guardrails
+
+1. Allow "I don't know."
+   If the provided context is insufficient, state "I do not know"
+   instead of guessing or filling the gap from memory.
+
+2. Cite or omit.
+   Every factual claim carries an inline citation to its source
+   (file:line, doc section, or URL). Uncitable claims are omitted.
+
+3. Quote before you summarise.
+   Extract the word-for-word quotes that support an answer first,
+   then write the summary from those quotes — not from recollection.
+```
+
+For accuracy-critical work, pair these with a thinking budget (`ultrathink` / `think hard`) so the model reasons over the evidence before answering. The reusable prompt version is [Quote-First / Cite-or-Omit](prompt-patterns.md#23-quote-first--cite-or-omit).
+
 ---
 
 ## Long-Session Hygiene — Surviving Compaction
@@ -258,6 +280,16 @@ three, stop the loop and ask the user.
 ```
 
 This is the anti-rot guard. Without it, long loops degrade into thoughtful essays *about* the work instead of *doing* the work.
+
+### 4. The Canary Technique — detect context overload
+
+The state block and handoff docs *survive* compaction. The canary *tells you it happened*. Plant an innocent marker instruction in the base prompt:
+
+```markdown
+Begin every reply with the line: 🐤 canary
+```
+
+While the marker keeps appearing, the model is still honouring its base instructions. The moment it silently drops — no canary, no acknowledgement — the context window is overloaded and early instructions are falling out of attention. That is your signal to act, not push on: `/clear` and bootstrap a fresh session from the latest handoff doc, or `/compact` to reclaim room. The playbook's default cadence (`/compact` around 50%, `/clear` around 80%) is the proactive version of the same guard; the canary is the reactive tripwire for when a long session blows past it. See the context-pollution decay curve in the [power user guide](guide.md) for why a fresh session beats fighting a rotted one.
 
 ---
 

@@ -65,7 +65,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 
 **Learn**
 - A [667-line power user guide](docs/guide.md) covering session management to multi-agent orchestration
-- [22 prompt engineering patterns](docs/prompt-patterns.md) with copy-paste examples and a decision tree
+- [24 prompt engineering patterns](docs/prompt-patterns.md) with copy-paste examples and a decision tree
 - [Quick-reference cheat sheet](docs/cheat-sheet.md) for commands, model routing, and session management
 - [Troubleshooting guide](docs/troubleshooting.md) with 15 common issues and diagnostic flowcharts
 
@@ -150,7 +150,7 @@ graph TB
 claude-code-playbook/
 ├── docs/
 │   ├── guide.md               # The complete power user guide (667 lines)
-│   ├── prompt-patterns.md     # 22 prompt engineering patterns with examples
+│   ├── prompt-patterns.md     # 24 prompt engineering patterns with examples
 │   ├── cheat-sheet.md         # Quick-reference card for commands & workflows
 │   ├── troubleshooting.md     # 15 common issues with diagnostic flowcharts
 │   ├── mcp-servers.md         # MCP server guide: setup, token impact, troubleshooting
@@ -462,6 +462,7 @@ Every skill is a drop-in `/command` that teaches Claude a specific workflow. Cop
 | **[deploy](skills/deploy/)** | Pre-deploy checklist: OOM-safe build, tests, env vars, git status, explicit confirmation | Before any deployment |
 | **[security-check](skills/security-check/)** | Quick security scan for OWASP Top 10: secrets, injection, XSS, auth issues | Before releases or after security-sensitive changes |
 | **[verification-before-completion](skills/verification-before-completion/)** | Forces Claude to prove work is done with actual test/build output | Automatically before "done" claims |
+| **[session-doubt](skills/session-doubt/)** | Two-question reflective close-out: enumerate + root-cause what it's least confident about, then name the biggest blind spot | After substantive work, alongside verification |
 
 </details>
 
@@ -648,7 +649,7 @@ Never append to shared context files. Always replace the entire content and keep
 | | Doc | What It Covers |
 |:--|:----|:---------------|
 | **[Power User Guide](docs/guide.md)** | 667 lines | Full lifecycle: sessions, context, plugins, multi-agent, production lessons |
-| **[Prompt Patterns](docs/prompt-patterns.md)** | 531 lines | 22 patterns: Reverse Prompting, Constraint-First, Scope Lock, SOURCE FACTS / CHANGE LIST, The Closeout Trio, and more |
+| **[Prompt Patterns](docs/prompt-patterns.md)** | 24 patterns | Reverse Prompting, Constraint-First, Scope Lock, SOURCE FACTS / CHANGE LIST, The Closeout Trio, The Doubt Audit, and more |
 | **[Cheat Sheet](docs/cheat-sheet.md)** | 192 lines | Quick-reference: commands, model routing, session management, troubleshooting |
 | **[Troubleshooting](docs/troubleshooting.md)** | 311 lines | 15 issues in Symptoms/Cause/Fix format with 3 diagnostic flowcharts |
 | **[MCP Servers](docs/mcp-servers.md)** | Guide | Setup, token impact, recommended servers, when to disable |

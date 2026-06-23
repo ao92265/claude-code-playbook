@@ -61,6 +61,16 @@ These are the most common mistakes from 900+ sessions. Each one has burned real 
 
 ---
 
+### Trusting Confident, Uncited Claims
+
+**Don't:** Accept a fluent, self-assured answer — "the config lives in `settings.json` under `permissions.allow`" — without checking the source.
+
+**Why it fails:** Hallucination is a *silent* failure. The output reads as done and confident, so there's no error to catch. The 10% that's invented looks identical to the 90% that's real, and you only find out when it breaks downstream. This is the prose equivalent of "the tests pass so it's fine" — except no test ran.
+
+**Do instead:** Require receipts. "Cite `file:line` or quote the source for every claim. If you can't cite it, say you don't know." Use the [Quote-First / Cite-or-Omit pattern](prompt-patterns.md#23-quote-first--cite-or-omit), then run a [Verify Before Done](prompt-patterns.md#11-verify-before-done) pass — or let the [verify gate hook](verify-gate-hook.md) enforce it.
+
+---
+
 ## Workflow Anti-Patterns
 
 ### 6. Planning and Coding in the Same Session

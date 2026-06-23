@@ -458,6 +458,51 @@ End every substantive deliverable with three sections:
 
 ---
 
+### 23. Quote-First / Cite-or-Omit
+
+**When to use:** Any task where a confident wrong answer is worse than "I don't know" — summarising a doc, answering from a spec, reporting what the code does, research over sources. The hallucination guard.
+
+```
+Three rules for this task:
+
+1. Allow "I don't know." If the provided context is insufficient,
+   say "I do not know" — do not guess or fill the gap from memory.
+
+2. Cite or omit. Every factual claim must carry an inline citation
+   to its source (file:line, doc section, or URL). If you can't cite
+   it, leave it out.
+
+3. Quote before you summarise. First extract the word-for-word
+   quotes that support your answer, then write the summary from
+   those quotes — not from recollection.
+```
+
+**Why it works:** Forcing a verbatim quote before the summary anchors the answer to text that actually exists, so the model can't drift into plausible-sounding invention. "Cite or omit" makes an uncitable claim cost more to keep than to drop. "I don't know" gives the model a legal exit, so it stops manufacturing one. For accuracy-critical asks, pair these rules with a thinking budget — prefix the prompt with `ultrathink` (or `think hard`) so Claude reasons through the evidence before committing to an answer. See [#10 Chain-of-Thought Architecture](#10-chain-of-thought-architecture) for structuring that reasoning and [#11 Verify Before Done](#11-verify-before-done) for the completion-side check. The written-output failure mode is catalogued as [Trusting Confident, Uncited Claims](anti-patterns.md#trusting-confident-uncited-claims).
+
+---
+
+### 24. The Doubt Audit
+
+**When to use:** End of any substantial session — after the work looks done and [#11 Verify Before Done](#11-verify-before-done) has actually passed. This is the reflection layer that catches what green tests can't: the assumption nobody checked.
+
+```
+The work looks done. Before I accept it, answer two questions.
+
+1. What are you least confident about right now? Enumerate EVERYTHING —
+   aim for 5-8 items, including ones that feel minor. Then take the items
+   that would actually matter if you're wrong and investigate each one
+   exhaustively — read the code, run the check, trace the path — until you
+   find the root cause. Do not stop at naming the doubt.
+
+2. What is the biggest thing I don't realise about this situation right now?
+   One thing. The highest-leverage risk, reframe, or connection I'm most
+   likely missing — the one that would change a decision, not just inform it.
+```
+
+**Why it works:** A model asked "is this done?" optimises for appearing-done. Asked to *enumerate* its uncertainty, it surfaces the low-confidence regions it would otherwise paper over — and forcing a full list before you curate stops it from quietly dropping the scary item. Question 2 breaks it out of your framing: it can only answer by stepping back from the task you defined to the situation you're actually in, which is where the missed risk usually lives. In practice roughly one run in four turns up something material. Distinct from [#18 Pre-Mortem](#18-pre-mortem) (risks *before* you build) and [#22 The Closeout Trio](#22-the-closeout-trio) (accounting of what was delivered) — this is doubt-surfacing *after* the work, before you trust it. Shipped as the [`session-doubt`](../skills/session-doubt/) skill. Origin: Q1 popularised by Sam Altman as an end-of-session prompt; Q2 a Claude-suggested complement.
+
+---
+
 ## Anti-Patterns
 
 These prompts consistently produce poor results. Avoid them.
