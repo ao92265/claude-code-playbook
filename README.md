@@ -23,8 +23,8 @@
 
 <img src="https://img.shields.io/badge/29-Skills-8B5CF6?style=flat-square" alt="29 Skills"/>
 <img src="https://img.shields.io/badge/11-Templates-F97316?style=flat-square" alt="11 Templates"/>
-<img src="https://img.shields.io/badge/16-Hooks-EF4444?style=flat-square" alt="16 Hooks"/>
-<img src="https://img.shields.io/badge/57-Docs-0078D4?style=flat-square" alt="57 Docs"/>
+<img src="https://img.shields.io/badge/18-Hooks-EF4444?style=flat-square" alt="18 Hooks"/>
+<img src="https://img.shields.io/badge/58-Docs-0078D4?style=flat-square" alt="58 Docs"/>
 <img src="https://img.shields.io/badge/3-Examples-22C55E?style=flat-square" alt="3 Examples"/>
 <img src="https://img.shields.io/badge/22-Anti--Patterns-EC4899?style=flat-square" alt="22 Anti-Patterns"/>
 
@@ -75,7 +75,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 **Use**
 - [29 production-ready skills](skills/) (custom `/commands`) you can drop into any project
 - [11 CLAUDE.md templates + 1 team onboarding template](templates/) — TypeScript, React, Node, Python, Full-stack, Go, Rust, Mobile, DevOps, Java, C#, Team Onboarding
-- [16 hook scripts](hooks/) that catch errors before they reach your commits
+- [18 hook scripts](hooks/) that catch errors before they reach your commits
 - [3 annotated example sessions](examples/) showing real workflows in action
 - [MCP server guide](docs/mcp-servers.md), [skills ecosystem](docs/skills-ecosystem.md), [model comparison](docs/model-comparison.md), [workflow decision tree](docs/workflows.md), [22 anti-patterns](docs/anti-patterns.md), and [30-day usage insights](docs/usage-insights.md)
 - [CI/CD automation](docs/github-actions.md), [enterprise governance](docs/enterprise-governance.md), [agent teams](docs/agent-teams.md), [security remediation](docs/security-remediation.md), and [legacy modernization](docs/legacy-modernization.md)
@@ -191,6 +191,7 @@ claude-code-playbook/
 │   ├── steering-files.md      # Enforceable house rules for AI-generated code
 │   ├── audit-log-hook.md      # Raw-prompt compliance logging (aidlc-workflows pattern)
 │   ├── verify-gate-hook.md    # Stop hook that blocks until tsc/tests pass (baseline-diffed)
+│   ├── daydream-hook.md       # Idle Stop hook: recombine memory → scored ideas → quick PRD
 │   └── news/                  # News & Research — 39 deep-read article pages (April 2026 research)
 ├── examples/
 │   ├── bug-fix-session.md     # Annotated bug fix session transcript
@@ -255,6 +256,9 @@ claude-code-playbook/
 │   ├── firewall.sh            # Dangerous command blocker
 │   ├── protect-paths.sh       # Protected file guard
 │   ├── audit-log.sh           # Raw-prompt compliance log (UserPromptSubmit)
+│   ├── daydream.sh            # Idle Stop hook: spawn detached memory-recombination run
+│   ├── daydream-surface.sh    # SessionStart: surface overnight daydreams once
+│   ├── daydream-engine-prompt.md # The daydream engine — the prompt the hook runs
 │   └── README.md              # Hook setup guide
 ├── config/
 │   ├── settings-example.json  # Example settings.json
@@ -690,6 +694,7 @@ Never append to shared context files. Always replace the entire content and keep
 | **[Steering Files](docs/steering-files.md)** | Guide | Writing enforceable house rules: good-vs-bad rule test, nested CLAUDE.md, minimum viable checklist |
 | **[Audit Log Hook](docs/audit-log-hook.md)** | Guide | Raw-prompt compliance logging adapted from awslabs/aidlc-workflows |
 | **[Verify Gate Hook](docs/verify-gate-hook.md)** | Guide | Stop hook with baseline-diffed tsc/test verification — forces Claude to keep working until regressions are fixed |
+| **[Daydream Hook](docs/daydream-hook.md)** | Guide | Idle-time Stop hook that recombines your memory into scored ideas and auto-forges a quick PRD — includes the headless-auth gotcha (`--bare` silently kills auth) |
 | **[Auditing & Hardening Your Setup](docs/setup-audit.md)** | Play | Worked case study: one firewall hook as the real Bash deny-layer (bypass voids hard_deny), env-indirected secrets, research-only Bash gate, scheduling orphaned scripts via launchd, and testing variant bypasses |
 | **[News & Research](docs/news/)** | 39 articles | Per-article deep reads of every substantive source behind the April 2026 briefing |
 | **[Article](article.md)** | Article | The original article that inspired this playbook |
@@ -783,7 +788,7 @@ sequenceDiagram
     Claude-->>You: "Bug fixed, types clean"
 ```
 
-**11 included hooks:** [ts-check.sh](hooks/ts-check.sh) (type errors) | [lint-check.sh](hooks/lint-check.sh) (ESLint) | [pre-commit-guard.sh](hooks/pre-commit-guard.sh) (debug statements) | [format-check.sh](hooks/format-check.sh) (Prettier) | [env-guard.sh](hooks/env-guard.sh) (secrets) | [build-check.sh](hooks/build-check.sh) (OOM-safe builds) | [session-start-check.sh](hooks/session-start-check.sh) (environment validation) | [firewall.sh](hooks/firewall.sh) (dangerous command blocker) | [protect-paths.sh](hooks/protect-paths.sh) (protected file guard) | [audit-log.sh](hooks/audit-log.sh) (raw-prompt compliance log) | [verify-gate.sh](hooks/verify-gate.sh) (Stop-blocking verify gate with baseline diffing)
+**13 included hooks:** [ts-check.sh](hooks/ts-check.sh) (type errors) | [lint-check.sh](hooks/lint-check.sh) (ESLint) | [pre-commit-guard.sh](hooks/pre-commit-guard.sh) (debug statements) | [format-check.sh](hooks/format-check.sh) (Prettier) | [env-guard.sh](hooks/env-guard.sh) (secrets) | [build-check.sh](hooks/build-check.sh) (OOM-safe builds) | [session-start-check.sh](hooks/session-start-check.sh) (environment validation) | [firewall.sh](hooks/firewall.sh) (dangerous command blocker) | [protect-paths.sh](hooks/protect-paths.sh) (protected file guard) | [audit-log.sh](hooks/audit-log.sh) (raw-prompt compliance log) | [verify-gate.sh](hooks/verify-gate.sh) (Stop-blocking verify gate with baseline diffing) | [daydream.sh](hooks/daydream.sh) (idle memory → ideas → quick PRD) | [daydream-surface.sh](hooks/daydream-surface.sh) (surface daydreams at session start)
 
 > See **[hooks/README.md](hooks/README.md)** for setup and **[config/hooks-example.json](config/hooks-example.json)** for a complete configuration with all included hooks wired up.
 

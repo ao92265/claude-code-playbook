@@ -9,6 +9,12 @@
             "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/session-start-check.sh",
             "timeout": 15,
             "statusMessage": "Checking environment..."
+          },
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/daydream-surface.sh",
+            "timeout": 5,
+            "statusMessage": "Surfacing overnight daydreams..."
           }
         ]
       }
@@ -76,6 +82,19 @@
             "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/build-check.sh",
             "timeout": 60,
             "statusMessage": "Running build check..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/daydream.sh",
+            "timeout": 5,
+            "statusMessage": "Daydreaming..."
           }
         ]
       }
