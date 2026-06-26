@@ -160,6 +160,7 @@ claude-code-playbook/
 │   ├── usage-insights.md      # 30-day field report: 2,228 sessions, top tools/MCPs/commands
 │   ├── awesome-claude-code.md # Curated list of tools, plugins, and resources
 │   ├── skills-ecosystem.md    # Agent skills package manager (skills.sh)
+│   ├── codex-parity.md        # Match Codex's workflow stack: record-to-skill + automations registry
 │   ├── faq.md                 # Frequently asked questions
 │   ├── account-setup.md       # Claude account signup and plan tiers
 │   ├── getting-started.md     # Beginner-friendly quickstart (10 min)
@@ -670,6 +671,7 @@ Never append to shared context files. Always replace the entire content and keep
 | **[Cost Guide](docs/cost-guide.md)** | Guide | Real token costs, ROI calculator, optimization strategies, budget templates |
 | **[Permissions](docs/permissions.md)** | Guide | Permission modes, allowlists, `--dangerously-skip-permissions` safety |
 | **[Comparison](docs/comparison.md)** | Guide | Claude Code vs Cursor vs Copilot vs Windsurf vs Codex vs Kiro vs Antigravity |
+| **[Codex Parity](docs/codex-parity.md)** | Guide | Match Codex's workflow stack: record-a-demo → skill, and a scheduled-jobs registry |
 | **[Case Studies](docs/case-studies.md)** | Stories | Real results: 85% faster features, zero regressions |
 | **[Adoption Playbook](docs/adoption-playbook.md)** | Guide | How to pitch and roll out Claude Code to your org |
 | **[Skills Ecosystem](docs/skills-ecosystem.md)** | Guide | Agent skills package manager: discovery, evaluation, recommended skills by stack |
