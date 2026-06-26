@@ -467,6 +467,7 @@ Every skill is a drop-in `/command` that teaches Claude a specific workflow. Cop
 | **[security-check](skills/security-check/)** | Quick security scan for OWASP Top 10: secrets, injection, XSS, auth issues | Before releases or after security-sensitive changes |
 | **[verification-before-completion](skills/verification-before-completion/)** | Forces Claude to prove work is done with actual test/build output | Automatically before "done" claims |
 | **[session-doubt](skills/session-doubt/)** | Two-question reflective close-out: enumerate + root-cause what it's least confident about, then name the biggest blind spot | After substantive work, alongside verification |
+| **[retry](skills/retry/)** | Survive Claude API errors/outages: a `claude-retry.sh` wrapper that relaunches with backoff on transient 5xx/overload/rate-limit, plus a `/retry` skill to cleanly resume the cut-off task afterward | When the API is overloaded, rate-limited, or down |
 
 </details>
 
