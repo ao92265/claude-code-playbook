@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Claude Code Setup — Full Atlas — aoreilly</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f4f6fa; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  .poster { width: 1840px; padding: 30px 34px 40px; background: #f4f6fa; }
+
+  /* ---- Banner ---- */
+  .banner { background: linear-gradient(135deg,#0b1f3a,#143a63 60%,#1d5089); border-radius: 18px; padding: 24px 30px; display: flex; align-items: center; gap: 20px; box-shadow: 0 8px 22px rgba(11,31,58,.28); }
+  .banner .mark { font-size: 46px; }
+  .banner h1 { color: #fff; font-size: 30px; letter-spacing: .2px; }
+  .banner p { color: #a9cbef; font-size: 14.5px; margin-top: 5px; }
+  .counts { margin-left: auto; display: flex; gap: 10px; flex-wrap: wrap; max-width: 560px; justify-content: flex-end; }
+  .counts .c { background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.18); border-radius: 10px; padding: 7px 12px; text-align: center; }
+  .counts .c b { display: block; color: #fff; font-size: 19px; line-height: 1; }
+  .counts .c span { color: #9fc0e6; font-size: 10.5px; text-transform: uppercase; letter-spacing: .4px; }
+
+  /* section title */
+  .band-title { font-size: 16px; font-weight: 800; color: #0b1f3a; margin: 26px 2px 13px; display: flex; align-items: center; gap: 9px; text-transform: uppercase; letter-spacing: .6px; }
+  .band-title .n { background: #0b1f3a; color: #fff; font-size: 11px; border-radius: 20px; padding: 2px 10px; letter-spacing: 0; }
+
+  /* ---- panels ---- */
+  .panel { background: #fff; border: 1px solid #e1e6ee; border-radius: 14px; padding: 14px 15px 12px; box-shadow: 0 2px 6px rgba(20,40,70,.05); margin-bottom: 16px; }
+  .panel h3 { font-size: 13.5px; color: #0b1f3a; margin-bottom: 11px; display: flex; align-items: center; gap: 7px; }
+  .panel h3 .count { margin-left: auto; font-size: 10.5px; color: #8a94a6; font-weight: 700; background: #f0f3f8; border-radius: 10px; padding: 1px 8px; }
+  .sub { font-size: 11px; color: #8a94a6; font-weight: 500; }
+
+  /* legend */
+  .legend-item { display: flex; gap: 9px; margin-bottom: 9px; align-items: flex-start; }
+  .legend-item:last-child { margin-bottom: 0; }
+  .dot { width: 21px; height: 21px; border-radius: 50%; flex: 0 0 21px; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .legend-item .t { font-size: 12px; color: #23324a; line-height: 1.35; }
+  .legend-item .t b { color: #0b1f3a; }
+  .pill { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 2px 9px; border-radius: 20px; margin: 0 4px 5px 0; color: #fff; }
+
+  /* dense atlas list */
+  .atlas { list-style: none; }
+  .atlas li { font-size: 11px; color: #2c3a52; line-height: 1.5; padding: 2.5px 0; border-bottom: 1px dashed #eef1f6; }
+  .atlas li:last-child { border-bottom: none; }
+  .atlas li b { color: #0b1f3a; }
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .chip { font-size: 10.5px; color: #1f2d44; background: #f1f4f9; border: 1px solid #e3e8f0; border-radius: 7px; padding: 3px 8px; }
+  .chip.hl { background: #fff3d6; border-color: #f0d27a; font-weight: 700; }
+
+  /* top 3-col */
+  .top { display: grid; grid-template-columns: 320px 1fr 470px; gap: 20px; align-items: start; }
+
+  /* center flow */
+  .flow { display: flex; flex-direction: column; align-items: center; }
+  .card { width: 100%; border-radius: 13px; padding: 12px 15px; box-shadow: 0 3px 9px rgba(20,40,70,.10); border-left: 7px solid; background: #fff; }
+  .card .head { display: flex; align-items: center; gap: 9px; }
+  .card .ico { font-size: 19px; }
+  .card .ttl { font-size: 14.5px; font-weight: 700; color: #16233a; }
+  .card .step { margin-left: auto; font-size: 10.5px; font-weight: 700; color: #fff; background: #16233a; border-radius: 6px; padding: 2px 7px; }
+  .card ul { margin: 7px 0 0 3px; padding-left: 15px; }
+  .card li { font-size: 11.5px; color: #3a485f; line-height: 1.45; margin-bottom: 1px; }
+  .arrow { color: #9aa7bd; font-size: 18px; line-height: 1; margin: 4px 0; }
+  .diamond { width: 330px; background: linear-gradient(135deg,#fff7df,#ffeaa6); border: 2px solid #e6b800; border-radius: 12px; padding: 11px 14px; text-align: center; box-shadow: 0 3px 9px rgba(180,140,0,.18); }
+  .diamond .ttl { font-weight: 700; color: #6b5200; font-size: 13.5px; }
+  .diamond .br { font-size: 11px; color: #7a6300; margin-top: 4px; line-height: 1.45; }
+
+  .c-slate{border-color:#64748b} .c-blue{border-color:#2f80ed} .c-purple{border-color:#7c5cdb}
+  .c-green{border-color:#27ae60} .c-teal{border-color:#159e8c} .c-orange{border-color:#e07b1a}
+  .c-indigo{border-color:#4257b2} .c-rose{border-color:#c0392b} .c-pink{border-color:#d6336c}
+
+  /* center mermaid spine */
+  .flow { width: 100%; }
+  .flow pre.mermaid { width: 100%; background: transparent; text-align: center; margin: 0; }
+  .flow .mermaid svg { max-width: 100%; height: auto; }
+  .spine-legend { display: flex; gap: 18px; justify-content: center; margin-bottom: 8px; font-size: 11px; color: #6b7891; }
+  .spine-legend i { display: inline-block; width: 22px; height: 0; vertical-align: middle; margin-right: 5px; }
+  .spine-legend i.d { width: 13px; height: 13px; background: #fff3cd; border: 1.5px solid #e0a800; transform: rotate(45deg); }
+  .spine-legend i.l { border-top: 2px dashed #c0392b; }
+
+  /* multi-col bands */
+  .cols { display: grid; gap: 14px; }
+  .cols-5 { grid-template-columns: repeat(5,1fr); }
+  .cols-4 { grid-template-columns: repeat(4,1fr); }
+  .cols-2 { grid-template-columns: 1fr 1fr; }
+
+  /* category card accent strip */
+  .cat { border-top: 4px solid; }
+  .cat .gp { font-size: 9.5px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; color: #fff; border-radius: 6px; padding: 1px 7px; }
+
+  /* footer */
+  .footer { margin-top: 26px; background: #16233a; border-radius: 16px; padding: 18px 24px; }
+  .footer h3 { color: #fff; font-size: 14.5px; margin-bottom: 11px; }
+  .footer .rules { display: flex; flex-wrap: wrap; gap: 9px; }
+  .footer .r { font-size: 12px; color: #cfd9e8; background: #1f3047; border-radius: 8px; padding: 7px 11px; }
+  .footer .prune { background: #5a1a1a; color: #ffd3d3; border: 1px solid #c0392b; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <!-- ===================== BANNER ===================== -->
+  <div class="banner">
+    <div class="mark">🧠</div>
+    <div>
+      <h1>Claude Code Setup — Full Atlas</h1>
+      <p>aoreilly · oh-my-claudecode orchestration stack · the complete map: lifecycle, agents, skills, gates, hooks &amp; infra</p>
+    </div>
+    <div class="counts">
+      <div class="c"><b>90+</b><span>skills</span></div>
+      <div class="c"><b>80+</b><span>agents</span></div>
+      <div class="c"><b>33</b><span>hooks · 8 ev</span></div>
+      <div class="c"><b>11</b><span>MCP</span></div>
+      <div class="c"><b>4</b><span>daemons</span></div>
+      <div class="c"><b>20+</b><span>plugins</span></div>
+    </div>
+  </div>
+
+  <!-- ===================== TOP: rail | spine | gates ===================== -->
+  <div class="band-title">⚙️ Request Lifecycle &amp; Control</div>
+  <div class="top">
+
+    <!-- LEFT RAIL -->
+    <div class="left">
+      <div class="panel">
+        <h3>⚖️ Operating Principles</h3>
+        <div class="legend-item"><div class="dot" style="background:#2f80ed">1</div><div class="t"><b>Delegate</b> specialized work to the right agent</div></div>
+        <div class="legend-item"><div class="dot" style="background:#27ae60">2</div><div class="t"><b>Evidence over assumption</b> — verify before claiming</div></div>
+        <div class="legend-item"><div class="dot" style="background:#7c5cdb">3</div><div class="t"><b>Lightest path</b> that preserves quality</div></div>
+        <div class="legend-item"><div class="dot" style="background:#e07b1a">4</div><div class="t"><b>Docs first</b> for any SDK / API / framework</div></div>
+        <div class="legend-item"><div class="dot" style="background:#c0392b">5</div><div class="t"><b>Separate lanes</b> — author then review, never self-approve</div></div>
+      </div>
+
+      <div class="panel">
+        <h3>🎚️ Model Routing</h3>
+        <div><span class="pill" style="background:#159e8c">haiku</span><span class="sub">search · lookup · format · extract</span></div>
+        <div style="margin-top:6px"><span class="pill" style="background:#2f80ed">sonnet</span><span class="sub">mechanical impl · bulk edits</span></div>
+        <div style="margin-top:6px"><span class="pill" style="background:#7c5cdb">opus 4.8</span><span class="sub">architecture · debug · review · judgment</span></div>
+      </div>
+
+      <div class="panel">
+        <h3>🏛️ OMO Codename Routing Agents <span class="count">7</span></h3>
+        <ul class="atlas">
+          <li><b>Prometheus / Hyperplan</b> — planning · Opus-class · 1–2 calls/session</li>
+          <li><b>Sisyphus</b> — impl loop · Sonnet · main cost lever (5–20×)</li>
+          <li><b>Hephaestus</b> — impl · Sonnet/Kimi/DeepSeek only</li>
+          <li><b>Oracle</b> — review/validation · Opus · sparingly</li>
+          <li><b>Aletheia</b> — review · Sonnet · budget slot</li>
+          <li><b>Hermes</b> — coordination only · never direct executor</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h3>👥 Native Team Workers <span class="count">6</span></h3>
+        <div class="chips">
+          <span class="chip">claude</span><span class="chip">codex</span><span class="chip">gemini</span>
+          <span class="chip">antigravity</span><span class="chip">grok</span><span class="chip">cursor</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>🤖 Autonomy Controls</h3>
+        <ul class="atlas">
+          <li><b>/goal</b> — verifiable end-state</li>
+          <li><b>/loop</b> — interval or until-condition</li>
+          <li><b>ralph / ultrawork</b> — boulder never stops</li>
+          <li>self-cancel: done+verified OR 15min stuck</li>
+          <li>session cap 4h · 3-strike → /rewind</li>
+          <li>canary tripwire → /clear on marker drop</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CENTER SPINE: branching flowchart with decision gates + loop-backs -->
+    <div class="flow">
+      <div class="spine-legend"><span><i class="d"></i> decision gate</span><span><i class="l"></i> loop-back</span></div>
+      <pre class="mermaid">
+flowchart TB
+  S0(["🚩 User Prompt"]) --> H["🪝 1 · Entry Gate — Hooks<br/>RTK · caveman · guardrails · secret-scan · protect-paths"]
+  H --> C["📚 2 · Context Layers<br/>CLAUDE.md ×4 · memory · wiki · handoff"]
+  C --> T{"3 · Triage<br/>complexity?"}
+  T -->|"trivial"| D["Work directly<br/>Opus main loop"]
+  T -->|"keyword"| K["Skill routing"]
+  T -->|"complex"| P["🧭 4 · Explore + Plan"]
+  K --> P
+  P --> PG{"Ambiguity<br/>≤ 20%?"}
+  PG -->|"no · vague"| DI["deep-interview /<br/>ralplan consensus"]
+  DI -. re-interview .-> P
+  PG -->|"yes"| R["🔀 5 · Model + Agent Route<br/>haiku / sonnet / opus"]
+  D --> V
+  R --> E["⚙️ 6 · Execution Engines<br/>autopilot · ralph · ultrawork · team · loops"]
+  E --> V{"7 · Checks<br/>pass?"}
+  V -->|"NO · fail"| FX["🔧 Fix &amp; Iterate<br/>3-strike → /rewind"]
+  FX -. loop back .-> E
+  V -->|"YES"| HS{"8 · High-stakes?<br/>security · prod · irreversible"}
+  HS -->|"yes"| MA["🛡️ multiask 5-way /<br/>codex · ccg review"]
+  HS -->|"no"| CM["📦 9 · Commit Protocol<br/>branch · pre-commit + pre-push codex gate"]
+  MA --> CM
+  CM --> PS["🧠 10 · Persist Knowledge<br/>memory · wiki · retro · handoff"]
+  PS --> DONE(["🏁 DONE + verified<br/>or /cancel"])
+
+  classDef start fill:#0b2545,stroke:#0b2545,color:#ffffff;
+  classDef hook fill:#e7f0fe,stroke:#2f80ed,color:#16233a;
+  classDef plan fill:#efe9fb,stroke:#7c5cdb,color:#16233a;
+  classDef exec fill:#e6f7ee,stroke:#27ae60,color:#16233a;
+  classDef gate fill:#fff3cd,stroke:#e0a800,color:#5a4500;
+  classDef fix fill:#fde8e8,stroke:#c0392b,color:#7a1f1f;
+  classDef done fill:#d6f5e0,stroke:#1e8449,color:#14532d;
+  class S0 start;
+  class H,C hook;
+  class P,K,D,DI,R,MA,CM,PS plan;
+  class E exec;
+  class T,PG,V,HS gate;
+  class FX fix;
+  class DONE done;
+      </pre>
+    </div>
+
+    <!-- RIGHT RAIL: GATES & MODES -->
+    <div class="right">
+      <div class="panel cat" style="border-top-color:#27ae60">
+        <h3><span class="gp" style="background:#27ae60">EXEC</span> Execution Modes <span class="count">9</span></h3>
+        <ul class="atlas">
+          <li><b>autopilot</b> — expand→plan→exec→QA→validate→cleanup</li>
+          <li><b>ralph</b> — PRD persistence loop · story-by-story verify</li>
+          <li><b>ultrawork</b> — dependency-aware parallel task graph</li>
+          <li><b>team</b> — N agents · plan→prd→exec→verify→fix</li>
+          <li><b>omc-teams</b> — CLI workers in tmux panes</li>
+          <li><b>oneshot</b> — kitchen-sink: PRD→build→QA→PR</li>
+          <li><b>swarm</b> · <b>ultrapilot</b> · <b>pipeline</b> — variants</li>
+        </ul>
+      </div>
+      <div class="panel cat" style="border-top-color:#7c5cdb">
+        <h3><span class="gp" style="background:#7c5cdb">PLAN</span> Planning Gates <span class="count">7</span></h3>
+        <ul class="atlas">
+          <li><b>plan</b> — --direct/--consensus/--review/--interactive</li>
+          <li><b>ralplan</b> — consensus: planner→architect→critic (max 5)</li>
+          <li><b>prdforge</b> — self-interviewing multi-agent HTML PRD</li>
+          <li><b>deep-interview</b> — Socratic ambiguity gate ≤20%, cap 20</li>
+          <li><b>deep-dive</b> — trace (3 lanes) → deep-interview</li>
+          <li><b>ultragoal</b> — durable multi-goal ledger + /goal handoff</li>
+          <li><b>spec</b> — Context/Objective/Boundaries/Validation</li>
+        </ul>
+      </div>
+      <div class="panel cat" style="border-top-color:#e07b1a">
+        <h3><span class="gp" style="background:#e07b1a">GATE</span> Quality Gates <span class="count">11</span></h3>
+        <ul class="atlas">
+          <li><b>done</b> — tsc+lint+test+build · no green on non-zero</li>
+          <li><b>verify</b> — tests→build→manual · PASS/FAIL/INCOMPLETE</li>
+          <li><b>code-review</b> — diff @ effort · --comment / --fix</li>
+          <li><b>ultraqa</b> — run→diagnose→fix · max 5 · 3× same-err exit</li>
+          <li><b>ai-slop-cleaner</b> — behavior-lock tests → deletion-first</li>
+          <li><b>multiask</b> — 4-CLI + adversarial · high-stakes only</li>
+          <li><b>ccg</b> — Codex+Antigravity → Claude synthesizes</li>
+          <li><b>codex:rescue</b> — stuck → Codex fresh pass (--write)</li>
+          <li><b>critic-gate</b> — REJECT/REVISE halts consensus</li>
+          <li><b>codex stop-review</b> hook · <b>codex-prepush-review</b></li>
+        </ul>
+      </div>
+      <div class="panel cat" style="border-top-color:#159e8c">
+        <h3><span class="gp" style="background:#159e8c">RSCH</span> Research Modes <span class="count">6</span></h3>
+        <ul class="atlas">
+          <li><b>sciomc</b> — parallel scientists · cross-validate · max 20</li>
+          <li><b>autoresearch</b> — stateful loop · JSON evaluator · hard stop</li>
+          <li><b>self-improve</b> — evolutionary · tournament selection</li>
+          <li><b>trace</b> — 3-lane causal · rebuttal round · names unknown</li>
+          <li><b>external-context</b> — parallel doc-specialist web search</li>
+          <li><b>research-only</b> — blocks Edit/Write · markdown only</li>
+        </ul>
+      </div>
+      <div class="panel cat" style="border-top-color:#d6336c">
+        <h3><span class="gp" style="background:#d6336c">CTRL</span> Control / Session <span class="count">6</span></h3>
+        <ul class="atlas">
+          <li><b>cancel</b> — kills active mode · --force</li>
+          <li><b>ask</b> — route to claude/codex/gemini/grok/cursor</li>
+          <li><b>reboot</b> — distill stale session → clean reprompt</li>
+          <li><b>session-doubt</b> — least-confident + blind-spot close-out</li>
+          <li><b>rest</b> — low-density tired-day output mode</li>
+          <li><b>tldr</b> — restate last answer in plain English</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== SKILL ATLAS ===================== -->
+  <div class="band-title">🧩 Skill Atlas — curated personal stack <span class="n">90+</span></div>
+  <div class="cols cols-5">
+    <div class="panel cat" style="border-top-color:#7c5cdb">
+      <h3><span class="gp" style="background:#7c5cdb">PLAN</span></h3>
+      <div class="chips"><span class="chip">spec</span><span class="chip">prdforge</span><span class="chip">plan</span><span class="chip">ralplan</span><span class="chip">deep-dive</span><span class="chip">deep-interview</span><span class="chip">karpathy-guidelines</span><span class="chip">critic</span><span class="chip">grilling</span><span class="chip">grill-me</span></div>
+    </div>
+    <div class="panel cat" style="border-top-color:#159e8c">
+      <h3><span class="gp" style="background:#159e8c">RESEARCH</span></h3>
+      <div class="chips"><span class="chip">research-only</span><span class="chip">deep-research</span><span class="chip">last30days</span><span class="chip">tab-digest</span><span class="chip">loom-analyze</span><span class="chip">codebase-memory</span><span class="chip">multiask</span><span class="chip">external-context</span><span class="chip">sciomc</span><span class="chip">autoresearch</span></div>
+    </div>
+    <div class="panel cat" style="border-top-color:#27ae60">
+      <h3><span class="gp" style="background:#27ae60">EXECUTION / LOOPS</span></h3>
+      <div class="chips"><span class="chip hl">oneshot</span><span class="chip">autopilot</span><span class="chip">ralph</span><span class="chip">ultrawork</span><span class="chip">ultraqa</span><span class="chip">ultragoal</span><span class="chip">team</span><span class="chip">omc-teams</span><span class="chip">trace</span><span class="chip">debug</span><span class="chip">ccg</span><span class="chip">ask</span><span class="chip">self-improve</span><span class="chip">loop</span><span class="chip">bad</span><span class="chip">tdd-fix</span><span class="chip">refactor-loop</span><span class="chip">codex:rescue</span><span class="chip">codex:setup</span></div>
+    </div>
+    <div class="panel cat" style="border-top-color:#e07b1a">
+      <h3><span class="gp" style="background:#e07b1a">REVIEW / QUALITY</span></h3>
+      <div class="chips"><span class="chip">done</span><span class="chip">code-review</span><span class="chip">codex-prepush-review</span><span class="chip">verify</span><span class="chip">visual-verdict</span><span class="chip hl">session-doubt</span><span class="chip">critic</span><span class="chip">ai-slop-cleaner</span></div>
+    </div>
+    <div class="panel cat" style="border-top-color:#d6336c">
+      <h3><span class="gp" style="background:#d6336c">PROSE / COMMS</span></h3>
+      <div class="chips"><span class="chip">anti-ai-prose</span><span class="chip">draft-reply</span><span class="chip hl">tldr</span><span class="chip hl">rest</span><span class="chip">caveman</span><span class="chip">caveman-commit</span><span class="chip">caveman-review</span><span class="chip">caveman-help</span><span class="chip">compress</span></div>
+    </div>
+    <div class="panel cat" style="border-top-color:#2f80ed">
+      <h3><span class="gp" style="background:#2f80ed">FRONTEND / DESIGN</span></h3>
+      <div class="chips"><span class="chip">impeccable</span><span class="chip">design-taste-frontend</span><span class="chip">webgpu-threejs-tsl</span><span class="chip">remotion-best-practices</span><span class="chip">frontend-design</span><span class="chip">claude-in-chrome</span></div>
+    </div>
+    <div class="panel cat" style="border-top-color:#4257b2">
+      <h3><span class="gp" style="background:#4257b2">MEMORY / STATE</span></h3>
+      <div class="chips"><span class="chip">wiki</span><span class="chip">remember</span><span class="chip">writer-memory</span><span class="chip">codebase-memory</span><span class="chip hl">reboot</span><span class="chip">morning</span><span class="chip">compress</span></div>
+    </div>
+    <div class="panel cat" style="border-top-color:#159e8c">
+      <h3><span class="gp" style="background:#159e8c">OPS / ENV</span></h3>
+      <div class="chips"><span class="chip">check-env</span><span class="chip">deploy</span><span class="chip">automations</span><span class="chip">pr-fleet</span><span class="chip">pr-merge-queue</span><span class="chip">release</span><span class="chip">project-session-manager</span><span class="chip">configure-notifications</span><span class="chip">hud</span><span class="chip">mcp-setup</span><span class="chip">omc-doctor</span><span class="chip">omc-setup</span><span class="chip">run</span><span class="chip hl">retry</span><span class="chip">shannon</span><span class="chip">claude-api</span><span class="chip">databasics-expenses</span></div>
+    </div>
+    <div class="panel cat" style="border-top-color:#7c5cdb">
+      <h3><span class="gp" style="background:#7c5cdb">META / SKILL-MGMT</span></h3>
+      <div class="chips"><span class="chip">skill-authoring</span><span class="chip">skill</span><span class="chip">skillify</span><span class="chip">learner</span><span class="chip">deepinit</span><span class="chip">omc-reference</span><span class="chip">autoskill</span><span class="chip">demo2skill</span><span class="chip">task-observer</span><span class="chip">find-skills</span></div>
+    </div>
+    <div class="panel cat" style="border-top-color:#64748b">
+      <h3><span class="gp" style="background:#64748b">PROJECT-SPECIFIC</span></h3>
+      <div class="chips"><span class="chip">backend-api</span><span class="chip">backend-migrations</span><span class="chip">backend-models</span><span class="chip">backend-queries</span><span class="chip">global-coding-style</span><span class="chip">global-commenting</span><span class="chip">global-conventions</span><span class="chip">global-error-handling</span><span class="chip">global-tech-stack</span><span class="chip">global-validation</span><span class="chip">testing-test-writing</span></div>
+      <div style="margin-top:8px" class="sub">+ claude-code-workflows libs · ~70 · python/js/backend patterns (collapsed)</div>
+    </div>
+  </div>
+
+  <!-- ===================== AGENT ATLAS ===================== -->
+  <div class="band-title">🤖 Agent Atlas <span class="n">80+</span></div>
+  <div class="cols cols-4">
+    <div class="panel cat" style="border-top-color:#2f80ed">
+      <h3>OMC Core <span class="count">10</span></h3>
+      <div class="chips"><span class="chip">executor</span><span class="chip">debugger</span><span class="chip">designer</span><span class="chip">document-specialist</span><span class="chip">git-master</span><span class="chip">qa-tester</span><span class="chip">test-engineer</span><span class="chip">tracer</span><span class="chip">explore</span><span class="chip">writer</span></div>
+    </div>
+    <div class="panel cat" style="border-top-color:#7c5cdb">
+      <h3>OMC Specialist (Opus, read-only) <span class="count">9</span></h3>
+      <div class="chips"><span class="chip">planner</span><span class="chip">analyst</span><span class="chip">architect</span><span class="chip">code-reviewer</span><span class="chip">code-simplifier</span><span class="chip">critic</span><span class="chip">security-reviewer</span><span class="chip">scientist</span><span class="chip">verifier</span></div>
+    </div>
+    <div class="panel cat" style="border-top-color:#e07b1a">
+      <h3>3rd-Party Plugin Agents</h3>
+      <ul class="atlas">
+        <li><b>pr-review-toolkit</b> · silent-failure-hunter · type-design-analyzer · comment-analyzer · pr-test-analyzer</li>
+        <li><b>understand-anything</b> · 9 analyzers (architecture/domain/file/graph/tour…)</li>
+        <li><b>claude-code-workflows</b> · backend-architect · event-sourcing · graphql · tdd-orchestrator · *-pro</li>
+        <li><b>skill-creator</b> · analyzer · comparator · grader</li>
+      </ul>
+    </div>
+    <div class="panel cat" style="border-top-color:#64748b">
+      <h3>Built-in & Spec Pipeline</h3>
+      <div class="chips"><span class="chip">Explore</span><span class="chip">Plan</span><span class="chip">general-purpose</span><span class="chip">claude-code-guide</span><span class="chip">implementer</span><span class="chip">implementation-verifier</span><span class="chip">spec-initializer</span><span class="chip">spec-shaper</span><span class="chip">spec-writer</span><span class="chip">spec-verifier</span><span class="chip">task-list-creator</span><span class="chip">product-planner</span><span class="chip">codex-rescue</span></div>
+    </div>
+  </div>
+
+  <!-- ===================== INFRA BAND ===================== -->
+  <div class="band-title">🔌 Infrastructure — Hooks · MCP · Scheduled · Plugins · State</div>
+  <div class="cols cols-2">
+    <div class="panel">
+      <h3>🪝 Hooks by event <span class="count">33 cmds / 8 events</span></h3>
+      <ul class="atlas">
+        <li><b>UserPromptSubmit</b> — factual-guardrail-nudge · babysitting-nudge · canary</li>
+        <li><b>SessionStart</b> — handoff · daydream-surface · cbm-session-reminder ×4 matchers</li>
+        <li><b>PreToolUse</b> — firewall · research-only-guard · rtk · codex-prepush-review · auto-simplify · pre-commit-verify · protect-paths · require-agent-model · read-once · secret-scanner · tdd-gate · plan-gate · verify-gate · cbm-code-discovery-gate</li>
+        <li><b>PostToolUse</b> — auto-format</li>
+        <li><b>PreCompact</b> — precompact-handoff &nbsp;·&nbsp; <b>PostCompact</b> — read-once/compact</li>
+        <li><b>Stop</b> — stop-handoff · daydream · verify-gate · notifier · notify-local-tts</li>
+        <li><b>Notification</b> — notifier</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>🔌 MCP Servers <span class="count">11</span></h3>
+      <div class="chips"><span class="chip">codebase-memory</span><span class="chip">historian</span><span class="chip">ai-digest</span><span class="chip">chrome-devtools</span><span class="chip">reactbits</span><span class="chip">context7</span><span class="chip">claude-in-chrome</span><span class="chip">computer-use</span><span class="chip">shadcn</span><span class="chip">Mermaid</span><span class="chip">Gmail</span></div>
+      <div style="margin-top:7px" class="sub">project-scoped: github · filesystem · memory</div>
+      <h3 style="margin-top:13px">⏰ Scheduled (launchd) <span class="count">4</span></h3>
+      <ul class="atlas">
+        <li><b>claude-morning</b> — Mon–Fri 07:30 · cross-terminal briefing</li>
+        <li><b>claude-maintenance</b> — Mon 09:00 · log/cache housekeeping</li>
+        <li><b>claude-observatory</b> — Mon 09:05 · weekly cost + intel digest</li>
+        <li><b>claude-reauth-watch</b> — every 60s · keeps auth alive</li>
+      </ul>
+    </div>
+  </div>
+  <div class="cols cols-2">
+    <div class="panel">
+      <h3>📦 Plugins <span class="count">5 on · ~15 installed</span></h3>
+      <div style="margin-bottom:6px"><span class="sub" style="font-weight:700;color:#27ae60">ENABLED</span></div>
+      <div class="chips"><span class="chip hl">oh-my-claudecode</span><span class="chip">commit-commands</span><span class="chip">typescript-lsp</span><span class="chip">codex</span><span class="chip">caveman</span></div>
+      <div style="margin:8px 0 6px"><span class="sub" style="font-weight:700;color:#8a94a6">INSTALLED / DISABLED</span></div>
+      <div class="chips"><span class="chip">superpowers</span><span class="chip">understand-anything</span><span class="chip">claude-code-workflows ×3</span><span class="chip">pr-review-toolkit</span><span class="chip">security-guidance</span><span class="chip">playwright</span><span class="chip">centurion ×3</span><span class="chip">code-review</span><span class="chip">frontend-design</span><span class="chip">skill-creator</span><span class="chip">playground</span></div>
+    </div>
+    <div class="panel">
+      <h3>🗂️ State &amp; Memory Tree</h3>
+      <ul class="atlas">
+        <li><b>.omc/state/</b> — live agent state · checkpoints · sessions/{uuid}</li>
+        <li><b>.omc/wiki/</b> — concepts · entities · raw · sources · syntheses</li>
+        <li><b>.omc/plans/ · prd*.json · progress*.txt</b> — planning artifacts</li>
+        <li><b>.omc/</b> — autopilot · team · worktrees · scientist · artifacts · ultragoal</li>
+        <li><b>.omc/project-memory.json</b> — durable domain facts</li>
+        <li><b>~/.claude/…/memory/</b> — MEMORY.md + user/feedback/project/reference files</li>
+        <li><b>handoffs</b> — stop-handoff · precompact-handoff · priority batches</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===================== FLEET & INFRASTRUCTURE ===================== -->
+  <div class="band-title">🛰️ Fleet &amp; Infrastructure — running the swarm <span class="n">meta layer</span></div>
+  <div class="cols" style="grid-template-columns:1.15fr 1fr 1fr;">
+    <div class="panel cat" style="border-top-color:#0e7490">
+      <h3>🖥️ Multi-Terminal Fleet <span class="count">6–10 parallel</span></h3>
+      <ul class="atlas">
+        <li><b>6–10 Claude terminals</b> in parallel · one task per session</li>
+        <li><b>stop-handoff</b> — per-terminal live state, overwritten each turn</li>
+        <li><b>precompact-handoff</b> — survives auto-compaction</li>
+        <li><b>/morning</b> — consolidates every parked session → one briefing</li>
+        <li><b>/reboot</b> — distill stale terminal → clean reprompt</li>
+        <li>hygiene: /compact @50% · /clear @80% · 4h cap · /clear on task-switch</li>
+        <li>3-strike → /rewind · canary tripwire on context rot</li>
+      </ul>
+    </div>
+    <div class="panel cat" style="border-top-color:#4257b2">
+      <h3>🗼 Control Towers</h3>
+      <ul class="atlas">
+        <li><b>Rohcna</b> — triage board for parked sessions · 4 columns (needs-you / mid-task / resume / stale) · drives iTerm panes · :4317</li>
+        <li><b>Day Start</b> — local zero-dep session control tower (~/Repos/day-start) · orchestrator v2 · subscription auth</li>
+        <li><b>ACT</b> — Agent Control Tower · consolidates agent systems</li>
+        <li><b>Vanguard</b> — nanoclaw personal-assistant command center · branch feat/vanguard-telegram</li>
+        <li><b>configure-notifications</b> — Telegram / Discord / Slack push</li>
+        <li><b>HUD</b> — statusline layout + presets</li>
+      </ul>
+    </div>
+    <div class="panel cat" style="border-top-color:#c0392b">
+      <h3>🔀 Proxies — in front of Claude</h3>
+      <ul class="atlas">
+        <li><b>RTK · Rust Token Killer</b> — hook auto-rewrites Bash → rtk · 60–90% token savings · <span class="sub">gain / discover / proxy</span></li>
+        <li><b>Headroom · claude-hr</b> — context-compression proxy · ~/.headroom · opt-in for tool outputs</li>
+        <li><b>reauth-watch</b> — launchd daemon every 60s · re-auths on expiry</li>
+      </ul>
+    </div>
+  </div>
+  <div class="cols cols-2">
+    <div class="panel cat" style="border-top-color:#7c5cdb">
+      <h3>⚡ Headless / Subscription</h3>
+      <ul class="atlas">
+        <li><b>headless driver</b> — claude -p --output-format stream-json --resume · subscription-funded agents, no API key</li>
+        <li><b>--bare flag</b> — CI/scripts · ~30% faster · skips skills/hooks/MCP</li>
+        <li><b>subscription auth &gt; API key</b> — scrub ANTHROPIC_API_KEY from child env</li>
+        <li><b>codex-companion.mjs</b> — drives Codex CLI for rescue/review on the subscription runtime</li>
+      </ul>
+    </div>
+    <div class="panel cat" style="border-top-color:#159e8c">
+      <h3>🧰 Local Services &amp; Observability</h3>
+      <ul class="atlas">
+        <li><b>ai-digest</b> — n8n digest feed · http://localhost:5678/mcp/digest</li>
+        <li><b>codebase-memory-mcp</b> — ~/.local/bin local binary · code knowledge graph</li>
+        <li><b>historian</b> — conversation history search &amp; recall</li>
+        <li><b>observatory-weekly.sh</b> + <b>spend-per-feature.py</b> — weekly cost per feature/branch</li>
+        <li>launchd timers: morning · maintenance · observatory · reauth-watch</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===================== FOOTER ===================== -->
+  <div class="footer">
+    <h3>📌 Always-On Rules</h3>
+    <div class="rules">
+      <span class="r">Caveman register · plain English to user</span>
+      <span class="r">Verify before claiming done</span>
+      <span class="r">Never assume env wrong — check actual state</span>
+      <span class="r">Batch completeness ledger · X/N done</span>
+      <span class="r">AskUserQuestion, not prose questions</span>
+      <span class="r">Use real project assets</span>
+      <span class="r">Protected paths: schema / migrations → STOP</span>
+      <span class="r">Subscription auth over API key</span>
+      <span class="r prune">⚠ PRUNE DEBT · keep CLAUDE.md under 150 lines</span>
+    </div>
+  </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    securityLevel: 'loose',
+    themeVariables: { fontFamily: '-apple-system, Segoe UI, Roboto, sans-serif', fontSize: '15px', lineColor: '#6b7891', edgeLabelBackground: '#ffffff' },
+    flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis', nodeSpacing: 36, rankSpacing: 44 }
+  });
+</script>
+</body>
+</html>
