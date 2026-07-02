@@ -15,8 +15,12 @@ jobs:
       - name: Check SKILL.md files have valid frontmatter
         run: |
           errors=0
+          # Note: skills/security/*/SKILL.md are TODO placeholder stubs awaiting
+          # contribution — they are excluded from validation and from the skill
+          # count until they have real frontmatter and content.
           for skill in skills/*/SKILL.md; do
             if [ ! -f "$skill" ]; then continue; fi
+            file_errors=0
 
             # Normalize CRLF to LF for parsing
             content=$(tr -d '\r' < "$skill")
@@ -41,10 +45,13 @@ jobs:
               if ! echo "$frontmatter" | grep -q "^${field}:"; then
                 echo "ERROR: $skill missing required field: $field"
                 errors=$((errors + 1))
+                file_errors=$((file_errors + 1))
               fi
             done
 
-            echo "OK: $skill"
+            if [ $file_errors -eq 0 ]; then
+              echo "OK: $skill"
+            fi
           done
 
           if [ $errors -gt 0 ]; then
@@ -63,6 +70,7 @@ jobs:
           errors=0
           for hook in hooks/*.sh; do
             if [ ! -f "$hook" ]; then continue; fi
+            file_errors=0
 
             # Normalize CRLF to LF before checking
             clean=$(mktemp)
@@ -72,13 +80,17 @@ jobs:
             if ! head -1 "$clean" | grep -qE "^#!(/bin/bash|/usr/bin/env bash)"; then
               echo "ERROR: $hook missing bash shebang (#!/bin/bash or #!/usr/bin/env bash)"
               errors=$((errors + 1))
+              file_errors=$((file_errors + 1))
             fi
 
             # Check syntax on normalized file
             if ! bash -n "$clean" 2>/dev/null; then
               echo "ERROR: $hook has syntax errors"
               errors=$((errors + 1))
-            else
+              file_errors=$((file_errors + 1))
+            fi
+
+            if [ $file_errors -eq 0 ]; then
               echo "OK: $hook"
             fi
 
@@ -90,6 +102,13 @@ jobs:
             exit 1
           fi
           echo "All hooks validated successfully"
+      - name: Check Python hook syntax
+        run: |
+          for py in hooks/*.py; do
+            if [ ! -f "$py" ]; then continue; fi
+            python3 -m py_compile "$py" || exit 1
+            echo "OK: $py"
+          done
 
   validate-templates:
     name: Validate Templates
@@ -101,6 +120,7 @@ jobs:
           errors=0
           for tmpl in templates/CLAUDE*.md; do
             if [ ! -f "$tmpl" ]; then continue; fi
+            file_errors=0
 
             # Normalize CRLF for grep
             content=$(tr -d '\r' < "$tmpl")
@@ -109,15 +129,19 @@ jobs:
             if ! echo "$content" | grep -q "^## Project Basics"; then
               echo "ERROR: $tmpl missing '## Project Basics' section"
               errors=$((errors + 1))
+              file_errors=$((file_errors + 1))
             fi
 
             # Check for Verification or Git & GitHub section
             if ! echo "$content" | grep -qE "^## (Verification|Git & GitHub)"; then
               echo "ERROR: $tmpl missing '## Verification' or '## Git & GitHub' section"
               errors=$((errors + 1))
+              file_errors=$((file_errors + 1))
             fi
 
-            echo "OK: $tmpl"
+            if [ $file_errors -eq 0 ]; then
+              echo "OK: $tmpl"
+            fi
           done
 
           if [ $errors -gt 0 ]; then
@@ -131,21 +155,90 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check README links point to existing files
+      - name: Check internal links across README, index, and docs
         run: |
           errors=0
-          # Extract markdown links from README that point to local files
-          grep -oP '\[.*?\]\(((?!http|#).*?)\)' README.md | grep -oP '\(([^)]+)\)' | tr -d '()' | while read -r link; do
-            # Remove anchor fragments
-            file=$(echo "$link" | sed 's/#.*//')
-            if [ -n "$file" ] && [ ! -e "$file" ]; then
-              echo "ERROR: README.md links to '$link' but file does not exist"
-              errors=$((errors + 1))
-            fi
+          checked=0
+          # Collect files to scan (avoids the pipe-into-while subshell that
+          # previously discarded the error count).
+          files=$(ls README.md index.md; find docs -name '*.md')
+          for file in $files; do
+            dir=$(dirname "$file")
+            while read -r raw; do
+              # Strip surrounding ]( and ), then any anchor fragment
+              link=${raw#](}
+              link=${link%)}
+              target=${link%%#*}
+              [ -z "$target" ] && continue
+              # Site-absolute Liquid links are resolved by Jekyll, skip
+              case "$target" in
+                *'{{'*) continue ;;
+              esac
+              # Resolve relative to the containing file
+              if [ "${target#/}" = "$target" ]; then
+                resolved="$dir/$target"
+              else
+                resolved=".$target"
+              fi
+              checked=$((checked + 1))
+              # Jekyll pretty-permalink fallbacks: extensionless page links
+              if [ ! -e "$resolved" ] && [ ! -e "${resolved%.html}.md" ] \
+                 && [ ! -e "${resolved%/}.md" ] && [ ! -e "${resolved%/}/index.md" ] \
+                 && [ ! -e "${resolved%/}/README.md" ]; then
+                echo "ERROR: $file links to '$link' but no file matches '$resolved'"
+                errors=$((errors + 1))
+              fi
+            done < <(grep -oE '\]\((https?:|#|mailto:)?[^)]+\)' "$file" | grep -vE '^\]\((https?:|#|mailto:)' || true)
           done
 
+          echo "Checked $checked internal links"
           if [ $errors -gt 0 ]; then
             echo "Found $errors broken link(s)"
             exit 1
           fi
-          echo "All README links valid"
+          echo "All internal links valid"
+
+  validate-counts:
+    name: Validate Count Claims
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: README/index counts must match the filesystem
+        run: |
+          # Top-level skills only; skills/security/* are placeholder stubs (see validate-skills)
+          skills=$(ls skills/*/SKILL.md | wc -l | tr -d ' ')
+          hooks=$(ls hooks/*.sh hooks/*.py | wc -l | tr -d ' ')
+          docs=$(ls docs/*.md | wc -l | tr -d ' ')
+          news=$(find docs/news -name '*.md' ! -name 'index.md' | wc -l | tr -d ' ')
+          examples=$(ls examples/*.md | grep -v README | wc -l | tr -d ' ')
+          anti=$(grep -cE '^### ' docs/anti-patterns.md)
+          echo "Computed: skills=$skills hooks=$hooks docs=$docs news=$news examples=$examples anti-patterns=$anti"
+
+          fail=0
+          grep -q "Skills-${skills}_" README.md          || { echo "FAIL: README skills badge != ${skills}"; fail=1; }
+          grep -q "Hooks-${hooks}" README.md             || { echo "FAIL: README hooks badge != ${hooks}"; fail=1; }
+          grep -qi "${anti} anti-patterns" README.md     || { echo "FAIL: README anti-patterns claim != ${anti}"; fail=1; }
+          grep -q "| ${skills} |" index.md               || { echo "FAIL: index.md skills count != ${skills}"; fail=1; }
+          grep -q "| ${hooks} |" index.md                || { echo "FAIL: index.md hooks count != ${hooks}"; fail=1; }
+          grep -q "| ${docs} |" index.md                 || { echo "FAIL: index.md docs count != ${docs}"; fail=1; }
+          grep -q "| ${examples} |" index.md             || { echo "FAIL: index.md examples count != ${examples}"; fail=1; }
+          grep -q "${news} deep-read" index.md           || { echo "FAIL: index.md news count != ${news}"; fail=1; }
+
+          if [ $fail -ne 0 ]; then
+            echo "Count drift detected — update README.md/index.md (or this job) to match the filesystem"
+            exit 1
+          fi
+          echo "All count claims match the filesystem"
+
+  validate-json:
+    name: Validate JSON Configs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: All shipped JSON must parse
+        run: |
+          for f in hooks/hooks.json config/*.json marketplace.json .claude-plugin/plugin.json; do
+            if [ ! -f "$f" ]; then continue; fi
+            jq empty "$f" || { echo "ERROR: $f is not valid JSON"; exit 1; }
+            echo "OK: $f"
+          done
