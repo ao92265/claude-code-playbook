@@ -126,4 +126,62 @@ Real results from teams using the patterns in this playbook.
 
 ---
 
+## Lessons from Production
+
+Beyond the headline numbers, production experience uncovered patterns worth encoding in any project.
+
+### Critical patterns
+
+| Pattern | Lesson |
+|---------|--------|
+| Foreign Key Cascades | SQL Server rejects multiple cascade paths on the same table. Use `onDelete: NoAction` on secondary relations and handle cascades in application code |
+| Adapter Imports | Import from `@prisma/adapter-mssql`, not the generic adapter package |
+| Feedback Loops | Any automated function that both produces and scans the same resource must exclude its own output to prevent infinite loops |
+| Emergency Disables | Track exactly what was disabled. Re-enable and verify all functions after the fix deploys |
+
+### The replace-don't-append pattern
+
+Never append to shared context files. Always replace the entire content, and keep it under 30 lines. Shared context files are read by every Claude session via CLAUDE.md; if sessions keep appending, the file grows unbounded, and once it exceeds the context window Claude silently drops it — losing all shared state. Every update should overwrite with only the current state.
+
+### Multi-agent safety rules
+
+| Rule | Rationale |
+|------|-----------|
+| No git stash in sub-agents | Sub-agents that stash can corrupt the working tree for the parent agent. Use worktrees for isolation instead |
+| No branch switching | A sub-agent switching branches will confuse every other running agent. Each agent should work on its current branch only |
+| Scope commits tightly | Each sub-agent should only commit the files it modified. Never use `git add -A` in a multi-agent context |
+| Exit cleanly on failure | If a sub-agent fails, it must report the failure clearly rather than attempting recovery that might conflict with the parent |
+
+### Context preservation
+
+Important decisions and discoveries must survive across Claude sessions:
+
+- **tasks.json** — structured task tracking with status, priority, and context fields
+- **PROJECT_NOTES.md** — freeform decision log with dated entries, updated immediately after architectural or technical decisions
+- **STRUCTURE.json** — machine-readable map of the codebase: modules, paths, purposes, dependencies
+
+Even without a framework, the "dated decision log" pattern is worth adopting on its own.
+
+### Local plugin marketplaces
+
+Rather than stuffing everything into CLAUDE.md, encapsulate domain-specific knowledge into reusable plugins that can be versioned and shared:
+
+```json
+// In .claude/settings.json
+{
+  "extraKnownMarketplaces": {
+    "your-project-plugins": {
+      "source": {
+        "source": "directory",
+        "path": "./plugins"
+      }
+    }
+  }
+}
+```
+
+This treats a local `plugins/` directory as a plugin marketplace. Plugins load without depending on external registries and can be versioned alongside your project code.
+
+---
+
 *Want to share your team's results? [Open a discussion](https://github.com/ao92265/claude-code-playbook/discussions) or [submit a pattern](https://github.com/ao92265/claude-code-playbook/issues/new?template=pattern-submission.md).*
