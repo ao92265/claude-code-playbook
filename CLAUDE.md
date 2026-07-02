@@ -1,6 +1,6 @@
 ## Project Basics
 
-This is a Markdown documentation project (Claude Code Playbook for Force Information Systems). There is no TypeScript, no build step, and no tests. Changes are primarily `.md` files.
+This is a Markdown documentation project (Claude Code Playbook). There is no TypeScript, no build step, and no tests. Changes are primarily `.md` files.
 
 ## Content Guidelines
 
