@@ -1,13 +1,13 @@
 ---
 title: Awesome Claude Code
 parent: Help
-nav_order: 4
+nav_order: 5
 ---
 # Awesome Claude Code
 
 A curated list of tools, plugins, MCP servers, and resources for Claude Code.
 
-> Know something that should be on this list? [Submit a PR](../CONTRIBUTING.md) or [open an issue](https://github.com/ao92265/claude-code-playbook/issues/new).
+> Know something that should be on this list? [Submit a PR](https://github.com/ao92265/claude-code-playbook/blob/main/CONTRIBUTING.md) or [open an issue](https://github.com/ao92265/claude-code-playbook/issues/new).
 
 ---
 

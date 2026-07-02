@@ -1,6 +1,6 @@
 ---
 title: Auditing & Hardening Your Setup
-nav_order: 43
+nav_order: 5
 parent: Architecture
 ---
 # Auditing & Hardening Your `~/.claude` Setup

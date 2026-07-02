@@ -1,6 +1,6 @@
 ---
 title: SDK vs CLI
-parent: Resources
+parent: Advanced
 nav_order: 37
 ---
 # SDK vs CLI

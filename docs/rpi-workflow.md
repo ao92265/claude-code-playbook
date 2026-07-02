@@ -1,6 +1,6 @@
 ---
 title: RPI Workflow
-parent: Resources
+parent: "Patterns & Techniques"
 nav_order: 38
 ---
 # RPI Workflow — Research → Plan → Implement

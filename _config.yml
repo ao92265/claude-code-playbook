@@ -1,5 +1,5 @@
 title: Claude Code Playbook
-description: Battle-tested patterns, skills, hooks, and templates for Claude Code
+description: Battle-tested Claude Code skills, hooks, and verification gates for working engineers
 remote_theme: just-the-docs/just-the-docs@v0.10.1
 
 url: "https://ao92265.github.io"
@@ -44,3 +44,6 @@ exclude:
   - .omc/
   - .claude/
   - "response-to-*.md"
+  - hooks/HANDOFF.md
+  - hooks/daydream-engine-prompt.md
+  - tools/

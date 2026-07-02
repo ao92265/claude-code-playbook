@@ -79,7 +79,7 @@ No. Planning context (rejected approaches, trade-off discussions) pollutes imple
 
 ### Can I create my own skills?
 
-Yes. Create a folder in `.claude/skills/` (project-local) or `~/.claude/skills/` (global) with a `SKILL.md` file. See [CONTRIBUTING.md](../CONTRIBUTING.md) for the format.
+Yes. Create a folder in `.claude/skills/` (project-local) or `~/.claude/skills/` (global) with a `SKILL.md` file. See [CONTRIBUTING.md](https://github.com/ao92265/claude-code-playbook/blob/main/CONTRIBUTING.md) for the format.
 
 ### Do hooks slow down my session?
 

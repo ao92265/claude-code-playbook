@@ -1,3 +1,7 @@
+---
+title: Day Start Dashboard Brief
+nav_exclude: true
+---
 # Design brief: "Day Start" — local dashboard for parking, resuming & measuring Claude Code sessions
 
 Hand this whole file to the designer (Claude designer agent or claude.ai). It's

@@ -1,6 +1,6 @@
 ---
 title: 30-Day Usage Insights
-nav_order: 4
+nav_order: 7
 parent: "Patterns & Techniques"
 permalink: /docs/usage-insights/
 ---

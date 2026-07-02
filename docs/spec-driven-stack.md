@@ -1,7 +1,7 @@
 ---
 title: Spec-Driven Stack 2026
 nav_order: 14
-parent: Patterns
+parent: "Patterns & Techniques"
 ---
 # Spec-Driven Stack 2026: Big 5 + GS
 

@@ -1,6 +1,6 @@
 ---
 title: Advanced Tool Use
-parent: Resources
+parent: Advanced
 nav_order: 36
 ---
 # Advanced Tool Use
