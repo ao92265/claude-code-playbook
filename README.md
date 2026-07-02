@@ -542,6 +542,7 @@ Every skill is a drop-in `/command` that teaches Claude a specific workflow. Cop
 |:------|:------------|:------------|
 | **[autoskill](skills/autoskill/)** | Analyzes your sessions to extract patterns and create new skills automatically | After sessions with lots of corrections |
 | **[skill-creator](skills/skill-creator/)** | Meta-skill for creating, testing, and refining new skills | When you need a new custom workflow |
+| **[myinsights](skills/myinsights/)** | Merged usage report over your ENTIRE local session corpus (all logins, not the built-in `/insights` sample) — quant rollups, an Opus narrative, and a deterministic ranked scorecard (9 factors graded A+→D), rendered as a self-contained Linear-styled HTML artifact | When you want a full, honest picture of how you actually use Claude Code |
 
 </details>
 
