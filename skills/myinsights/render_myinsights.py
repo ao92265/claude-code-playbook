@@ -91,6 +91,13 @@ areas = q.get("top_project_areas", [])
 scratch = next((v for nm,v in areas if nm=="scratch/worktree"), 0)
 named = [(nm,v) for nm,v in areas if nm!="scratch/worktree"][:9]
 est_upper = q.get("input_tokens",0)/1e6*5 + q.get("output_tokens",0)/1e6*25
+# API-rate scenarios. Standard per-Mtok rates (claude-api skill, cached 2026-06-24):
+# Opus 4.8 $5/$25 · Sonnet 5 $3/$15 · Haiku 4.5 $1/$5. No prompt-caching discount modeled,
+# so these are ceilings per tier; the real bill would sit between floor and ceiling by mix.
+_in_m = q.get("input_tokens",0)/1e6; _out_m = q.get("output_tokens",0)/1e6
+COST_OPUS = _in_m*5 + _out_m*25
+COST_SONNET = _in_m*3 + _out_m*15
+COST_HAIKU = _in_m*1 + _out_m*5
 
 def code(s): return f'<pre class="code">{E(str(s))}</pre>' if s else ""
 def prompt_box(s): return f'<div class="prompt"><span class="pl">copyable prompt</span><pre class="code">{E(str(s))}</pre></div>' if s else ""
@@ -186,6 +193,11 @@ for i, f in enumerate(FACTORS, 1):
         f'<div class="rk-lever">↗ {E(f["lever"])}</div>'
         f'</div></div>')
 rank_html = "".join(rank_rows)
+
+# TL;DR derivations — all deterministic from FACTORS/quant, no narrative input
+TL_BEST = FACTORS[0]
+TL_DRAG = max(FACTORS, key=lambda f: (100 - f["score"]) * f["w"])  # biggest weighted headroom
+TL_LANDED = outc.get("fully_achieved", 0) + outc.get("mostly_achieved", 0)
 
 # ---------- narrative pieces ----------
 istyle = n.get("interaction_style", {})
@@ -316,6 +328,11 @@ pre.code{{background:{C['bg']};border:1px solid var(--line);border-radius:12px;p
 .rk-bar span{{display:block;height:100%;border-radius:5px}}
 .rk-ev{{color:var(--muted);font-size:12.5px;line-height:1.5}}
 .rk-lever{{color:var(--faint);font-size:12px;margin-top:3px}} .rk-lever::first-letter{{color:var(--link)}}
+.tldr{{padding:18px 22px}}
+.tl-row{{display:grid;grid-template-columns:92px 1fr;gap:14px;padding:9px 0;border-bottom:1px solid var(--line);align-items:baseline}} .tl-row:last-child{{border:none}}
+.tl-k{{font-family:"Berkeley Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}}
+.tl-v{{font-size:14px;color:var(--body);line-height:1.55}} .tl-v b{{color:var(--ink);font-weight:590}}
+.cost-note{{color:var(--muted);font-size:12.5px;font-style:italic;margin:12px 2px 0;line-height:1.55;max-width:92ch}}
 footer{{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:var(--faint);font-size:12px;font-family:"Berkeley Mono",ui-monospace,monospace;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}}
 @media(max-width:820px){{.kpis,.three{{grid-template-columns:repeat(2,1fr)}}.two,.glance,.scoregrid{{grid-template-columns:1fr}}.tiers{{flex-direction:column}}.tier+.tier{{border-left:none;border-top:1px solid var(--line)}}.bar{{grid-template-columns:110px 1fr 56px}}}}
 </style>
@@ -332,6 +349,16 @@ footer{{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:
   </div>
   <p class="cap" style="max-width:82ch">Built-in <span class="mono">/insights</span> narrated ~131. This narrates {N_FACET} and <b>counts all {fmt(N_FULL)}</b>.</p>
   <p class="caveat">⚠︎ Merged, not segmented. Session history on disk carries <b>no account tag</b>, so this cannot split work vs personal — and both logins are the same person who asked for a merged view. Full-corpus stats (n={fmt(N_FULL)}) and sampled narrative stats (n={N_FACET}) are badged separately and never blended.</p>
+
+  <section class="section">
+    {h2("TL;DR")}
+    <div class="card tldr">
+      <div class="tl-row"><span class="tl-k">verdict</span><span class="tl-v"><b style="color:{COMP_COL}">{COMP_GRADE} ({COMPOSITE:.0f}/100)</b> — strongest factor: <b>{E(TL_BEST["name"])}</b> ({TL_BEST["score"]:.0f}); biggest weighted drag: <b>{E(TL_DRAG["name"])}</b> ({TL_DRAG["score"]:.0f}, weight {TL_DRAG["w"]}%)</span></div>
+      <div class="tl-row"><span class="tl-k">scale</span><span class="tl-v"><b>{fmt(N_FULL)}</b> sessions · <b>{q.get('total_hours',0)}h</b> wall-clock · <b>{fmt(q.get('commits',0))}</b> commits · <b>{TL_LANDED} of {N_FACET}</b> analyzed sessions landed</span></div>
+      <div class="tl-row"><span class="tl-k">cost</span><span class="tl-v">API-rate ceiling <b>${COST_OPUS:,.0f}</b> if every token were Opus — floor <b>${COST_HAIKU:,.0f}</b> all-Haiku — over just <b>{q.get('active_days',0)} active days</b>. Breakdown below.</span></div>
+      <div class="tl-row"><span class="tl-k">fix first</span><span class="tl-v">{E(TL_DRAG["lever"])}</span></div>
+    </div>
+  </section>
 
   <section class="section">
     {h2("Scorecard — every factor, ranked")}
@@ -443,6 +470,16 @@ footer{{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:
       <div class="card stat"><div class="n" style="color:var(--teal)">≤ ${est_upper/1000:.1f}k</div><div class="l">upper-bound cost IF all Opus-rate*</div></div>
     </div>
     <p class="cap">*Model tier isn't logged per session; real spend is well below this (much ran on Sonnet/Haiku subagents). Directional ceiling, not a bill.</p>
+  </section>
+
+  <section class="section">
+    {h2("What the API would have charged ", badge_full())}
+    <div class="grid three">
+      <div class="card stat"><div class="n" style="color:var(--green)">${COST_HAIKU:,.0f}</div><div class="l">floor — all Haiku 4.5 ($1/$5 per Mtok)</div></div>
+      <div class="card stat"><div class="n" style="color:var(--blue)">${COST_SONNET:,.0f}</div><div class="l">mid — all Sonnet 5 ($3/$15 per Mtok)</div></div>
+      <div class="card stat"><div class="n" style="color:var(--yellow)">${COST_OPUS:,.0f}</div><div class="l">ceiling — all Opus 4.8 ($5/$25 per Mtok)</div></div>
+    </div>
+    <p class="cost-note">All three price EVERY token ({_in_m:.1f}M in / {_out_m:.1f}M out) at that tier's standard API rate with <b>no prompt-caching discount</b> — cached reads bill at ~0.1× on the real API, so an actual API bill for this mix would land well inside these bounds. The corpus spans {q.get('active_days',0)} active days — roughly one subscription month. Rates: standard list prices (Sonnet 5 has intro pricing through 2026-08-31, not used here). Scenario, not a bill — model-tier per session isn't logged.</p>
   </section>
 
   <section class="section">
