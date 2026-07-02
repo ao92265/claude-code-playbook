@@ -107,6 +107,7 @@ The playbook covers the Opus 4.7 release and the related ecosystem shifts:
 - **[Prompt Discipline](docs/prompt-discipline)** — Cialdini persuasion principles applied to CLAUDE.md, rationalisation tables, 13 red flags, and pressure-testing as TDD-for-prompts
 - **[Knowledge & Context](docs/knowledge-and-context)** — Karpathy's LLM Wiki pattern and the 5-project ecosystem (Waykee Cortex, Sage-Wiki, Thinking-MCP, ELF, qmd)
 - **[Local Models](docs/local-models)** — Gemma 4 (Apache 2.0) as a local alternative in Codex CLI via llama.cpp or Ollama
+- **[GLM on Claude Code (z.AI)](docs/glm-zai)** — run GLM-5.2 as a ~1/6-cost second model: delegate one subtask from an Opus session, or route a whole session with `claude-glm`
 - **[BMad Autonomous Development](docs/bmad)** — the `/bad` coordinator for overnight sprint execution with git-worktree-per-story isolation
 
 ## Why This Exists
