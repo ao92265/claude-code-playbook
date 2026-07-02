@@ -2,6 +2,7 @@
 title: Hooks
 parent: Resources
 nav_order: 3
+permalink: /hooks/
 ---
 # Claude Code Hooks
 
