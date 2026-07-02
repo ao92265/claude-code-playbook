@@ -104,67 +104,13 @@ def prompt_box(s): return f'<div class="prompt"><span class="pl">copyable prompt
 def scaffold_tag(s): return f'<span class="scaf">{E(str(s))}</span>' if s else ""
 
 # ================= SCORECARD =================
-# Deterministic formulas over quant.json. Each factor: name, score 0-100, provenance
-# ("full" n=sessions | "samp" n=facets), evidence, lever, weight (%). Targets for
-# cadence/delegation are stated in the evidence line — they are chosen yardsticks,
-# not industry benchmarks.
-def compute_scores():
-    fn = max(N_FACET, 1)
-    fric = dict(q.get("facet_frictions", []))
-    landed = outc.get("fully_achieved",0) + outc.get("mostly_achieved",0)
-    unclear = outc.get("unclear_from_transcript", 0)
-    buggy = fric.get("buggy_code", 0); wrong = fric.get("wrong_approach", 0)
-    commits = q.get("commits", 0); pushes = q.get("pushes", 0)
-    days = max(q.get("active_days", 1), 1)
-    cadence = commits / days
-    worktree = next((v for nm,v in areas if nm=="scratch/worktree"), 0)
-    agents = q.get("task_agent_sessions", 0)
-    errs = q.get("tool_errors", 0)
-    top_calls = sum(v for _,v in q.get("top_tools", [])) or 1
-    nf = max(N_FULL, 1)
-    F = []
-    F.append(dict(name="Ship cadence", score=min(100.0, 100*cadence/25), kind="full", w=10,
-        ev=f"{fmt(commits)} commits over {days} active days ≈ {cadence:.0f}/day, scored vs a 25/day target",
-        lever="Already elite — protect it; don't let review debt slow the pipeline."))
-    F.append(dict(name="Tool reliability", score=100*(1 - errs/top_calls), kind="full", w=5,
-        ev=f"{fmt(errs)} tool errors vs {fmt(top_calls)} top-12 tool calls (error rate is an upper bound — denominator excludes long-tail tools)",
-        lever="Mostly environmental; pre-flight known blockers (ports, auth, dead servers)."))
-    F.append(dict(name="Survival rate", score=100*(1 - unclear/fn), kind="samp", w=10,
-        ev=f"{unclear} of {fn} analyzed sessions died to output-token-limit errors",
-        lever="Budgeted runs with a forced reboot handoff before the ceiling."))
-    F.append(dict(name="Landing rate", score=100*landed/fn, kind="samp", w=20,
-        ev=f"{landed} of {fn} analyzed sessions ended fully or mostly achieved",
-        lever="Tighten done-criteria up front; keep the verify gate mandatory."))
-    F.append(dict(name="Approach accuracy", score=100*(1 - wrong/fn), kind="samp", w=15,
-        ev=f"wrong_approach flagged in {wrong} of {fn} analyzed sessions",
-        lever="5-minute feasibility probe + named fallback before coding against external systems."))
-    F.append(dict(name="Isolation discipline", score=100*worktree/nf, kind="full", w=10,
-        ev=f"{fmt(worktree)} of {fmt(nf)} sessions ran in isolated scratch/worktree areas",
-        lever="Default every multi-file build into a worktree off origin/main."))
-    F.append(dict(name="Clean first pass", score=100*(1 - buggy/fn), kind="samp", w=15,
-        ev=f"buggy_code flagged in {buggy} of {fn} analyzed sessions",
-        lever="Failing test (or assertion checklist) BEFORE editing 2+ files."))
-    F.append(dict(name="Push-through", score=100*pushes/max(commits,1), kind="full", w=10,
-        ev=f"{fmt(pushes)} pushes vs {fmt(commits)} commits — work that actually left the machine",
-        lever="Land or discard: fewer stranded local commits — unpushed work is invisible to teammates and at risk on a single machine."))
-    F.append(dict(name="Delegation leverage", score=min(100.0, 100*(agents/nf)/0.20), kind="full", w=5,
-        ev=f"{agents} of {fmt(nf)} sessions used task agents, scored vs a 20% target",
-        lever="Route search/mechanical work to haiku/sonnet subagents; keep Opus for judgment."))
-    total_w = sum(f["w"] for f in F)
-    composite = sum(f["score"]*f["w"] for f in F) / total_w
-    return sorted(F, key=lambda f: -f["score"]), composite
+# Formulas live in scorecard.py (shared with export_scores.py and any future
+# leaderboard client). variant="report" is bit-identical to the historical
+# inline implementation — leaderboard clamping only exists in variant="export".
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from scorecard import compute_scores, grade_of, grade_color
 
-def grade_of(s):
-    for cut, letter in ((93,"A+"),(85,"A"),(78,"A−"),(70,"B+"),(62,"B"),(55,"B−"),(45,"C+"),(35,"C")):
-        if s >= cut: return letter
-    return "D"
-def grade_color(s):
-    if s >= 78: return C["green"]
-    if s >= 55: return C["blue"]
-    if s >= 35: return C["yellow"]
-    return C["red"]
-
-FACTORS, COMPOSITE = compute_scores()
+FACTORS, COMPOSITE = compute_scores(q, variant="report")
 COMP_GRADE = grade_of(COMPOSITE); COMP_COL = grade_color(COMPOSITE)
 
 def gauge():

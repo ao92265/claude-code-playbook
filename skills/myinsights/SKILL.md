@@ -50,6 +50,22 @@ The built-in `/insights` samples a subset of sessions and reflects the currently
    Then call the `Artifact` tool on `$OUT/report.html`. Favicon `📊`, title "myinsights — all logins merged".
    The renderer also computes a **deterministic ranked Scorecard** (9 factors scored 0–100 by disclosed formulas over `quant.json` + facet outcomes, graded A+→D, weighted into a composite) and styles the report on the Linear design system — both are automatic, no narrative input needed.
 
+## Leaderboard (dormant — no service exists yet)
+
+An **opt-in** Harris community leaderboard is planned but NOT live. Current state: fully dormant. There is no endpoint, no config, and this skill makes **zero network calls** — with or without the files below.
+
+What exists today (local-only):
+- `scorecard.py` — the 9-factor formulas as a shared module (`variant="report"` = the report's numbers; `variant="export"` = clamped to [0,100] for any future wire use).
+- `export_scores.py [quant.json] [scores.json]` — emits a **strict-allowlist** scores.json (schema/formula versions, corpus counts, 9 `{name,score,kind,w}` factors, composite, grade, skill_version — never evidence text, projects, hours, tokens, or anything else from quant.json) and maintains local snapshots under `data/snapshots/` so personal-best deltas compute offline.
+- `leaderboard-mock.html` — a seeded, self-contained demo board (synthetic handles; most-improved deltas, not absolute grades).
+
+Future submission flow (requires a live service, which is gated on sponsor + HR sign-off):
+1. User explicitly opts in and picks a pseudonymous handle.
+2. Skill runs `export_scores.py` and **shows the exact payload for review before anything is sent** (payload-preview is mandatory — no silent submission, no scheduling).
+3. Only the reviewed scores.json is transmitted. Deletion is self-service.
+
+Rules for any future implementation: no endpoint configured → no network code path executes; the payload allowlist is enforced by `tests/test_payload_and_privacy.py`; the board is a voluntary community game, never a performance instrument.
+
 ## Rules
 - **Read-only.** Never write into `~/.claude/usage-data` or `projects`. No secrets emitted.
 - **Self-contained HTML** — inline CSS + SVG only (Artifact CSP blocks CDNs/fonts/remote images). Charts are hand-rolled SVG/CSS bars; body-only (no `<html>/<head>/<body>`).
