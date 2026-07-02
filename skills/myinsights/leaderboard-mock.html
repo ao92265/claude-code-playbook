@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Harris Claude Code Leaderboard — seeded mock</title>
+<style>
+/* Linear design tokens (design-md/linear). Fully self-contained: no webfonts, no CDN, zero external requests. */
+:root{--bg:#08090A;--panel:#0F1011;--elev:#1C1C1F;--ink:#F7F8F8;--body:#D0D6E0;--muted:#8A8F98;--faint:#62666D;--line:#23252A;--line2:#34343A;--indigo:#5E6AD2;--link:#7070FF;--hover:#828FFF;--blue:#4EA7FC;--teal:#00B8CC;--green:#27A644;--yellow:#F0BF00;--red:#EB5757}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Inter Variable","SF Pro Display",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.6;letter-spacing:-.011em}
+.wrap{max-width:880px;margin:0 auto;padding:48px 24px 64px}
+.mono{font-family:"Berkeley Mono",ui-monospace,"SF Mono",Menlo,monospace}
+.eyebrow{font-family:"Berkeley Mono",ui-monospace,monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--link);margin:0 0 10px;font-weight:510}
+h1{font-size:30px;line-height:1.14;margin:0 0 10px;font-weight:590;letter-spacing:-.022em;text-wrap:balance}
+.lede{color:var(--muted);font-size:14.5px;max-width:64ch;margin:0 0 6px}
+.mockbanner{font-family:"Berkeley Mono",ui-monospace,monospace;font-size:12px;color:#f0cf4d;background:#F0BF0012;border:1px solid #F0BF0033;border-radius:8px;padding:9px 13px;margin:18px 0 0;line-height:1.5}
+h2{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-family:"Berkeley Mono",ui-monospace,monospace;margin:42px 0 14px;font-weight:510;display:flex;align-items:center;gap:10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:6px 20px;box-shadow:0 3px 12px rgba(0,0,0,.09)}
+.row{display:grid;grid-template-columns:44px 1fr 130px 120px 90px;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border:none}
+.row.head{color:var(--faint);font-family:"Berkeley Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:11px 0 9px}
+.rank{font-family:"Berkeley Mono",ui-monospace,monospace;font-size:14px;color:var(--faint);font-weight:590}
+.row:nth-child(2) .rank{color:var(--yellow)}
+.handle{font-weight:590;font-size:14.5px;letter-spacing:-.011em;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.you{font-family:"Berkeley Mono",ui-monospace,monospace;font-size:10px;padding:1px 9px;border-radius:9999px;background:#5E6AD21f;color:var(--hover);border:1px solid #828FFF40;font-weight:510}
+.delta{font-family:"Berkeley Mono",ui-monospace,monospace;font-size:15px;font-weight:590;font-variant-numeric:tabular-nums}
+.up{color:var(--green)} .flat{color:var(--faint)} .down{color:var(--red)}
+.pb{font-family:"Berkeley Mono",ui-monospace,monospace;font-size:12px;color:var(--teal)}
+.streak{font-family:"Berkeley Mono",ui-monospace,monospace;font-size:12px;color:var(--muted);text-align:right}
+.cap{color:var(--muted);font-size:12.5px;font-style:italic;margin:12px 2px 0;line-height:1.55}
+.cal .row{grid-template-columns:1fr 220px}
+.cal .prog{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:6px;height:10px;overflow:hidden}
+.cal .prog span{display:block;height:100%;background:var(--yellow);border-radius:5px}
+.cal .meta{font-family:"Berkeley Mono",ui-monospace,monospace;font-size:11px;color:var(--faint);margin-top:4px}
+footer{margin-top:46px;padding:16px 18px;border:1px solid var(--line2);border-radius:12px;background:var(--elev);color:var(--body);font-size:13px;line-height:1.6}
+footer b{color:var(--ink)}
+.foot2{margin-top:14px;color:var(--faint);font-size:11.5px;font-family:"Berkeley Mono",ui-monospace,monospace;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+@media(max-width:640px){.row{grid-template-columns:34px 1fr 90px 70px;font-size:13px}.streak{display:none}.row.head .streak{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Harris · Claude Code · community board</p>
+  <h1>Most improved — last 30 days</h1>
+  <p class="lede">Opt-in, pseudonymous, scores-only. Your sessions never leave your machine — the skill submits ~25 numbers, and the board ranks <b>improvement against your own past self</b>, never absolute grades.</p>
+  <div class="mockbanner">⚠ SEEDED MOCK — every row below except the labelled author row is synthetic demo data. No live service exists; nothing was collected. This page works offline from file://.</div>
+
+  <h2>Leaderboard <span style="color:var(--faint);text-transform:none;letter-spacing:0">— Δ composite vs own 30-day baseline</span></h2>
+  <div class="card">
+    <div class="row head"><span>#</span><span>handle</span><span>Δ 30 days</span><span>personal best</span><span class="streak">streak</span></div>
+    <div class="row"><span class="rank">1</span><span class="handle">quantum-badger</span><span class="delta up">+9.4</span><span class="pb">✦ new PB</span><span class="streak">6 wks</span></div>
+    <div class="row"><span class="rank">2</span><span class="handle">velvet-mongoose</span><span class="delta up">+7.1</span><span class="pb">✦ new PB</span><span class="streak">4 wks</span></div>
+    <div class="row"><span class="rank">3</span><span class="handle">midnight-pangolin</span><span class="delta up">+5.8</span><span class="pb">—</span><span class="streak">9 wks</span></div>
+    <div class="row"><span class="rank">4</span><span class="handle">turbo-heron</span><span class="delta up">+3.2</span><span class="pb">✦ new PB</span><span class="streak">3 wks</span></div>
+    <div class="row"><span class="rank">5</span><span class="handle">boulder-pusher <span class="you">author · real data · baseline day 1</span></span><span class="delta flat">+0.0</span><span class="pb">baseline set</span><span class="streak">1 wk</span></div>
+    <div class="row"><span class="rank">6</span><span class="handle">solar-lemur</span><span class="delta down">−1.9</span><span class="pb">—</span><span class="streak">7 wks</span></div>
+  </div>
+  <p class="cap">Deltas are computed locally by the skill against your own snapshots — the service never sees per-factor detail, only what you chose to submit. Gameable factors (commit cadence, push-through, delegation) are capped and blended before they can move a delta.</p>
+
+  <h2>Calibrating <span style="color:var(--faint);text-transform:none;letter-spacing:0">— building enough corpus to qualify</span></h2>
+  <div class="card cal">
+    <div class="row"><div><span class="handle">crimson-otter</span><div class="meta">31 / 50 sessions · 9 / 15 analyzed</div></div><div class="prog"><span style="width:62%"></span></div></div>
+    <div class="row"><div><span class="handle">paper-albatross</span><div class="meta">12 / 50 sessions · 3 / 15 analyzed</div></div><div class="prog"><span style="width:24%"></span></div></div>
+  </div>
+  <p class="cap">Scores from a small corpus aren't comparable to an 800-session one — rows join the board only past the minimum thresholds (straw-man: ≥50 sessions and ≥15 analyzed; final numbers pending calibration).</p>
+
+  <footer>
+    <b>This is a voluntary community game, not a performance instrument.</b> Participation is opt-in, handles are pseudonymous by default, submissions are a strict ~25-number allowlist (never transcripts, projects, or hours), any participant can delete their rows at any time, and this board must never be used in performance reviews, ranking discussions, or management reporting. If that framing ever breaks, the board shuts down.
+  </footer>
+  <div class="foot2">
+    <span>seeded mock · zero network requests · scores-only by design</span>
+    <span>myinsights leaderboard · pre-talk demo artifact</span>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "sessions": 200,
+  "facet_n": 50,
+  "facet_outcomes": [["fully_achieved", 20], ["mostly_achieved", 15], ["unclear_from_transcript", 5], ["partially_achieved", 8], ["not_achieved", 2]],
+  "facet_frictions": [["buggy_code", 10], ["wrong_approach", 5]],
+  "commits": 100,
+  "pushes": 50,
+  "active_days": 10,
+  "top_project_areas": [["scratch/worktree", 120], ["projA", 30]],
+  "task_agent_sessions": 20,
+  "tool_errors": 20,
+  "top_tools": [["Bash", 800], ["Read", 200]]
+}
