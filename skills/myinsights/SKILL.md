@@ -59,12 +59,18 @@ What exists today (local-only):
 - `export_scores.py [quant.json] [scores.json]` — emits a **strict-allowlist** scores.json (schema/formula versions, corpus counts, 9 `{name,score,kind,w}` factors, composite, grade, skill_version — never evidence text, projects, hours, tokens, or anything else from quant.json) and maintains local snapshots under `data/snapshots/` so personal-best deltas compute offline.
 - `leaderboard-mock.html` — a seeded, self-contained demo board (synthetic handles; most-improved deltas, not absolute grades).
 
-Future submission flow (requires a live service, which is gated on sponsor + HR sign-off):
-1. User explicitly opts in and picks a pseudonymous handle.
-2. Skill runs `export_scores.py` and **shows the exact payload for review before anything is sent** (payload-preview is mandatory — no silent submission, no scheduling).
-3. Only the reviewed scores.json is transmitted. Deletion is self-service.
+### Compete — one command, one confirm ("/myinsights submit")
 
-Rules for any future implementation: no endpoint configured → no network code path executes; the payload allowlist is enforced by `tests/test_payload_and_privacy.py`; the board is a voluntary community game, never a performance instrument.
+The board is live at https://ao92265.github.io/claude-code-leaderboard/ (repo `ao92265/claude-code-leaderboard`, PR-based submissions). When the user says "submit my scores", "put me on the leaderboard", "compete", or "/myinsights submit", automate the WHOLE flow except one explicit confirmation:
+
+1. Ensure a handle: ask once (pseudonymous, lowercase `a-z0-9-`, 3–31 chars) and remember it in `data/handle.txt` next to this skill for reuse.
+2. Run step 1 (gather) if quant.json is stale/missing, then `python3 "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/myinsights/export_scores.py"`.
+3. **Show the user the full scores.json payload + their delta and ask ONE explicit yes/no.** This preview is mandatory — never skip it, never submit silently, never schedule submissions. No yes → stop, delete nothing.
+4. On yes, do the git plumbing for them with `gh` (check `gh auth status` first):
+   `gh repo fork ao92265/claude-code-leaderboard --clone=false` (first time only), clone or update a scratch checkout of the fork, copy the payload to `scores/<handle>/<as_of>.json`, commit, push a branch, `gh pr create` against `ao92265/claude-code-leaderboard` with a one-line body. Print the PR URL. CI validates the allowlist; merge puts them on the board.
+5. "Delete me from the leaderboard" → same plumbing, PR that removes `scores/<handle>/`. No questions.
+
+Rules: the payload allowlist is enforced by `tests/test_payload_and_privacy.py` AND by the leaderboard repo's CI; the ONLY file that may be added to the fork is `scores/<handle>/<date>.json`; the board is a voluntary community game, never a performance instrument.
 
 ## Rules
 - **Read-only.** Never write into `~/.claude/usage-data` or `projects`. No secrets emitted.
