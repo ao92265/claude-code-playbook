@@ -1,6 +1,6 @@
 ---
 title: The Harness Pattern
-nav_order: 41
+nav_order: 2
 parent: Architecture
 ---
 # The Harness Pattern (and Why Vibe Coding Fails)

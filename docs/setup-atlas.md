@@ -1,6 +1,6 @@
 ---
 title: Setup Atlas
-nav_order: 42
+nav_order: 4
 parent: Architecture
 ---
 # The full setup atlas — one diagram of a real stack

@@ -1,6 +1,6 @@
 ---
 title: BMad Autonomous Development
-nav_order: 8
+nav_order: 9
 parent: Advanced
 ---
 # BMad Autonomous Development — The `/bad` Coordinator
@@ -188,6 +188,71 @@ See also: [Agent Teams guide]({{ site.baseurl }}/docs/agent-teams/).
 - Customer-facing changes without human PR review
 - Anything touching regulatory / compliance decisions (see [Regulated AI]({{ site.baseurl }}/docs/regulated-ai/))
 - Projects without good CI coverage — the self-heal loop relies on signal to operate
+
+---
+
+## The BMAD Method — Quick Reference
+
+`/bad` builds on the underlying BMAD plugin. If you're new to BMAD itself, this is the short version.
+
+### Standard agents
+
+| Agent | Role |
+|-------|------|
+| Architect | Evaluates design, raises scalability and maintainability concerns |
+| Developer | Owns implementation, raises edge cases and testing concerns |
+| QA Engineer | Writes test cases, identifies coverage gaps |
+| Security Auditor | Flags security risks, compliance issues, injection vulnerabilities |
+| Product Manager | Raises scope, timeline, and user impact concerns |
+
+### Party Mode
+
+Start with `/bmad-party-mode` or just tell Claude "start a party mode session." The BMad Master agent activates and orchestrates other agents; as you type, relevant agents respond in character. Most valuable during the analysis phase (multiple perspectives prevent tunnel vision), architecture reviews (Architect + Security Auditor + Developer catch issues early), and sprint retrospectives.
+
+### Modules
+
+| Module | Purpose |
+|--------|---------|
+| BMM (BMad Method Module) | Core Agile suite for software development |
+| BMB (BMad Builder) | Framework for creating custom AI agents and extensions |
+| CIS (Creative Intelligence Suite) | Innovation, design thinking, and brainstorming |
+| BMVCS (Version Control System) | Git workflow automation and version control |
+| BMGD (BMad Game Dev Studio) | Specialized module for game development |
+
+### Commands
+
+**Agent activation:**
+
+| Command | What It Does |
+|---------|-------------|
+| `/bmad:init` | Initialize BMAD in the current project |
+| `/bmad-help` | Get guidance on what to do next |
+| `/bmad-architect` | Activate the Architect |
+| `/bmad-dev` | Activate the Developer agent |
+| `/bmad-pm` | Activate the Product Manager |
+| `/bmad-party-mode` | Activate Party Mode for multi-agent collaboration |
+
+**Workflow commands:**
+
+| Command | Phase |
+|---------|-------|
+| `/bmad-bmm-create-product-brief` | Analysis — Create initial product brief |
+| `/bmad-bmm-create-prd` | Planning — Generate Product Requirements Document |
+| `/bmad-bmm-create-architecture` | Solutioning — Design system architecture |
+| `/bmad-bmm-create-epics-and-stories` | Solutioning — Break down into implementable stories |
+| `/bmad-bmm-sprint-planning` | Implementation — Plan the sprint |
+| `/bmad-bmm-dev-story` | Implementation — Develop a single story |
+| `/bmad-bmm-code-review` | Implementation — Review completed work |
+
+**Review commands:**
+
+| Command | Purpose |
+|---------|---------|
+| `/bmad-review-adversarial-general` | Stress-test plans and designs |
+| `/bmad-review-edge-case-hunter` | Find edge cases and failure modes |
+| `/bmad-bmm-qa-generate-e2e-tests` | Generate end-to-end test suites from stories |
+
+BMAD is available as a Claude plugin — install it from the plugin marketplace and activate any of the commands above.
 
 ---
 

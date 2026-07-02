@@ -1,7 +1,7 @@
 ---
 title: Verify Gate Hook
 nav_order: 42
-parent: Hooks
+parent: Configuration
 ---
 # Verify Gate Hook — Force Verification Before Claude Stops
 

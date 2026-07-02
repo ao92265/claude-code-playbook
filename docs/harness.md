@@ -1,6 +1,6 @@
 ---
 title: Harness
-nav_order: 40
+nav_order: 1
 parent: Architecture
 ---
 # Harness — What It Is, How To Implement

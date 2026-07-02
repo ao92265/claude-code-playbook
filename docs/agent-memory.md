@@ -1,6 +1,6 @@
 ---
 title: Agent Memory
-parent: Resources
+parent: "Skills & Extensibility"
 nav_order: 35
 ---
 # Agent Memory

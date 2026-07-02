@@ -239,6 +239,77 @@ This pattern underpins OMC's built-in `ccg` workflow (Claude-Codex-Gemini tri-mo
 
 ---
 
+## OMC — Session Orchestration Modes
+
+OMC (oh-my-claudecode) is the plugin most of this page's patterns run through. Beyond cross-model routing, it provides advanced session tools inside Claude Code itself: spawning parallel agents, managing context, running distributed workflows, and debugging Claude's decision-making.
+
+### Execution modes
+
+| Mode | Description |
+|------|-------------|
+| Autopilot | Flagship mode. Describe a goal, OMC handles the full lifecycle: planning, parallel execution, testing, and self-correction |
+| Ultrawork | Maximum parallelism with up to 5 concurrent worker agents. 3-5x faster than sequential |
+| Swarm | Coordinated agents pulling from a shared task pool. Prevents duplicate work |
+| Pipeline | Sequential agent chains with preset workflows for review, implement, and debug |
+| Ecomode | Token-efficient parallel execution with smart model routing. 30-50% token savings |
+| Ralph | Persistence mode — keeps working until the Architect agent verifies the goal is fully met |
+| TDD | Test-Driven Development workflow — write tests first, then implement |
+
+### Magic keywords
+
+Type these keywords naturally in your prompt to trigger specific modes:
+
+| Keyword | Effect |
+|---------|--------|
+| autopilot | Full autonomous execution from idea to code |
+| ralph | Persistence mode — runs until verified complete |
+| ralplan | Iterative planning with consensus structured deliberation |
+| ulw / ultrawork | Maximum parallelism with concurrent agents |
+| team | Spawns a team of coordinated agents |
+| deep-interview | Socratic questioning to clarify vague ideas before execution |
+| deepsearch | Enhanced search for finding files and modules across large codebases |
+| deep-analyze | Deep analysis of problems (e.g. why tests are failing) |
+| tdd | Test-Driven Development workflow |
+| plan | Planning interview before execution |
+
+### Smart model routing
+
+OMC automatically routes tasks to the right model: Haiku for simple tasks, Sonnet for standard work, Opus for complex reasoning. This saves 30-50% on tokens with no manual configuration. For specialist tasks it can orchestrate other providers too — Codex for deep code review and security analysis, Gemini for visual analysis and 1M-token context on large files — which is where this page's CLI-vs-MCP framework applies.
+
+### Key commands
+
+| Command | Purpose |
+|---------|---------|
+| `/spawn` | Start a background agent on a specific task |
+| `/status` | Show status of all running agents |
+| `/focus` | Switch focus to a background agent |
+| `/merge` | Merge results from agents and terminate them |
+| `/kill` | Terminate a background agent |
+| `/log` | Show detailed logs for a specific agent |
+| `/oh-my-claudecode:autopilot` | Autonomous execution from idea to code |
+| `/oh-my-claudecode:ultrawork` | Parallel agent execution |
+| `/oh-my-claudecode:ralph` | Persistent execution until verified complete |
+| `stopomc` / `cancel` | Cancel active orchestration |
+
+### /batch — parallel codebase changes
+
+`/batch` orchestrates large-scale changes across a codebase in parallel. Describe the change, and Claude decomposes it into 5-30 independent units, spawning one background agent per unit in isolated git worktrees.
+
+```
+/batch migrate src/ from Solid to React
+/batch replace all uses of lodash with native equivalents
+/batch add type annotations to all untyped function parameters
+/batch rename all database columns from camelCase to snake_case
+```
+
+Only works when units are independent. If one unit depends on another, use standard sessions or agent teams instead.
+
+### /simplify — post-implementation cleanup
+
+`/simplify` spawns three review agents in parallel to clean up code you just wrote: one checks code reuse and duplication, one checks overall code quality, one checks efficiency. Run it after implementing a feature that works. It operates at the architectural level — code structure, algorithm efficiency, design decisions — not formatting.
+
+---
+
 ## Further Reading
 
 - [I Ran Codex and Claude Side by Side — Yanli Liu (Medium)](https://medium.com/ai-advances/i-ran-codex-and-claude-side-by-side-heres-what-i-found-ee16ea991838)

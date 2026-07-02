@@ -6,10 +6,10 @@
 
 <sub>Built by <strong>Force Information Systems</strong> · A <strong>Harris Computer</strong> Company · Part of <strong>Constellation Software</strong></sub>
 
-[![Quick Start](https://img.shields.io/badge/Quick_Start-0078D4?style=for-the-badge&logo=rocket&logoColor=white)](#-quick-start)
-[![Full Guide](https://img.shields.io/badge/Full_Guide-667_lines-00B4D8?style=for-the-badge&logo=book&logoColor=white)](docs/guide.md)
-[![Skills](https://img.shields.io/badge/Skills-29_included-8B5CF6?style=for-the-badge&logo=puzzle-piece&logoColor=white)](#-skills-reference)
-[![Templates](https://img.shields.io/badge/Templates-11_stacks-F97316?style=for-the-badge&logo=file-code&logoColor=white)](#-claudemd-templates)
+[![Quick Start](https://img.shields.io/badge/Quick_Start-0078D4?style=for-the-badge&logo=rocket&logoColor=white)](#quick-start)
+[![Docs Site](https://img.shields.io/badge/Docs_Site-00B4D8?style=for-the-badge&logo=book&logoColor=white)](https://ao92265.github.io/claude-code-playbook/)
+[![Skills](https://img.shields.io/badge/Skills-52_included-8B5CF6?style=for-the-badge&logo=puzzle-piece&logoColor=white)](#skills-reference)
+[![Hooks](https://img.shields.io/badge/Hooks-28_included-EF4444?style=for-the-badge&logoColor=white)](#hooks)
 [![CI](https://img.shields.io/github/actions/workflow/status/ao92265/claude-code-playbook/validate.yml?style=for-the-badge&label=CI&logo=github)](https://github.com/ao92265/claude-code-playbook/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/ao92265/claude-code-playbook?style=for-the-badge&logo=github&color=EAB308)](https://github.com/ao92265/claude-code-playbook/stargazers)
@@ -21,12 +21,12 @@
 
 <br/>
 
-<img src="https://img.shields.io/badge/29-Skills-8B5CF6?style=flat-square" alt="29 Skills"/>
-<img src="https://img.shields.io/badge/11-Templates-F97316?style=flat-square" alt="11 Templates"/>
-<img src="https://img.shields.io/badge/18-Hooks-EF4444?style=flat-square" alt="18 Hooks"/>
-<img src="https://img.shields.io/badge/58-Docs-0078D4?style=flat-square" alt="58 Docs"/>
-<img src="https://img.shields.io/badge/3-Examples-22C55E?style=flat-square" alt="3 Examples"/>
-<img src="https://img.shields.io/badge/22-Anti--Patterns-EC4899?style=flat-square" alt="22 Anti-Patterns"/>
+<img src="https://img.shields.io/badge/52-Skills-8B5CF6?style=flat-square" alt="52 Skills"/>
+<img src="https://img.shields.io/badge/12-Templates-F97316?style=flat-square" alt="12 Templates"/>
+<img src="https://img.shields.io/badge/28-Hooks-EF4444?style=flat-square" alt="28 Hooks"/>
+<img src="https://img.shields.io/badge/67-Docs-0078D4?style=flat-square" alt="67 Docs"/>
+<img src="https://img.shields.io/badge/5-Examples-22C55E?style=flat-square" alt="5 Examples"/>
+<img src="https://img.shields.io/badge/24-Anti--Patterns-EC4899?style=flat-square" alt="24 Anti-Patterns"/>
 
 </div>
 
@@ -64,22 +64,20 @@ After months of daily production use — debugging at 2am, shipping features acr
 <td width="50%">
 
 **Learn**
-- A [667-line power user guide](docs/guide.md) covering session management to multi-agent orchestration
+- The **[docs site](https://ao92265.github.io/claude-code-playbook/)** — 67 guides organised by section, from [Getting Started](docs/getting-started.md) to enterprise governance, plus 58 news deep-reads
 - [24 prompt engineering patterns](docs/prompt-patterns.md) with copy-paste examples and a decision tree
 - [Quick-reference cheat sheet](docs/cheat-sheet.md) for commands, model routing, and session management
 - [Troubleshooting guide](docs/troubleshooting.md) with 15 common issues and diagnostic flowcharts
+- [24 anti-patterns](docs/anti-patterns.md) — what goes wrong and how to avoid it
 
 </td>
 <td width="50%">
 
 **Use**
-- [29 production-ready skills](skills/) (custom `/commands`) you can drop into any project
-- [11 CLAUDE.md templates + 1 team onboarding template](templates/) — TypeScript, React, Node, Python, Full-stack, Go, Rust, Mobile, DevOps, Java, C#, Team Onboarding
-- [18 hook scripts](hooks/) that catch errors before they reach your commits
-- [3 annotated example sessions](examples/) showing real workflows in action
-- [MCP server guide](docs/mcp-servers.md), [skills ecosystem](docs/skills-ecosystem.md), [model comparison](docs/model-comparison.md), [workflow decision tree](docs/workflows.md), [22 anti-patterns](docs/anti-patterns.md), and [30-day usage insights](docs/usage-insights.md)
-- [CI/CD automation](docs/github-actions.md), [enterprise governance](docs/enterprise-governance.md), [agent teams](docs/agent-teams.md), [security remediation](docs/security-remediation.md), and [legacy modernization](docs/legacy-modernization.md)
-- [Skills 2.0](docs/skills-v2.md) (context fork, dynamic injection, agent frontmatter), [Code Container](docs/code-container.md) (Docker sandboxing), [auto mode](docs/auto-mode.md), [path-scoped rules](docs/path-scoped-rules.md), and [channels](docs/channels.md)
+- [52 production-ready skills](skills/) (custom `/commands`) you can drop into any project
+- [11 CLAUDE.md templates + 1 team onboarding template](templates/) — TypeScript, React, Node, Python, Full-stack, Go, Rust, Mobile, DevOps, Java, C#
+- [28 hook scripts](hooks/) that catch errors before they reach your commits
+- [5 annotated example sessions](examples/) showing real workflows in action
 - **One-line installer** for skills, hooks, and templates
 
 </td>
@@ -142,139 +140,17 @@ graph TB
 
 ## What's Inside
 
-<details>
-<summary><strong>Full directory tree</strong> (click to expand)</summary>
-<br/>
-
-```
-claude-code-playbook/
-├── docs/
-│   ├── guide.md               # The complete power user guide (667 lines)
-│   ├── prompt-patterns.md     # 24 prompt engineering patterns with examples
-│   ├── cheat-sheet.md         # Quick-reference card for commands & workflows
-│   ├── troubleshooting.md     # 15 common issues with diagnostic flowcharts
-│   ├── mcp-servers.md         # MCP server guide: setup, token impact, troubleshooting
-│   ├── model-comparison.md    # Claude model comparison: Haiku vs Sonnet vs Opus
-│   ├── workflows.md           # Decision tree: which skill to use when
-│   ├── anti-patterns.md       # 22 things that go wrong and how to avoid them
-│   ├── usage-insights.md      # 30-day field report: 2,228 sessions, top tools/MCPs/commands
-│   ├── awesome-claude-code.md # Curated list of tools, plugins, and resources
-│   ├── skills-ecosystem.md    # Agent skills package manager (skills.sh)
-│   ├── codex-parity.md        # Match Codex's workflow stack: record-to-skill + automations registry
-│   ├── faq.md                 # Frequently asked questions
-│   ├── account-setup.md       # Claude account signup and plan tiers
-│   ├── getting-started.md     # Beginner-friendly quickstart (10 min)
-│   ├── team-setup.md          # How to roll out the playbook to a team
-│   ├── github-actions.md      # Claude Code in CI/CD: PR review, issue-to-PR, Bedrock/Vertex
-│   ├── enterprise-governance.md # SSO, compliance API, managed policies, EU AI Act
-│   ├── agent-teams.md         # Native Agent Teams: parallel multi-agent coordination
-│   ├── security-remediation.md # Scanner-to-fix pipeline: OWASP patterns, batch remediation
-│   ├── legacy-modernization.md # AI-assisted tech debt reduction and code migration
-│   ├── plugin-authoring.md    # Build and distribute Claude Code plugins
-│   ├── channels.md            # Claude.ai channels and conversation management
-│   ├── path-scoped-rules.md   # Directory-scoped CLAUDE.md rules and overrides
-│   ├── auto-mode.md           # Auto Mode: skip-permissions for autonomous sessions
-│   ├── skills-v2.md           # Skills 2.0: context fork, dynamic injection, agent frontmatter
-│   ├── code-container.md      # Docker sandboxing for autonomous Claude Code work
-│   ├── april-2026-briefing.md # 20-min tech-lead briefing: Opus 4.7, caveman, Codex plugin, compliance
-│   ├── opus-4-7.md            # Claude Opus 4.7 reference: 5 behavioural patterns, xhigh, /ultrareview
-│   ├── cost-and-observability.md # caveman plugin + OpenTelemetry stack (Docker Compose, 8 metrics)
-│   ├── multi-model-orchestration.md # Codex plugin, CLI-vs-MCP 70/30, Managed Agents, loop-breaker
-│   ├── regulated-ai.md        # SR 11-7, EU AI Act Article 12, Critique-vs-Council, 3 vendor questions
-│   ├── prompt-discipline.md   # Cialdini authority/commitment, rationalisation tables, 13 red flags
-│   ├── local-models.md        # Gemma 4 (Apache 2.0) in Codex CLI via llama.cpp / Ollama
-│   ├── knowledge-and-context.md # Karpathy LLM Wiki pattern + 5-project ecosystem
-│   ├── bmad.md                # /bad autonomous sprint orchestrator deep dive
-│   ├── spec-driven-stack.md   # Big 5 + GS stack: SpecKit, BMAD, GSD, BART, Claude Code, GStack
-│   ├── harness.md             # Harness vs model vs rules — what to build, what to use
-│   ├── harness-pattern.md     # The Harness Pattern — why vibe coding fails; three checks
-│   ├── planning-blueprint.md  # 7 subagents (1 role/1 artifact/1 lane) → parallel → merge → adversarial QA
-│   ├── steering-files.md      # Enforceable house rules for AI-generated code
-│   ├── audit-log-hook.md      # Raw-prompt compliance logging (aidlc-workflows pattern)
-│   ├── verify-gate-hook.md    # Stop hook that blocks until tsc/tests pass (baseline-diffed)
-│   ├── daydream-hook.md       # Idle Stop hook: recombine memory → scored ideas → quick PRD
-│   └── news/                  # News & Research — 39 deep-read article pages (April 2026 research)
-├── examples/
-│   ├── bug-fix-session.md     # Annotated bug fix session transcript
-│   ├── feature-session.md     # Annotated new feature session transcript
-│   └── multi-agent-session.md # Annotated multi-agent orchestration transcript
-├── templates/
-│   ├── CLAUDE.md              # General CLAUDE.md template
-│   ├── CLAUDE-react.md        # React / Next.js
-│   ├── CLAUDE-node-api.md     # Node.js API
-│   ├── CLAUDE-python.md       # Python
-│   ├── CLAUDE-fullstack.md    # Full-stack monorepo
-│   ├── CLAUDE-go.md           # Go
-│   ├── CLAUDE-rust.md         # Rust
-│   ├── CLAUDE-mobile.md       # React Native / Mobile
-│   ├── CLAUDE-devops.md       # DevOps / Infrastructure
-│   ├── CLAUDE-java.md         # Java / Spring Boot
-│   ├── CLAUDE-csharp.md       # C# / .NET
-│   └── ONBOARDING-TEAM.md     # Team onboarding guide (paste into Claude for guided setup)
-├── skills/                    # 29 ready-to-use custom slash commands
-│   ├── api-test/              # API endpoint testing
-│   ├── autoskill/             # Self-learning from sessions
-│   ├── brainstorming/         # Structured idea exploration
-│   ├── changelog/             # Generate changelog from commits
-│   ├── check-env/             # Pre-flight environment checks
-│   ├── code-review/           # Structured code review
-│   ├── codex-prepush-review/  # Code review before push
-│   ├── cross-project-search/  # Search across repos
-│   ├── debug/                 # Scientific debugging workflow
-│   ├── deep-explore/          # Deep codebase exploration
-│   ├── dependency-audit/      # Vulnerability & update audit
-│   ├── deploy/                # Safe deployment checklist
-│   ├── doc-finalise/          # Finalise .docx deliverables with embedded visuals + PDF regen
-│   ├── docker-check/          # Docker environment validation
-│   ├── executing-plans/       # Execute plans with checkpoints
-│   ├── explain/               # Layered code explanations
-│   ├── git-cleanup/           # Stale branch cleanup
-│   ├── handoff/               # Session handoff summaries
-│   ├── karpathy-guidelines/   # Anti-overcomplication checklist
-│   ├── migrate-db/            # Safe database migrations
-│   ├── perf-check/            # Performance investigation
-│   ├── pr-batch-review/       # Batch PR management
-│   ├── refactor/              # Zero-behavior-change refactor
-│   ├── security/
-│   │   ├── browser-security/  # Browser security hardening (CSP, headers, cookies)
-│   │   │   ├── SKILL.md
-│   │   │   └── references/    # Framework-specific: aspnet.md, node.md, django.md
-│   │   └── fix-vulnerability/ # Scanner-to-fix pipeline (Checkmarx CSV → OWASP fix)
-│   │       └── SKILL.md
-│   ├── security-check/        # OWASP Top 10 scan
-│   ├── skill-creator/         # Create new skills
-│   ├── test-first/            # TDD workflow
-│   ├── verification-before-completion/
-│   └── writing-plans/         # Implementation planning
-├── hooks/
-│   ├── ts-check.sh            # TypeScript type checking
-│   ├── lint-check.sh          # ESLint validation
-│   ├── pre-commit-guard.sh    # Block debug statements
-│   ├── format-check.sh        # Prettier formatting
-│   ├── env-guard.sh           # Secret detection
-│   ├── build-check.sh         # OOM-safe builds
-│   ├── session-start-check.sh # Environment validation
-│   ├── firewall.sh            # Dangerous command blocker
-│   ├── protect-paths.sh       # Protected file guard
-│   ├── audit-log.sh           # Raw-prompt compliance log (UserPromptSubmit)
-│   ├── daydream.sh            # Idle Stop hook: spawn detached memory-recombination run
-│   ├── daydream-surface.sh    # SessionStart: surface overnight daydreams once
-│   ├── daydream-engine-prompt.md # The daydream engine — the prompt the hook runs
-│   └── README.md              # Hook setup guide
-├── config/
-│   ├── settings-example.json  # Example settings.json
-│   └── hooks-example.json     # All 7 hooks configured
-├── scripts/
-│   └── install.sh             # Interactive installer
-├── .github/
-│   ├── workflows/validate.yml # CI validation
-│   └── ISSUE_TEMPLATE/        # Bug, skill request, pattern templates
-├── article.md                 # Original article
-├── CONTRIBUTING.md            # Contribution guide
-└── LICENSE                    # MIT
-```
-
-</details>
+| Directory | Contents |
+|:----------|:---------|
+| **[docs/](docs/)** | 67 guides — patterns, configuration, architecture, enterprise, troubleshooting — plus [News & Research](docs/news/) with 58 deep-read article pages |
+| **[skills/](skills/)** | 52 ready-to-use custom slash commands ([full reference below](#skills-reference)) |
+| **[hooks/](hooks/)** | 28 hook scripts — deterministic guard rails for commits, builds, secrets, and session state ([list below](#hooks)) |
+| **[templates/](templates/)** | 11 stack-specific CLAUDE.md files + a team onboarding template |
+| **[examples/](examples/)** | 5 annotated real-session transcripts |
+| **[onboarding/](onboarding/)** | Structured 2-hour team onboarding program |
+| **[config/](config/)** | Example `settings.json` and hook wiring configs |
+| **[scripts/](scripts/)** | One-line installer, updater, audit, and `claude-retry` wrapper |
+| **[tools/](tools/)** | `cc-tools` Python CLI: cache radar, cost ledger, markdown lint |
 
 <br/>
 
@@ -351,31 +227,31 @@ See [hooks/README.md](hooks/README.md) for `settings.json` config, or copy the c
 > /deploy           # Safe deployment
 > /test-first       # TDD workflow
 > /security-check   # OWASP scan
-> /pr-batch-review  # Review all PRs
+> /morning          # Cross-terminal briefing
 ```
 
 </td>
 </tr>
 </table>
 
-Then read the **[Full Guide](docs/guide.md)** — it covers everything:
+Then dive into the docs — the **[Complete Guide](docs/guide.md)** hub maps every topic to its focused page:
 
 | Section | What You'll Learn |
 |:--------|:------------------|
-| Core Workflow | The Request-Implement-Verify-Close cycle that prevents marathon sessions |
-| Context Management | Why Claude "gets dumber" mid-session and how to prevent it |
-| Reverse Prompting | Let Claude interview *you* for better specs |
-| Plugins & MCP | Which plugins are worth installing and which waste context tokens |
-| BMAD | Multi-agent orchestration with Architect, Developer, QA, and Security agents |
-| OMC | Advanced session modes: autopilot, parallel agents, persistence loops |
-| Troubleshooting | Session disconnects, agent deadlocks, OOM crashes |
-| Production Lessons | Hard-won patterns from a 10,000+ test codebase |
+| [Getting Started](docs/getting-started.md) | Zero to productive in 10 minutes |
+| [Patterns & Techniques](docs/patterns.md) | Prompt patterns, anti-patterns, workflows, usage insights |
+| [Configuration](docs/configuration.md) | Permissions, MCP servers, model routing, cost control |
+| [Architecture](docs/architecture.md) | Harness vs model vs rules, steering files, setup auditing |
+| [Skills & Extensibility](docs/skills-section.md) | The skills ecosystem, Skills 2.0, plugin authoring |
+| [Advanced](docs/advanced.md) | Multi-agent teams, multi-model orchestration, code containers |
+| [Enterprise](docs/enterprise.md) | Governance, regulated AI, security remediation, legacy modernization |
+| [News & Research](docs/news/) | 58 deep-read article pages behind the April 2026 briefing |
 
 <br/>
 
 ## Plugin Ecosystem
 
-The guide covers two major orchestration plugins in depth:
+The playbook covers two major orchestration plugins in depth — see [BMad Autonomous Development](docs/bmad.md) and [Multi-Model Orchestration](docs/multi-model-orchestration.md):
 
 <table>
 <tr>
@@ -449,13 +325,11 @@ graph LR
 </tr>
 </table>
 
-> See the [full guide](docs/guide.md) for complete command references, magic keywords, and module breakdowns.
-
 <br/>
 
 ## Skills Reference
 
-Every skill is a drop-in `/command` that teaches Claude a specific workflow. Copy the ones you need.
+Every skill is a drop-in `/command` that teaches Claude a specific workflow. All 52 are listed here — copy the ones you need.
 
 <details open>
 <summary><strong>Environment & Safety</strong></summary>
@@ -467,31 +341,23 @@ Every skill is a drop-in `/command` that teaches Claude a specific workflow. Cop
 | **[deploy](skills/deploy/)** | Pre-deploy checklist: OOM-safe build, tests, env vars, git status, explicit confirmation | Before any deployment |
 | **[security-check](skills/security-check/)** | Quick security scan for OWASP Top 10: secrets, injection, XSS, auth issues | Before releases or after security-sensitive changes |
 | **[verification-before-completion](skills/verification-before-completion/)** | Forces Claude to prove work is done with actual test/build output | Automatically before "done" claims |
+| **[done](skills/done/)** | Single-command verification gate: typecheck + lint + tests + build; refuses a green summary on any non-zero exit | Before saying a task is finished or committing |
 | **[session-doubt](skills/session-doubt/)** | Two-question reflective close-out: enumerate + root-cause what it's least confident about, then name the biggest blind spot | After substantive work, alongside verification |
-| **[retry](skills/retry/)** | Survive Claude API errors/outages: a `claude-retry.sh` wrapper that relaunches with backoff on transient 5xx/overload/rate-limit, plus a `/retry` skill to cleanly resume the cut-off task afterward | When the API is overloaded, rate-limited, or down |
+| **[retry](skills/retry/)** | Survive Claude API errors/outages: a `claude-retry.sh` wrapper that relaunches with backoff, plus a `/retry` skill to cleanly resume the cut-off task | When the API is overloaded, rate-limited, or down |
 
 </details>
 
 <details open>
-<summary><strong>Security Remediation</strong></summary>
-
-| Skill | What It Does | When To Use |
-|:------|:------------|:------------|
-| **[browser-security](skills/security/browser-security/)** | Browser security hardening: CSP, security headers, cookie flags, with framework-specific references | Hardening web apps against client-side attacks |
-| **[fix-vulnerability](skills/security/fix-vulnerability/)** | Scanner-to-fix pipeline: takes Checkmarx/Snyk findings, applies OWASP fixes, verifies with re-scan | Remediating scanner findings at scale |
-
-</details>
-
-<details open>
-<summary><strong>Code Quality</strong></summary>
+<summary><strong>Code Quality & Testing</strong></summary>
 
 | Skill | What It Does | When To Use |
 |:------|:------------|:------------|
 | **[test-first](skills/test-first/)** | TDD workflow: write failing tests, implement, verify green, refactor | Any new feature or bug fix where you want test discipline |
+| **[tdd-fix](skills/tdd-fix/)** | Strict TDD bug-fix loop: failing test first, minimal fix, full CI parity before PR | Bug-fix issues |
 | **[refactor](skills/refactor/)** | Focused refactoring with zero behavior change — reverts if any test fails | When improving structure without changing behavior |
+| **[refactor-loop](skills/refactor-loop/)** | Characterization-test-first refactor loop: baseline tests committed, then iterate until they stay green | Safe refactors of untested code |
 | **[code-review](skills/code-review/)** | Structured code review with severity ratings and categorized feedback | After completing changes |
 | **[codex-prepush-review](skills/codex-prepush-review/)** | Automated code review triggered before `git push` | Every push |
-| **[pr-batch-review](skills/pr-batch-review/)** | Reviews all open PRs in one pass with a consolidated summary table | PR management sessions |
 | **[dependency-audit](skills/dependency-audit/)** | Scans dependencies for vulnerabilities, outdated packages, and license issues | Before releases or periodically |
 | **[karpathy-guidelines](skills/karpathy-guidelines/)** | Pre-coding checklist to prevent over-engineering and unnecessary complexity | Before starting any feature |
 | **[debug](skills/debug/)** | Scientific debugging: hypothesis → test → narrow down → fix | When you need systematic root cause analysis |
@@ -501,13 +367,15 @@ Every skill is a drop-in `/command` that teaches Claude a specific workflow. Cop
 </details>
 
 <details open>
-<summary><strong>Planning & Execution</strong></summary>
+<summary><strong>Planning & Specs</strong></summary>
 
 | Skill | What It Does | When To Use |
 |:------|:------------|:------------|
 | **[writing-plans](skills/writing-plans/)** | Creates structured implementation plans with architecture decisions and risk flags | Before complex features |
 | **[executing-plans](skills/executing-plans/)** | Executes written plans in batches with verification checkpoints | After planning is done |
 | **[brainstorming](skills/brainstorming/)** | Multi-perspective structured brainstorming with devil's advocate analysis | When exploring approaches |
+| **[spec](skills/spec/)** | Scaffolds a Context/Objective/Boundaries/Validation prompt before non-trivial implementation | Scoping a task before code |
+| **[critic](skills/critic/)** | One-shot adversarial plan review: 3-10 severity-rated findings on scope creep, missing tests, unverified assumptions | Before executing a plan |
 
 </details>
 
@@ -519,6 +387,21 @@ Every skill is a drop-in `/command` that teaches Claude a specific workflow. Cop
 | **[deep-explore](skills/deep-explore/)** | Multi-step codebase exploration across many files with structural analysis | Understanding unfamiliar code |
 | **[cross-project-search](skills/cross-project-search/)** | Searches across all repos in your workspace for patterns and implementations | Finding examples across projects |
 | **[explain](skills/explain/)** | Layered code explanations — from one-liner to deep implementation details | Understanding unfamiliar code quickly |
+| **[research-only](skills/research-only/)** | Enforces strict analysis-only mode: no Edit/Write tools, findings as markdown only | Investigations that must not touch code |
+| **[multiask](skills/multiask/)** | Cross-checks an answer across multiple AI CLIs in parallel with adversarial review | High-stakes decisions: security, prod incidents, irreversible changes |
+| **[loom-analyze](skills/loom-analyze/)** | Downloads a Loom share URL and produces a transcript plus keyframes for analysis | Turning recorded walkthroughs into actionable notes |
+
+</details>
+
+<details>
+<summary><strong>Git & PR Operations</strong></summary>
+
+| Skill | What It Does | When To Use |
+|:------|:------------|:------------|
+| **[git-cleanup](skills/git-cleanup/)** | Clean up stale branches, prune remotes, tidy repository state | Periodic repo maintenance |
+| **[pr-batch-review](skills/pr-batch-review/)** | Reviews all open PRs in one pass with a consolidated summary table | PR management sessions |
+| **[pr-merge-queue](skills/pr-merge-queue/)** | Batched PR merge loop with checkpoints for triaging a backlog | Clearing an open-PR backlog interactively |
+| **[pr-fleet](skills/pr-fleet/)** | Overnight parallel PR processing: coordinator + one worker per PR in isolated worktrees | Autonomous backlog clearing at scale |
 
 </details>
 
@@ -528,10 +411,43 @@ Every skill is a drop-in `/command` that teaches Claude a specific workflow. Cop
 | Skill | What It Does | When To Use |
 |:------|:------------|:------------|
 | **[changelog](skills/changelog/)** | Generates formatted changelog from recent commits (Keep a Changelog style) | Before releases or version tags |
-| **[doc-finalise](skills/doc-finalise/)** | Finalise .docx deliverables: integrity inventory, embedded PNG visuals, style normalisation, PDF regen, Closeout Trio summary | Board packs, exec status reports, compliance documents |
+| **[doc-finalise](skills/doc-finalise/)** | Finalise .docx deliverables: integrity inventory, embedded visuals, style normalisation, PDF regen | Board packs, exec status reports, compliance documents |
 | **[migrate-db](skills/migrate-db/)** | Safe database migration with backup verification, dry-run, and rollback plan | Running schema changes |
+
+</details>
+
+<details>
+<summary><strong>Session & Workflow</strong></summary>
+
+| Skill | What It Does | When To Use |
+|:------|:------------|:------------|
+| **[morning](skills/morning/)** | Cross-terminal morning briefing: consolidates every parked session into one report | Resuming 6-10 terminals without rereading each |
 | **[handoff](skills/handoff/)** | Structured session summary: what's done, what's left, decisions, gotchas | End of every session |
-| **[git-cleanup](skills/git-cleanup/)** | Clean up stale branches, prune remotes, tidy repository state | Periodic repo maintenance |
+| **[reboot](skills/reboot/)** | Distills the current task into a clean reprompt so a bloated session can be cleared without losing the thread | When a session goes stale |
+| **[rest](skills/rest/)** | Persistent low-effort output mode: one bold answer line + one next step, plain words | Tired days |
+| **[task-observer](skills/task-observer/)** | Monitors task execution for patterns and corrections worth preserving as new skills | Long working sessions |
+
+</details>
+
+<details>
+<summary><strong>Writing & Communication</strong></summary>
+
+| Skill | What It Does | When To Use |
+|:------|:------------|:------------|
+| **[anti-ai-prose](skills/anti-ai-prose/)** | De-AIs prose: strips LLM tells and rewrites in a real-human voice | Any publishable draft |
+| **[draft-reply](skills/draft-reply/)** | Audience-first drafting: forces recipient + tone framing before writing | Replies, emails, Slack/Teams messages |
+| **[tldr](skills/tldr/)** | Restates the previous answer in plain English with concrete next steps | Explaining technical output to non-technical readers |
+
+</details>
+
+<details>
+<summary><strong>Frontend & Design</strong></summary>
+
+| Skill | What It Does | When To Use |
+|:------|:------------|:------------|
+| **[design-taste-frontend](skills/design-taste-frontend/)** | Anti-slop frontend skill: infers the right design direction and ships non-templated interfaces | Landing pages, portfolios, redesigns |
+| **[impeccable](skills/impeccable/)** | Full design/critique/polish toolkit for frontend interfaces, with live browser iteration | Designing, auditing, or hardening any UI |
+| **[webgpu-threejs-tsl](skills/webgpu-threejs-tsl/)** | WebGPU Three.js development guide: TSL shaders, node materials, compute shaders | Three.js WebGPU work |
 
 </details>
 
@@ -542,7 +458,8 @@ Every skill is a drop-in `/command` that teaches Claude a specific workflow. Cop
 |:------|:------------|:------------|
 | **[autoskill](skills/autoskill/)** | Analyzes your sessions to extract patterns and create new skills automatically | After sessions with lots of corrections |
 | **[skill-creator](skills/skill-creator/)** | Meta-skill for creating, testing, and refining new skills | When you need a new custom workflow |
-| **[myinsights](skills/myinsights/)** | Merged usage report over your ENTIRE local session corpus (all logins, not the built-in `/insights` sample) — quant rollups, an Opus narrative, and a deterministic ranked scorecard (9 factors graded A+→D), rendered as a self-contained Linear-styled HTML artifact | When you want a full, honest picture of how you actually use Claude Code |
+| **[skill-authoring](skills/skill-authoring/)** | Best practices for building skills, distilled from Anthropic's official guide | Writing or debugging a SKILL.md |
+| **[myinsights](skills/myinsights/)** | Merged usage report over your entire local session corpus — quant rollups, narrative, ranked scorecard | A full, honest picture of how you actually use Claude Code |
 
 </details>
 
@@ -550,7 +467,7 @@ Every skill is a drop-in `/command` that teaches Claude a specific workflow. Cop
 
 ## Key Patterns
 
-These are the highest-impact patterns from [the full guide](docs/guide.md):
+These are the highest-impact patterns from the playbook:
 
 <table>
 <tr>
@@ -653,55 +570,20 @@ Never append to shared context files. Always replace the entire content and keep
 
 ## Documentation
 
-| | Doc | What It Covers |
-|:--|:----|:---------------|
-| **[Power User Guide](docs/guide.md)** | 667 lines | Full lifecycle: sessions, context, plugins, multi-agent, production lessons |
-| **[Prompt Patterns](docs/prompt-patterns.md)** | 24 patterns | Reverse Prompting, Constraint-First, Scope Lock, SOURCE FACTS / CHANGE LIST, The Closeout Trio, The Doubt Audit, and more |
-| **[Cheat Sheet](docs/cheat-sheet.md)** | 192 lines | Quick-reference: commands, model routing, session management, troubleshooting |
-| **[Troubleshooting](docs/troubleshooting.md)** | 311 lines | 15 issues in Symptoms/Cause/Fix format with 3 diagnostic flowcharts |
-| **[MCP Servers](docs/mcp-servers.md)** | Guide | Setup, token impact, recommended servers, when to disable |
-| **[Model Comparison](docs/model-comparison.md)** | Guide | Haiku vs Sonnet vs Opus: routing, cost optimization, decision flowchart |
-| **[Workflows](docs/workflows.md)** | Guide | Decision tree: which skill to use for any situation |
-| **[Anti-Patterns](docs/anti-patterns.md)** | 22 items | The "don't do this" guide with real examples of what goes wrong |
-| **[Awesome Claude Code](docs/awesome-claude-code.md)** | List | Curated tools, plugins, MCP servers, and community resources |
-| **[Tribune](https://github.com/ao92265/tribune)** | Companion CLI | Convene a three-voice panel (Proposer / Skeptic / Red Team) on a hard decision and commit an ADR — uses your Claude Code / Codex / Gemini subscriptions, no API keys |
-| **[FAQ](docs/faq.md)** | Q&A | Quick answers to the most common questions |
-| **[Getting Started](docs/getting-started.md)** | Guide | Zero to productive in 10 minutes |
-| **[Team Setup](docs/team-setup.md)** | Guide | How to roll out the playbook to your team |
-| **[Prompt Library](docs/prompt-library.md)** | 50+ prompts | Copy-paste prompts for every situation — the cheat codes page |
-| **[Cost Guide](docs/cost-guide.md)** | Guide | Real token costs, ROI calculator, optimization strategies, budget templates |
-| **[Permissions](docs/permissions.md)** | Guide | Permission modes, allowlists, `--dangerously-skip-permissions` safety |
-| **[Comparison](docs/comparison.md)** | Guide | Claude Code vs Cursor vs Copilot vs Windsurf vs Codex vs Kiro vs Antigravity |
-| **[Codex Parity](docs/codex-parity.md)** | Guide | Match Codex's workflow stack: record-a-demo → skill, and a scheduled-jobs registry |
-| **[Case Studies](docs/case-studies.md)** | Stories | Real results: 85% faster features, zero regressions |
-| **[Adoption Playbook](docs/adoption-playbook.md)** | Guide | How to pitch and roll out Claude Code to your org |
-| **[Skills Ecosystem](docs/skills-ecosystem.md)** | Guide | Agent skills package manager: discovery, evaluation, recommended skills by stack |
-| **[GitHub Actions](docs/github-actions.md)** | Guide | CI/CD automation: PR review, @claude triggers, Bedrock/Vertex, issue-to-PR |
-| **[Enterprise Governance](docs/enterprise-governance.md)** | Guide | SSO, managed policies, Compliance API, spend controls, EU AI Act |
-| **[Agent Teams](docs/agent-teams.md)** | Guide | Native parallel multi-agent coordination with shared task lists |
-| **[Security Remediation](docs/security-remediation.md)** | Guide | Scanner-to-fix pipeline: OWASP patterns, Checkmarx/Snyk, batch remediation |
-| **[Legacy Modernization](docs/legacy-modernization.md)** | Guide | AI-assisted tech debt reduction, characterisation tests, incremental migration |
-| **[Plugin Authoring](docs/plugin-authoring.md)** | Guide | Build and distribute plugins: skills, hooks, MCP servers bundled |
-| **[April 2026 Briefing](docs/april-2026-briefing.md)** | 20-min read | Shareable tech-lead summary of the April 2026 AI ecosystem shifts |
-| **[Opus 4.7 Reference](docs/opus-4-7.md)** | Reference | Full Opus 4.7 reference: 5 behavioural patterns, xhigh, /ultrareview, migration checklist |
-| **[Cost & Observability](docs/cost-and-observability.md)** | Guide | `caveman` plugin (75% output-token reduction) + OpenTelemetry Docker stack |
-| **[Multi-Model Orchestration](docs/multi-model-orchestration.md)** | Guide | Official OpenAI Codex plugin, CLI-vs-MCP 70/30 framework, Managed Agents, loop-breaker |
-| **[Regulated AI](docs/regulated-ai.md)** | Guide | SR 11-7, EU AI Act Article 12, Critique-vs-Council, 3 vendor questions |
-| **[Prompt Discipline](docs/prompt-discipline.md)** | Guide | Cialdini playbook: authority, commitment, rationalisation tables, 13 red flags |
-| **[Local Models](docs/local-models.md)** | Guide | Gemma 4 (Apache 2.0) as local model in Codex CLI (llama.cpp, Ollama) |
-| **[Knowledge & Context](docs/knowledge-and-context.md)** | Guide | Karpathy's LLM Wiki pattern + 5-project ecosystem (Waykee, Sage-Wiki, qmd) |
-| **[BMad Autonomous Development](docs/bmad.md)** | Guide | `/bad` overnight sprint orchestrator with git-worktree isolation |
-| **[Spec-Driven Stack 2026](docs/spec-driven-stack.md)** | Guide | Big 5 + GS: SpecKit, BMAD, GSD, BART mode, Claude Code, GStack — one operating model |
-| **[Harness](docs/harness.md)** | Guide | Harness vs model vs rules: Claude Code, Agent SDK, and when to write rules instead |
-| **[Harness Pattern](docs/harness-pattern.md)** | Play | Why vibe coding fails: three checks (steering, content store, comprehension), anti-patterns, agent hardening |
-| **[Planning Blueprint](docs/planning-blueprint.md)** | Play | Seven subagents (one role / one artifact / one lane) run in parallel, merged by hand, then attacked by an adversarial read-only QA reviewer |
-| **[Steering Files](docs/steering-files.md)** | Guide | Writing enforceable house rules: good-vs-bad rule test, nested CLAUDE.md, minimum viable checklist |
-| **[Audit Log Hook](docs/audit-log-hook.md)** | Guide | Raw-prompt compliance logging adapted from awslabs/aidlc-workflows |
-| **[Verify Gate Hook](docs/verify-gate-hook.md)** | Guide | Stop hook with baseline-diffed tsc/test verification — forces Claude to keep working until regressions are fixed |
-| **[Daydream Hook](docs/daydream-hook.md)** | Guide | Idle-time Stop hook that recombines your memory into scored ideas and auto-forges a quick PRD — includes the headless-auth gotcha (`--bare` silently kills auth) |
-| **[Auditing & Hardening Your Setup](docs/setup-audit.md)** | Play | Worked case study: one firewall hook as the real Bash deny-layer (bypass voids hard_deny), env-indirected secrets, research-only Bash gate, scheduling orphaned scripts via launchd, and testing variant bypasses |
-| **[News & Research](docs/news/)** | 39 articles | Per-article deep reads of every substantive source behind the April 2026 briefing |
-| **[Article](article.md)** | Article | The original article that inspired this playbook |
+67 docs organised into sections on the **[docs site](https://ao92265.github.io/claude-code-playbook/)** — highlights by section:
+
+| Section | Key Pages |
+|:--------|:----------|
+| **Getting Started** | [Getting Started](docs/getting-started.md) · [Account Setup](docs/account-setup.md) · [Cheat Sheet](docs/cheat-sheet.md) · [CLI Reference](docs/cli-reference.md) · [Complete Guide hub](docs/guide.md) |
+| **Patterns & Techniques** | [Prompt Patterns](docs/prompt-patterns.md) (24 patterns) · [Prompt Library](docs/prompt-library.md) (50+ prompts) · [Prompt Discipline](docs/prompt-discipline.md) · [Anti-Patterns](docs/anti-patterns.md) (24 items) · [Workflows](docs/workflows.md) · [Usage Insights](docs/usage-insights.md) · [Spec-Driven Stack](docs/spec-driven-stack.md) · [RPI Workflow](docs/rpi-workflow.md) |
+| **Configuration** | [Permissions](docs/permissions.md) · [MCP Servers](docs/mcp-servers.md) · [Model Comparison](docs/model-comparison.md) · [Cost Guide](docs/cost-guide.md) · [Path-Scoped Rules](docs/path-scoped-rules.md) · [Auto Mode](docs/auto-mode.md) · [Verify Gate Hook](docs/verify-gate-hook.md) · [Daydream Hook](docs/daydream-hook.md) · [Audit Log Hook](docs/audit-log-hook.md) |
+| **Architecture** | [Harness](docs/harness.md) · [Harness Pattern](docs/harness-pattern.md) · [Steering Files](docs/steering-files.md) · [Setup Atlas](docs/setup-atlas.md) · [Setup Audit](docs/setup-audit.md) |
+| **Skills & Extensibility** | [Skills Ecosystem](docs/skills-ecosystem.md) · [Skills 2.0](docs/skills-v2.md) · [Plugin Authoring](docs/plugin-authoring.md) · [Agent Memory](docs/agent-memory.md) |
+| **Advanced** | [Agent Teams](docs/agent-teams.md) · [Multi-Model Orchestration](docs/multi-model-orchestration.md) · [BMad Autonomous Development](docs/bmad.md) · [Planning Blueprint](docs/planning-blueprint.md) · [Code Container](docs/code-container.md) · [Local Models](docs/local-models.md) · [Cost & Observability](docs/cost-and-observability.md) · [Knowledge & Context](docs/knowledge-and-context.md) · [Advanced Tool Use](docs/advanced-tool-use.md) · [SDK vs CLI](docs/sdk-vs-cli.md) · [Opus 4.7 Reference](docs/opus-4-7.md) |
+| **Enterprise** | [Enterprise Governance](docs/enterprise-governance.md) · [Regulated AI](docs/regulated-ai.md) · [Security Remediation](docs/security-remediation.md) · [Legacy Modernization](docs/legacy-modernization.md) · [GitHub Actions](docs/github-actions.md) · [Team Setup](docs/team-setup.md) · [Adoption Playbook](docs/adoption-playbook.md) · [Case Studies](docs/case-studies.md) |
+| **News & Research** | [April 2026 Briefing](docs/april-2026-briefing.md) · [58 deep-read article pages](docs/news/) across 9 categories |
+| **Help** | [FAQ](docs/faq.md) · [Troubleshooting](docs/troubleshooting.md) · [Comparison](docs/comparison.md) · [Codex Parity](docs/codex-parity.md) · [Awesome Claude Code](docs/awesome-claude-code.md) |
+| **Resources** | [Launch Article](docs/article.md) · [Examples](examples/) · [Templates](templates/) · [Tribune](https://github.com/ao92265/tribune) — companion CLI for three-voice decision panels |
 
 <br/>
 
@@ -722,54 +604,13 @@ Never append to shared context files. Always replace the entire content and keep
 | **[CLAUDE-devops.md](templates/CLAUDE-devops.md)** | DevOps / IaC | Terraform, Docker, CI/CD, secrets management, monitoring |
 | **[CLAUDE-java.md](templates/CLAUDE-java.md)** | Java / Spring Boot | DI, JPA, error handling, Flyway migrations, testing |
 | **[CLAUDE-csharp.md](templates/CLAUDE-csharp.md)** | C# / .NET | EF Core, async patterns, minimal APIs, xUnit testing |
-| **[ONBOARDING-TEAM.md](templates/ONBOARDING-TEAM.md)** | Team onboarding | New teammate pastes it into Claude Code for a guided setup tour (repos, MCPs, skills, team tips) |
-
-<details>
-<summary><strong>Template architecture</strong> — each section addresses a specific failure mode</summary>
-<br/>
-
-```mermaid
-graph TB
-    subgraph "Prevention Layer"
-        PB["Project Basics<br/><em>Language & imports</em>"]
-        UI["UI/Frontend<br/><em>Visual verification</em>"]
-        GW["General Workflow<br/><em>Action over planning</em>"]
-        AU["Agent Usage<br/><em>Rate limit prevention</em>"]
-    end
-
-    subgraph "Quality Layer"
-        TE["Token Efficiency<br/><em>Model routing</em>"]
-        CP["Change Philosophy<br/><em>Minimal changes</em>"]
-        VF["Verification<br/><em>Prove it works</em>"]
-        LT["Lessons Tracking<br/><em>Learn from mistakes</em>"]
-    end
-
-    subgraph "Safety Layer"
-        CR["Communication<br/><em>Don't blame the user</em>"]
-        DE["Dev Environment<br/><em>Pre-flight checks</em>"]
-        BD["Build & Deploy<br/><em>OOM prevention</em>"]
-        GG["Git & GitHub<br/><em>No unsolicited pushes</em>"]
-    end
-
-    style PB fill:#4A90D9,stroke:#357ABD,color:#fff
-    style UI fill:#4A90D9,stroke:#357ABD,color:#fff
-    style GW fill:#4A90D9,stroke:#357ABD,color:#fff
-    style AU fill:#4A90D9,stroke:#357ABD,color:#fff
-    style TE fill:#50C878,stroke:#3CB371,color:#fff
-    style CP fill:#50C878,stroke:#3CB371,color:#fff
-    style VF fill:#50C878,stroke:#3CB371,color:#fff
-    style LT fill:#50C878,stroke:#3CB371,color:#fff
-    style CR fill:#FF6B6B,stroke:#EE5A5A,color:#fff
-    style DE fill:#FF6B6B,stroke:#EE5A5A,color:#fff
-    style BD fill:#FF6B6B,stroke:#EE5A5A,color:#fff
-    style GG fill:#FF6B6B,stroke:#EE5A5A,color:#fff
-```
-
-</details>
+| **[ONBOARDING-TEAM.md](templates/ONBOARDING-TEAM.md)** | Team onboarding | New teammate pastes it into Claude Code for a guided setup tour |
 
 <br/>
 
 ## Hooks
+
+Hooks are deterministic guard rails — they fire on tool events whether or not the model remembers to check.
 
 ```mermaid
 sequenceDiagram
@@ -792,9 +633,13 @@ sequenceDiagram
     Claude-->>You: "Bug fixed, types clean"
 ```
 
-**13 included hooks:** [ts-check.sh](hooks/ts-check.sh) (type errors) | [lint-check.sh](hooks/lint-check.sh) (ESLint) | [pre-commit-guard.sh](hooks/pre-commit-guard.sh) (debug statements) | [format-check.sh](hooks/format-check.sh) (Prettier) | [env-guard.sh](hooks/env-guard.sh) (secrets) | [build-check.sh](hooks/build-check.sh) (OOM-safe builds) | [session-start-check.sh](hooks/session-start-check.sh) (environment validation) | [firewall.sh](hooks/firewall.sh) (dangerous command blocker) | [protect-paths.sh](hooks/protect-paths.sh) (protected file guard) | [audit-log.sh](hooks/audit-log.sh) (raw-prompt compliance log) | [verify-gate.sh](hooks/verify-gate.sh) (Stop-blocking verify gate with baseline diffing) | [daydream.sh](hooks/daydream.sh) (idle memory → ideas → quick PRD) | [daydream-surface.sh](hooks/daydream-surface.sh) (surface daydreams at session start)
+**28 hook scripts included.** 11 are auto-wired when you install the playbook as a plugin (via [hooks/hooks.json](hooks/hooks.json)); the rest are opt-in via your `settings.json`.
 
-> See **[hooks/README.md](hooks/README.md)** for setup and **[config/hooks-example.json](config/hooks-example.json)** for a complete configuration with all included hooks wired up.
+**Auto-wired (11):** [session-start-check.sh](hooks/session-start-check.sh) (environment validation) · [pre-commit-guard.sh](hooks/pre-commit-guard.sh) (debug statements) · [env-guard.sh](hooks/env-guard.sh) (secrets) · [firewall.sh](hooks/firewall.sh) (dangerous command blocker) · [protect-paths.sh](hooks/protect-paths.sh) (protected file guard) · [ts-check.sh](hooks/ts-check.sh) (type errors) · [lint-check.sh](hooks/lint-check.sh) (ESLint) · [format-check.sh](hooks/format-check.sh) (Prettier) · [build-check.sh](hooks/build-check.sh) (OOM-safe builds) · [daydream.sh](hooks/daydream.sh) (idle memory → ideas → quick PRD) · [daydream-surface.sh](hooks/daydream-surface.sh) (surface daydreams at session start)
+
+**Opt-in (17):** [verify-gate.sh](hooks/verify-gate.sh) (Stop-blocking verify gate with baseline diffing) · [audit-log.sh](hooks/audit-log.sh) (raw-prompt compliance log) · [secret-scanner.py](hooks/secret-scanner.py) (pattern-based secret detection) · [codex-prepush-review.sh](hooks/codex-prepush-review.sh) (second-model review on push) · [pre-commit-verify.sh](hooks/pre-commit-verify.sh) (typecheck before commit) · [commit-message-check.sh](hooks/commit-message-check.sh) (conventional commits) · [tdd-gate.sh](hooks/tdd-gate.sh) (warn on source edits without a failing test) · [plan-gate.sh](hooks/plan-gate.sh) (warn on edits without a plan) · [require-agent-model.sh](hooks/require-agent-model.sh) (block subagent spawns without an explicit model) · [research-only-guard.sh](hooks/research-only-guard.sh) (enforce analysis-only mode) · [test-on-save.sh](hooks/test-on-save.sh) (auto-run relevant tests) · [auto-simplify.sh](hooks/auto-simplify.sh) (simplification pass on commit) · [stop-handoff.sh](hooks/stop-handoff.sh) (write a "where I left off" handoff) · [sessionstart-handoff.sh](hooks/sessionstart-handoff.sh) (re-inject the last handoff) · [precompact-handoff.sh](hooks/precompact-handoff.sh) (preserve state before compaction) · [notify-local-tts.sh](hooks/notify-local-tts.sh) (TTS notifications) · [play-tts.sh](hooks/play-tts.sh) (TTS wrapper)
+
+> See **[hooks/README.md](hooks/README.md)** for setup and **[config/hooks-example.json](config/hooks-example.json)** for an example configuration wiring 9 of the hook scripts.
 
 <br/>
 
@@ -847,16 +692,10 @@ Real session transcripts annotated with explanations of what's happening and why
 | Example | Pattern | Key Takeaway |
 |:--------|:--------|:------------|
 | **[Bug Fix](examples/bug-fix-session.md)** | Request-Implement-Verify-Close | Paste real errors, scope-lock fixes, verify with actual tests |
+| **[Debugging](examples/debugging-session.md)** | Scientific debugging | Hypothesis → test → narrow down → fix, not guess-and-check |
 | **[New Feature](examples/feature-session.md)** | Reverse prompting + scope constraints | Let Claude ask questions, constrain the blast radius |
+| **[Refactoring](examples/refactoring-session.md)** | Zero-behavior-change refactor | Tests are the safety net; revert on any red |
 | **[Multi-Agent](examples/multi-agent-session.md)** | Parallel agents with model routing | Cap at 3-4 agents, use worktree isolation, verify combined output |
-
-<br/>
-
-## Contributing
-
-Found a useful pattern? Built a skill that saved you hours? PRs welcome.
-
-See **[CONTRIBUTING.md](CONTRIBUTING.md)** for detailed guidelines on contributing skills, hooks, templates, and documentation.
 
 <br/>
 
@@ -874,6 +713,14 @@ New to Claude Code? Hand your team the **[onboarding package](onboarding/)** —
 | [Checklist](onboarding/checklist.md) | Completion verification | 5 min |
 
 Also see: [Getting Started](docs/getting-started.md) | [Team Setup](docs/team-setup.md) | [Adoption Playbook](docs/adoption-playbook.md) | [Case Studies](docs/case-studies.md) | [Enterprise Governance](docs/enterprise-governance.md) | [GitHub Actions](docs/github-actions.md)
+
+<br/>
+
+## Contributing
+
+Found a useful pattern? Built a skill that saved you hours? PRs welcome.
+
+See **[CONTRIBUTING.md](CONTRIBUTING.md)** for detailed guidelines on contributing skills, hooks, templates, and documentation.
 
 <br/>
 

@@ -18,10 +18,10 @@ Built by **Force Information Systems** · A **Harris Computer** Company · Part 
 
 | Category | Count | Description |
 |----------|-------|-------------|
-| [Skills](docs/skills-ecosystem) | 29 | Production-ready custom `/commands` you can drop into any project |
-| [Templates](templates/CLAUDE) | 11 | Stack-specific CLAUDE.md files for TypeScript, React, Node, Python, Go, Rust, and more |
-| [Hooks](hooks/) | 9 | Pre-commit and pre-push guard scripts that catch errors before they reach your commits |
-| [Docs](docs/guide) | 30+ | Guides, patterns, anti-patterns, troubleshooting, and reference material |
+| [Skills](docs/skills-ecosystem) | 52 | Production-ready custom `/commands` you can drop into any project |
+| [Templates](templates/CLAUDE) | 11 | Stack-specific CLAUDE.md files for TypeScript, React, Node, Python, Go, Rust, and more — plus a team onboarding template |
+| [Hooks](hooks/) | 28 | Guard-rail scripts for commits, builds, secrets, and session state — 11 auto-wired via the plugin, the rest opt-in |
+| [Docs](docs/guide) | 67 | Guides, patterns, anti-patterns, troubleshooting, and reference material — plus 58 news deep-reads |
 | [Examples](examples/) | 5 | Annotated real-world sessions showing workflows in action |
 | [Onboarding](onboarding/) | 6 | Step-by-step guides from installation to advanced usage |
 
@@ -85,20 +85,20 @@ flowchart TB
 ## Quick Start
 
 1. **New to Claude Code?** Start with the [Getting Started](docs/getting-started) guide
-2. **Want the full picture?** Read the [667-line Complete Guide](docs/guide)
+2. **Want the full picture?** Start at the [Complete Guide hub](docs/guide) — it maps every topic to its focused page
 3. **Need a quick reference?** Grab the [Cheat Sheet](docs/cheat-sheet)
 4. **Setting up a project?** Pick a [CLAUDE.md template](templates/CLAUDE) for your stack
 5. **Want custom commands?** Browse the [Skills Ecosystem](docs/skills-ecosystem)
 
 ## 🔖 April 2026 Briefing
 
-> **The shareable 20-minute summary of this month's AI development shifts.** Covers Opus 4.7, cost optimisation, multi-model orchestration, regulated-AI compliance, and a 10-item 30-day action list for engineering leaders.
+> **The shareable 20-minute summary of the April 2026 AI development shifts.** Covers Opus 4.7, cost optimisation, multi-model orchestration, regulated-AI compliance, and a 10-item 30-day action list for engineering leaders.
 >
 > **[→ Read the April 2026 Briefing](docs/april-2026-briefing)**
 
-Backed by [57 deep-read article pages in News & Research](docs/news/) across 9 categories — Models & Vendors, Cost & Performance, Multi-Model Orchestration, Prompting & Discipline, Knowledge Management, Local Inference, Claude Code Features & Updates, Industry Signals, and Adjacent & Off-Topic.
+Backed by [58 deep-read article pages in News & Research](docs/news/) across 9 categories — Models & Vendors, Cost & Performance, Multi-Model Orchestration, Prompting & Discipline, Knowledge Management, Local Inference, Claude Code Features & Updates, Industry Signals, and Adjacent & Off-Topic.
 
-The playbook now covers the Opus 4.7 release and the related ecosystem shifts:
+The playbook covers the Opus 4.7 release and the related ecosystem shifts:
 
 - **[Opus 4.7 Reference](docs/opus-4-7)** — the five behavioural patterns, `xhigh` default, `/ultrareview`, task budgets, 1M context, Cyber Verification Program, and the migration checklist
 - **[Cost & Observability](docs/cost-and-observability)** — the `caveman` output-compression plugin (75% reduction) and Rezvani's OpenTelemetry monitoring stack (Docker Compose + 8 metrics)

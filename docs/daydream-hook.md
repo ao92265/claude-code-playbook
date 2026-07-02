@@ -1,7 +1,7 @@
 ---
 title: Daydream Hook
 nav_order: 43
-parent: Hooks
+parent: Configuration
 ---
 # Daydream Hook — Idle-Time Memory Recombination
 
