@@ -158,7 +158,7 @@ If the answer to all of these is no, you probably do not need a harness. You nee
 
 ## FIS Defaults
 
-For Force Information Systems / Harris projects:
+For Harris projects:
 
 - **Day-to-day dev**: Claude Code (this playbook's defaults)
 - **CI/CD**: Claude Code headless (`claude --print`) or Agent SDK in GitHub Actions — see [github-actions.md](github-actions.md)

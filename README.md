@@ -23,7 +23,7 @@
 <img src="https://img.shields.io/badge/52-Skills-5E6AD2?style=flat-square" alt="52 Skills"/>
 <img src="https://img.shields.io/badge/12-Templates-FC7840?style=flat-square" alt="12 Templates"/>
 <img src="https://img.shields.io/badge/28-Hooks-EB5757?style=flat-square" alt="28 Hooks"/>
-<img src="https://img.shields.io/badge/67-Docs-4EA7FC?style=flat-square" alt="67 Docs"/>
+<img src="https://img.shields.io/badge/69-Docs-4EA7FC?style=flat-square" alt="69 Docs"/>
 <img src="https://img.shields.io/badge/5-Examples-27A644?style=flat-square" alt="5 Examples"/>
 <img src="https://img.shields.io/badge/24-Anti--Patterns-F0BF00?style=flat-square" alt="24 Anti-Patterns"/>
 
@@ -68,7 +68,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 <td width="50%">
 
 **Learn**
-- The **[docs site](https://ao92265.github.io/claude-code-playbook/)** — 67 guides organised by section, from [Getting Started](docs/getting-started.md) to enterprise governance, plus 58 news deep-reads
+- The **[docs site](https://ao92265.github.io/claude-code-playbook/)** — 69 guides organised by section, from [Getting Started](docs/getting-started.md) to enterprise governance, plus 58 news deep-reads
 - [24 prompt engineering patterns](docs/prompt-patterns.md) with copy-paste examples and a decision tree
 - [Quick-reference cheat sheet](docs/cheat-sheet.md) for commands, model routing, and session management
 - [Troubleshooting guide](docs/troubleshooting.md) with 15 common issues and diagnostic flowcharts
@@ -148,7 +148,7 @@ graph TB
 
 | Directory | Contents |
 |:----------|:---------|
-| **[docs/](docs/)** | 67 guides — patterns, configuration, architecture, enterprise, troubleshooting — plus [News & Research](docs/news/) with 58 deep-read article pages |
+| **[docs/](docs/)** | 69 guides — patterns, configuration, architecture, enterprise, troubleshooting — plus [News & Research](docs/news/) with 58 deep-read article pages |
 | **[skills/](skills/)** | 52 ready-to-use custom slash commands ([full reference below](#skills-reference)) |
 | **[hooks/](hooks/)** | 28 hook scripts — deterministic guard rails for commits, builds, secrets, and session state ([list below](#hooks)) |
 | **[templates/](templates/)** | 11 stack-specific CLAUDE.md files + a team onboarding template |
@@ -589,9 +589,28 @@ Never append to shared context files. Always replace the entire content and keep
 
 <br/>
 
+## Continuous Development — When the Loop Replaces the Ticket Queue
+
+The end-state this playbook builds towards: **ACT** (Autonomous Continuous Development) — an AI loop doing the day-to-day work of a Software Developer (Level 3) — scoped features, bug fixes, tests, PRs — **continuously, with a human in the loop** at the merge boundary. The human sets objectives and reviews merges; the loop does the L3 work in between.
+
+What makes it survivable is the **gate ladder** — quality enforcement ordered by what it costs and what it outlives:
+
+| Level | Gate | Survives running out of tokens? |
+|:------|:-----|:--------------------------------|
+| **L0** | Hooks + CI (deterministic, zero tokens) | **Yes** — they run regardless |
+| **L1** | Self-verification (run the tests, paste the exit code) | No — but L0 backstops it |
+| **L2** | Cross-model review (a different vendor's quota) | **Yes** — different provider, different limits |
+| **L3** | Human PR review, protected paths | Yes |
+
+Token limits are a *scheduled* failure mode for long loops, not a surprise. The playbook for it: continuous state handoffs so any fresh session resumes cold, cross-vendor fallback for reviews and grunt work, automated retry with backoff, budgeted stretches with a canary marker for context rot — and the one forbidden move: **never bypass a gate to keep moving**. Pause and queue instead.
+
+**[→ Read the full guide: Continuous Development (ACT)](docs/continuous-development.md)** — the operating model, the token-outage playbook in full, and the hard-won safety lessons (stage isolation, concurrency caps, sacrificial-repo certification).
+
+<br/>
+
 ## Documentation
 
-67 docs organised into sections on the **[docs site](https://ao92265.github.io/claude-code-playbook/)** — highlights by section:
+69 docs organised into sections on the **[docs site](https://ao92265.github.io/claude-code-playbook/)** — highlights by section:
 
 | Section | Key Pages |
 |:--------|:----------|
@@ -600,7 +619,7 @@ Never append to shared context files. Always replace the entire content and keep
 | **Configuration** | [Permissions](docs/permissions.md) · [MCP Servers](docs/mcp-servers.md) · [Model Comparison](docs/model-comparison.md) · [GLM on Claude Code (z.AI)](docs/glm-zai.md) · [Cost Guide](docs/cost-guide.md) · [Path-Scoped Rules](docs/path-scoped-rules.md) · [Auto Mode](docs/auto-mode.md) · [Verify Gate Hook](docs/verify-gate-hook.md) · [Daydream Hook](docs/daydream-hook.md) · [Audit Log Hook](docs/audit-log-hook.md) |
 | **Architecture** | [Harness](docs/harness.md) · [Harness Pattern](docs/harness-pattern.md) · [Steering Files](docs/steering-files.md) · [Setup Atlas](docs/setup-atlas.md) · [Setup Audit](docs/setup-audit.md) |
 | **Skills & Extensibility** | [Skills Ecosystem](docs/skills-ecosystem.md) · [Skills 2.0](docs/skills-v2.md) · [Plugin Authoring](docs/plugin-authoring.md) · [Agent Memory](docs/agent-memory.md) |
-| **Advanced** | [Agent Teams](docs/agent-teams.md) · [Multi-Model Orchestration](docs/multi-model-orchestration.md) · [BMad Autonomous Development](docs/bmad.md) · [Planning Blueprint](docs/planning-blueprint.md) · [Code Container](docs/code-container.md) · [Local Models](docs/local-models.md) · [Cost & Observability](docs/cost-and-observability.md) · [Knowledge & Context](docs/knowledge-and-context.md) · [Advanced Tool Use](docs/advanced-tool-use.md) · [SDK vs CLI](docs/sdk-vs-cli.md) · [Opus 4.7 Reference](docs/opus-4-7.md) |
+| **Advanced** | [Continuous Development (ACT)](docs/continuous-development.md) · [Agent Teams](docs/agent-teams.md) · [Multi-Model Orchestration](docs/multi-model-orchestration.md) · [BMad Autonomous Development](docs/bmad.md) · [Planning Blueprint](docs/planning-blueprint.md) · [Code Container](docs/code-container.md) · [Local Models](docs/local-models.md) · [Cost & Observability](docs/cost-and-observability.md) · [Knowledge & Context](docs/knowledge-and-context.md) · [Advanced Tool Use](docs/advanced-tool-use.md) · [SDK vs CLI](docs/sdk-vs-cli.md) · [Opus 4.7 Reference](docs/opus-4-7.md) |
 | **Enterprise** | [Enterprise Governance](docs/enterprise-governance.md) · [Regulated AI](docs/regulated-ai.md) · [Security Remediation](docs/security-remediation.md) · [Legacy Modernization](docs/legacy-modernization.md) · [GitHub Actions](docs/github-actions.md) · [Team Setup](docs/team-setup.md) · [Adoption Playbook](docs/adoption-playbook.md) · [Case Studies](docs/case-studies.md) |
 | **News & Research** | [April 2026 Briefing](docs/april-2026-briefing.md) · [58 deep-read article pages](docs/news/) across 9 categories |
 | **Help** | [FAQ](docs/faq.md) · [Troubleshooting](docs/troubleshooting.md) · [Comparison](docs/comparison.md) · [Codex Parity](docs/codex-parity.md) · [Awesome Claude Code](docs/awesome-claude-code.md) |
@@ -752,7 +771,7 @@ See **[CONTRIBUTING.md](CONTRIBUTING.md)** for detailed guidelines on contributi
 
 <br/>
 
-Built with hard-won lessons by **[Force Information Systems](https://www.force-uk.com)**, a **[Harris Computer](https://www.harriscomputer.com)** company, part of **[Constellation Software](https://www.csisoftware.com)**.
+Built with hard-won lessons at **[Harris Computer](https://www.harriscomputer.com)**, part of **[Constellation Software](https://www.csisoftware.com)**.
 
 <br/>
 

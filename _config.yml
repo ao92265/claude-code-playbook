@@ -29,7 +29,7 @@ color_scheme: harris
 mermaid:
   version: "10.9.1"
 
-footer_content: "Built by Force Information Systems &middot; Harris Computer &middot; Constellation Software. Licensed under MIT."
+footer_content: "Built at Harris Computer &middot; Constellation Software. Licensed under MIT."
 
 plugins:
   - jekyll-remote-theme

@@ -5,7 +5,7 @@ parent: "News & Research"
 ---
 # AI Engineering Briefing — April 2026
 
-**Author:** Alex O'Reilly, Force Information Systems
+**Author:** Alex O'Reilly, Harris Computer
 **Date:** 17 April 2026
 **Length:** ~20-minute read
 
@@ -764,7 +764,7 @@ Key sources linked inline in each section above:
 - Reza Rezvani, [The CLI vs MCP Debate Is Asking the Wrong Question]({{ site.baseurl }}/docs/news/cli-vs-mcp/)
 - Anthropic, [Introducing Claude Managed Agents]({{ site.baseurl }}/docs/news/managed-agents-launch/) — public beta
 
-**Contact:** Alex O'Reilly, Force Information Systems, aoreilly@harriscomputer.com
+**Contact:** Alex O'Reilly, Harris Computer, aoreilly@harriscomputer.com
 
 ---
 

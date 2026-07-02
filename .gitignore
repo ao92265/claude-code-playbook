@@ -7,3 +7,4 @@ node_modules/
 *.tmp
 .omc/
 response-to-*.md
+__pycache__/
