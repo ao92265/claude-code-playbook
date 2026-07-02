@@ -1,0 +1,59 @@
+<svg width="1200" height="340" viewBox="0 0 1200 340" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The Claude Code Playbook — Stop prompting. Start engineering.">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="0%" r="90%">
+      <stop offset="0%" stop-color="#5E6AD2" stop-opacity="0.28"/>
+      <stop offset="45%" stop-color="#5E6AD2" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#5E6AD2" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#5E6AD2" stop-opacity="0"/>
+      <stop offset="18%" stop-color="#5E6AD2"/>
+      <stop offset="50%" stop-color="#00B8CC"/>
+      <stop offset="82%" stop-color="#5E6AD2"/>
+      <stop offset="100%" stop-color="#5E6AD2" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="titlegrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#C9CEDA"/>
+    </linearGradient>
+    <pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse">
+      <circle cx="1.5" cy="1.5" r="1.2" fill="#F7F8F8" fill-opacity="0.045"/>
+    </pattern>
+    <clipPath id="panelclip"><rect x="1" y="1" width="1198" height="338" rx="18"/></clipPath>
+  </defs>
+
+  <rect x="1" y="1" width="1198" height="338" rx="18" fill="#08090A"/>
+  <g clip-path="url(#panelclip)">
+    <rect x="1" y="1" width="1198" height="338" fill="url(#dots)"/>
+    <rect x="1" y="1" width="1198" height="338" fill="url(#glow)"/>
+    <!-- terminal chrome motif, top-left -->
+    <g transform="translate(36,30)">
+      <rect width="150" height="94" rx="10" fill="#141516" stroke="#23252A"/>
+      <circle cx="16" cy="15" r="4" fill="#EB5757"/>
+      <circle cx="30" cy="15" r="4" fill="#F0BF00"/>
+      <circle cx="44" cy="15" r="4" fill="#27A644"/>
+      <text x="14" y="46" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#8A8F98">$ claude</text>
+      <text x="14" y="66" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#5E6AD2">&gt; /check-env</text>
+      <text x="14" y="84" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#27A644">✓ verified</text>
+    </g>
+    <!-- loop motif, top-right -->
+    <g transform="translate(1010,36)" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11">
+      <rect x="0" y="0" width="118" height="26" rx="13" fill="#141516" stroke="#23252A"/>
+      <text x="59" y="17" text-anchor="middle" fill="#4EA7FC">request</text>
+      <rect x="0" y="34" width="118" height="26" rx="13" fill="#141516" stroke="#23252A"/>
+      <text x="59" y="51" text-anchor="middle" fill="#5E6AD2">implement</text>
+      <rect x="0" y="68" width="118" height="26" rx="13" fill="#141516" stroke="#23252A"/>
+      <text x="59" y="85" text-anchor="middle" fill="#27A644">verify</text>
+      <rect x="0" y="102" width="118" height="26" rx="13" fill="#141516" stroke="#23252A"/>
+      <text x="59" y="119" text-anchor="middle" fill="#FC7840">close</text>
+    </g>
+  </g>
+
+  <text x="600" y="150" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="52" font-weight="700" letter-spacing="-1.5" fill="url(#titlegrad)">The Claude Code Playbook</text>
+  <text x="600" y="196" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="21" font-weight="500" fill="#8A8F98">Stop prompting. <tspan fill="#D0D6E0">Start engineering.</tspan></text>
+
+  <rect x="300" y="228" width="600" height="2" rx="1" fill="url(#rule)"/>
+
+  <text x="600" y="266" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="600" letter-spacing="2.4" fill="#62666D">SKILLS · HOOKS · TEMPLATES · MULTI-AGENT ORCHESTRATION · HARD-WON LESSONS</text>
+  <text x="600" y="300" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#62666D">Force Information Systems · A Harris Computer Company · Part of Constellation Software</text>
+</svg>

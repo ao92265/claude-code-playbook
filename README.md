@@ -1,18 +1,17 @@
 <div align="center">
 
-# The Claude Code Playbook
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/images/readme/hero-dark.svg">
+  <img src="assets/images/readme/hero-light.svg" alt="The Claude Code Playbook — Stop prompting. Start engineering." width="100%">
+</picture>
 
-### Stop prompting. Start engineering.
-
-<sub>Built by <strong>Force Information Systems</strong> · A <strong>Harris Computer</strong> Company · Part of <strong>Constellation Software</strong></sub>
-
-[![Quick Start](https://img.shields.io/badge/Quick_Start-0078D4?style=for-the-badge&logo=rocket&logoColor=white)](#quick-start)
-[![Docs Site](https://img.shields.io/badge/Docs_Site-00B4D8?style=for-the-badge&logo=book&logoColor=white)](https://ao92265.github.io/claude-code-playbook/)
-[![Skills](https://img.shields.io/badge/Skills-52_included-8B5CF6?style=for-the-badge&logo=puzzle-piece&logoColor=white)](#skills-reference)
-[![Hooks](https://img.shields.io/badge/Hooks-28_included-EF4444?style=for-the-badge&logoColor=white)](#hooks)
+[![Quick Start](https://img.shields.io/badge/Quick_Start-5E6AD2?style=for-the-badge&logo=rocket&logoColor=white)](#quick-start)
+[![Docs Site](https://img.shields.io/badge/Docs_Site-00B8CC?style=for-the-badge&logo=book&logoColor=white)](https://ao92265.github.io/claude-code-playbook/)
+[![Skills](https://img.shields.io/badge/Skills-52_included-5E6AD2?style=for-the-badge&logo=puzzle-piece&logoColor=white)](#skills-reference)
+[![Hooks](https://img.shields.io/badge/Hooks-28_included-EB5757?style=for-the-badge&logoColor=white)](#hooks)
 [![CI](https://img.shields.io/github/actions/workflow/status/ao92265/claude-code-playbook/validate.yml?style=for-the-badge&label=CI&logo=github)](https://github.com/ao92265/claude-code-playbook/actions/workflows/validate.yml)
-[![License](https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/ao92265/claude-code-playbook?style=for-the-badge&logo=github&color=EAB308)](https://github.com/ao92265/claude-code-playbook/stargazers)
+[![License](https://img.shields.io/badge/License-MIT-27A644?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/ao92265/claude-code-playbook?style=for-the-badge&logo=github&color=F0BF00)](https://github.com/ao92265/claude-code-playbook/stargazers)
 
 <br/>
 
@@ -21,12 +20,12 @@
 
 <br/>
 
-<img src="https://img.shields.io/badge/52-Skills-8B5CF6?style=flat-square" alt="52 Skills"/>
-<img src="https://img.shields.io/badge/12-Templates-F97316?style=flat-square" alt="12 Templates"/>
-<img src="https://img.shields.io/badge/28-Hooks-EF4444?style=flat-square" alt="28 Hooks"/>
-<img src="https://img.shields.io/badge/67-Docs-0078D4?style=flat-square" alt="67 Docs"/>
-<img src="https://img.shields.io/badge/5-Examples-22C55E?style=flat-square" alt="5 Examples"/>
-<img src="https://img.shields.io/badge/24-Anti--Patterns-EC4899?style=flat-square" alt="24 Anti-Patterns"/>
+<img src="https://img.shields.io/badge/52-Skills-5E6AD2?style=flat-square" alt="52 Skills"/>
+<img src="https://img.shields.io/badge/12-Templates-FC7840?style=flat-square" alt="12 Templates"/>
+<img src="https://img.shields.io/badge/28-Hooks-EB5757?style=flat-square" alt="28 Hooks"/>
+<img src="https://img.shields.io/badge/67-Docs-4EA7FC?style=flat-square" alt="67 Docs"/>
+<img src="https://img.shields.io/badge/5-Examples-27A644?style=flat-square" alt="5 Examples"/>
+<img src="https://img.shields.io/badge/24-Anti--Patterns-F0BF00?style=flat-square" alt="24 Anti-Patterns"/>
 
 </div>
 
@@ -38,15 +37,20 @@ Every successful Claude Code session follows the same rhythm. Break this loop an
 
 ```mermaid
 graph LR
-    A["Request"] --> B["Implement"]
-    B --> C["Verify"]
-    C --> D["Close"]
-    D -->|"New task"| A
+    A(["Request"]) --> B["Implement"]
+    B --> C{"Verify"}
+    C -->|"pass"| D(["Close"])
+    C -.->|"fail"| B
+    D -->|"new task"| A
 
-    style A fill:#4A90D9,stroke:#357ABD,color:#fff
-    style B fill:#7B68EE,stroke:#6A5ACD,color:#fff
-    style C fill:#50C878,stroke:#3CB371,color:#fff
-    style D fill:#FF6B6B,stroke:#EE5A5A,color:#fff
+    classDef info fill:#4EA7FC,stroke:#2E86D9,color:#0B1220
+    classDef primary fill:#5E6AD2,stroke:#4653B8,color:#FFFFFF
+    classDef warn fill:#F0BF00,stroke:#B89200,color:#221A00
+    classDef success fill:#27A644,stroke:#1F8737,color:#FFFFFF
+    class A info
+    class B primary
+    class C warn
+    class D success
 ```
 
 > **The cardinal rule:** Each step has a clear boundary. Don't blur them. Plan in one session, execute in another. Verify with real tests, not code inspection.
@@ -124,16 +128,18 @@ graph TB
     CC --> DB
     CC --> GH
 
-    style CC fill:#4A90D9,stroke:#357ABD,color:#fff
-    style CM fill:#50C878,stroke:#3CB371,color:#fff
-    style SK fill:#7B68EE,stroke:#6A5ACD,color:#fff
-    style HK fill:#FF6B6B,stroke:#EE5A5A,color:#fff
-    style OMC fill:#FFB347,stroke:#FFA500,color:#333
-    style BMAD fill:#FFB347,stroke:#FFA500,color:#333
-    style C7 fill:#FFB347,stroke:#FFA500,color:#333
-    style BR fill:#DDA0DD,stroke:#BA55D3,color:#333
-    style DB fill:#DDA0DD,stroke:#BA55D3,color:#333
-    style GH fill:#DDA0DD,stroke:#BA55D3,color:#333
+    classDef primary fill:#5E6AD2,stroke:#4653B8,color:#FFFFFF
+    classDef info fill:#4EA7FC,stroke:#2E86D9,color:#0B1220
+    classDef success fill:#27A644,stroke:#1F8737,color:#FFFFFF
+    classDef danger fill:#EB5757,stroke:#C43D3D,color:#FFFFFF
+    classDef warn fill:#F0BF00,stroke:#B89200,color:#221A00
+    classDef dark fill:#232326,stroke:#3E3E44,color:#F7F8F8
+    class CC primary
+    class CM success
+    class SK info
+    class HK danger
+    class OMC,BMAD,C7 warn
+    class BR,DB,GH dark
 ```
 
 <br/>
@@ -270,13 +276,19 @@ graph TB
     BM --> SEC["Security Auditor<br/><em>Vulnerabilities</em>"]
     BM --> PM["Product Manager<br/><em>Scope & impact</em>"]
 
-    style YOU fill:#4A90D9,stroke:#357ABD,color:#fff
-    style BM fill:#FFB347,stroke:#FFA500,color:#333
-    style AR fill:#7B68EE,stroke:#6A5ACD,color:#fff
-    style DEV fill:#50C878,stroke:#3CB371,color:#fff
-    style QA fill:#FF6B6B,stroke:#EE5A5A,color:#fff
-    style SEC fill:#FF69B4,stroke:#DB7093,color:#fff
-    style PM fill:#DDA0DD,stroke:#BA55D3,color:#333
+    classDef primary fill:#5E6AD2,stroke:#4653B8,color:#FFFFFF
+    classDef info fill:#4EA7FC,stroke:#2E86D9,color:#0B1220
+    classDef success fill:#27A644,stroke:#1F8737,color:#FFFFFF
+    classDef warn fill:#F0BF00,stroke:#B89200,color:#221A00
+    classDef danger fill:#EB5757,stroke:#C43D3D,color:#FFFFFF
+    classDef dark fill:#232326,stroke:#3E3E44,color:#F7F8F8
+    class YOU info
+    class BM warn
+    class AR primary
+    class DEV success
+    class QA warn
+    class SEC danger
+    class PM dark
 ```
 
 **Best for:** Architecture reviews, code reviews, sprint planning, production incident analysis.
@@ -310,13 +322,18 @@ graph LR
     RL --> S
     RL --> O
 
-    style AP fill:#4A90D9,stroke:#357ABD,color:#fff
-    style UW fill:#7B68EE,stroke:#6A5ACD,color:#fff
-    style RL fill:#50C878,stroke:#3CB371,color:#fff
-    style TD fill:#FF6B6B,stroke:#EE5A5A,color:#fff
-    style H fill:#90EE90,stroke:#32CD32,color:#333
-    style S fill:#FFB347,stroke:#FFA500,color:#333
-    style O fill:#FF69B4,stroke:#DB7093,color:#fff
+    classDef primary fill:#5E6AD2,stroke:#4653B8,color:#FFFFFF
+    classDef info fill:#4EA7FC,stroke:#2E86D9,color:#0B1220
+    classDef success fill:#27A644,stroke:#1F8737,color:#FFFFFF
+    classDef warn fill:#F0BF00,stroke:#B89200,color:#221A00
+    classDef dark fill:#232326,stroke:#3E3E44,color:#F7F8F8
+    class AP primary
+    class UW info
+    class RL success
+    class TD warn
+    class H dark
+    class S info
+    class O primary
 ```
 
 **Best for:** Autonomous feature dev, parallel codebase changes, persistent bug fixing. Saves 30-50% on tokens.
@@ -484,12 +501,18 @@ graph LR
 
     F["/clear"] --> A
 
-    style A fill:#50C878,stroke:#3CB371,color:#fff
-    style B fill:#90EE90,stroke:#32CD32,color:#333
-    style C fill:#FFB347,stroke:#FFA500,color:#333
-    style D fill:#FF6B6B,stroke:#EE5A5A,color:#fff
-    style E fill:#DC143C,stroke:#B22222,color:#fff
-    style F fill:#4A90D9,stroke:#357ABD,color:#fff
+    classDef success fill:#27A644,stroke:#1F8737,color:#FFFFFF
+    classDef teal fill:#00B8CC,stroke:#00919F,color:#04252A
+    classDef warn fill:#F0BF00,stroke:#B89200,color:#221A00
+    classDef orange fill:#FC7840,stroke:#D9581F,color:#2A1204
+    classDef danger fill:#EB5757,stroke:#C43D3D,color:#FFFFFF
+    classDef primary fill:#5E6AD2,stroke:#4653B8,color:#FFFFFF
+    class A success
+    class B teal
+    class C warn
+    class D orange
+    class E danger
+    class F primary
 ```
 
 When Claude gives generic answers, your context is polluted. `/clear` when switching tasks. `/compact` at 50%. Fresh session above 80%.
@@ -511,12 +534,10 @@ graph LR
 
     P3 -->|"New session"| E1
 
-    style P1 fill:#7B68EE,stroke:#6A5ACD,color:#fff
-    style P2 fill:#7B68EE,stroke:#6A5ACD,color:#fff
-    style P3 fill:#7B68EE,stroke:#6A5ACD,color:#fff
-    style E1 fill:#50C878,stroke:#3CB371,color:#fff
-    style E2 fill:#50C878,stroke:#3CB371,color:#fff
-    style E3 fill:#50C878,stroke:#3CB371,color:#fff
+    classDef primary fill:#5E6AD2,stroke:#4653B8,color:#FFFFFF
+    classDef success fill:#27A644,stroke:#1F8737,color:#FFFFFF
+    class P1,P2,P3 primary
+    class E1,E2,E3 success
 ```
 
 Planning context pollutes implementation focus. Three rejected approaches in memory = defensive, over-engineered code.
@@ -537,10 +558,10 @@ graph TB
     P --> W2["Worker 2<br/><em>Own worktree</em>"]
     P --> W3["Worker 3<br/><em>Own worktree</em>"]
 
-    style P fill:#4A90D9,stroke:#357ABD,color:#fff
-    style W1 fill:#50C878,stroke:#3CB371,color:#fff
-    style W2 fill:#50C878,stroke:#3CB371,color:#fff
-    style W3 fill:#50C878,stroke:#3CB371,color:#fff
+    classDef primary fill:#5E6AD2,stroke:#4653B8,color:#FFFFFF
+    classDef success fill:#27A644,stroke:#1F8737,color:#FFFFFF
+    class P primary
+    class W1,W2,W3 success
 ```
 
 - Cap at 3-4 parallel agents
@@ -613,6 +634,7 @@ Never append to shared context files. Always replace the entire content and keep
 Hooks are deterministic guard rails — they fire on tool events whether or not the model remembers to check.
 
 ```mermaid
+%%{init: {"themeVariables": {"actorBkg": "#5E6AD2", "actorTextColor": "#FFFFFF", "actorBorder": "#4653B8", "activationBkgColor": "#F0BF00"}}}%%
 sequenceDiagram
     participant You
     participant Claude
@@ -665,12 +687,10 @@ graph LR
     B2 -.->|"99% faster"| A2
     B3 -.->|"50x more"| A3
 
-    style B1 fill:#FF6B6B,stroke:#EE5A5A,color:#fff
-    style B2 fill:#FF6B6B,stroke:#EE5A5A,color:#fff
-    style B3 fill:#FF6B6B,stroke:#EE5A5A,color:#fff
-    style A1 fill:#50C878,stroke:#3CB371,color:#fff
-    style A2 fill:#50C878,stroke:#3CB371,color:#fff
-    style A3 fill:#50C878,stroke:#3CB371,color:#fff
+    classDef danger fill:#EB5757,stroke:#C43D3D,color:#FFFFFF
+    classDef success fill:#27A644,stroke:#1F8737,color:#FFFFFF
+    class B1,B2,B3 danger
+    class A1,A2,A3 success
 ```
 
 | Metric | Before | After |
