@@ -21,7 +21,7 @@ Built at **Harris Computer** · Part of **Constellation Software**
 | [Skills](docs/skills-ecosystem) | 47 | Production-ready custom `/commands` you can drop into any project |
 | [Templates](templates/CLAUDE) | 11 | Stack-specific CLAUDE.md files for TypeScript, React, Node, Python, Go, Rust, and more — plus a team onboarding template |
 | [Hooks](hooks/) | 28 | Guard-rail scripts for commits, builds, secrets, and session state — 11 auto-wired via the plugin, the rest opt-in |
-| [Docs](docs/guide) | 69 | Guides, patterns, anti-patterns, troubleshooting, and reference material — plus 59 news deep-reads |
+| [Docs](docs/guide) | 70 | Guides, patterns, anti-patterns, troubleshooting, and reference material — plus 59 news deep-reads |
 | [Examples](examples/) | 5 | Annotated real-world sessions showing workflows in action |
 | [Onboarding](onboarding/) | 6 | Step-by-step guides from installation to advanced usage |
 
