@@ -4,8 +4,11 @@ description: >
   Single-command verification gate. Runs typecheck + lint + tests + build before
   any "done"/"complete" claim. Refuses to print a green summary on any non-zero
   exit code. Use before saying a task is finished, before committing, or before
-  handing back to the user. Triggers: "/done", "verify done", "ready to commit",
-  "finished implementing".
+  handing back to the user — and WHENEVER you are about to run tests, lint,
+  typecheck, or a build as separate manual Bash commands at a task boundary:
+  this skill IS that bundle. Triggers: "/done", "verify done", "ready to commit",
+  "finished implementing", "run the tests", "run lint", "run typecheck",
+  "tsc -b", "does it build", "is it passing", "all green", "make sure nothing broke".
 
   Auto-detects the repo: if package.json declares a `ci:local` script, it runs
   that. Otherwise falls back to `tsc + lint + test` discovery.
@@ -51,7 +54,7 @@ skill makes the gate mechanical.
 
 ## Reference — Wraith Repo Specifics
 
-`/path/to/your-project` exposes `npm run ci:local` which expands to:
+`/Users/aoreilly/Repos/Wraith` exposes `npm run ci:local` which expands to:
 
 ```
 npm run lint && npm run typecheck && npm run test:backend \
