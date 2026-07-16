@@ -18,10 +18,10 @@ Built at **Harris Computer** · Part of **Constellation Software**
 
 | Category | Count | Description |
 |----------|-------|-------------|
-| [Skills](docs/skills-ecosystem) | 52 | Production-ready custom `/commands` you can drop into any project |
+| [Skills](docs/skills-ecosystem) | 47 | Production-ready custom `/commands` you can drop into any project |
 | [Templates](templates/CLAUDE) | 11 | Stack-specific CLAUDE.md files for TypeScript, React, Node, Python, Go, Rust, and more — plus a team onboarding template |
 | [Hooks](hooks/) | 28 | Guard-rail scripts for commits, builds, secrets, and session state — 11 auto-wired via the plugin, the rest opt-in |
-| [Docs](docs/guide) | 70 | Guides, patterns, anti-patterns, troubleshooting, and reference material — plus 58 news deep-reads |
+| [Docs](docs/guide) | 70 | Guides, patterns, anti-patterns, troubleshooting, and reference material — plus 59 news deep-reads |
 | [Examples](examples/) | 5 | Annotated real-world sessions showing workflows in action |
 | [Onboarding](onboarding/) | 6 | Step-by-step guides from installation to advanced usage |
 
@@ -96,7 +96,7 @@ flowchart TB
 >
 > **[→ Read the April 2026 Briefing](docs/april-2026-briefing)**
 
-Backed by [58 deep-read article pages in News & Research](docs/news/) across 9 categories — Models & Vendors, Cost & Performance, Multi-Model Orchestration, Prompting & Discipline, Knowledge Management, Local Inference, Claude Code Features & Updates, Industry Signals, and Adjacent & Off-Topic.
+Backed by [59 deep-read article pages in News & Research](docs/news/) across 9 categories — Models & Vendors, Cost & Performance, Multi-Model Orchestration, Prompting & Discipline, Knowledge Management, Local Inference, Claude Code Features & Updates, Industry Signals, and Adjacent & Off-Topic.
 
 The playbook covers the Opus 4.7 release and the related ecosystem shifts:
 
