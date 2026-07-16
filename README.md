@@ -7,7 +7,7 @@
 
 [![Quick Start](https://img.shields.io/badge/Quick_Start-5E6AD2?style=for-the-badge&logo=rocket&logoColor=white)](#quick-start)
 [![Docs Site](https://img.shields.io/badge/Docs_Site-00B8CC?style=for-the-badge&logo=book&logoColor=white)](https://ao92265.github.io/claude-code-playbook/)
-[![Skills](https://img.shields.io/badge/Skills-52_included-5E6AD2?style=for-the-badge&logo=puzzle-piece&logoColor=white)](#skills-reference)
+[![Skills](https://img.shields.io/badge/Skills-47_included-5E6AD2?style=for-the-badge&logo=puzzle-piece&logoColor=white)](#skills-reference)
 [![Hooks](https://img.shields.io/badge/Hooks-28_included-EB5757?style=for-the-badge&logoColor=white)](#hooks)
 [![CI](https://img.shields.io/github/actions/workflow/status/ao92265/claude-code-playbook/validate.yml?style=for-the-badge&label=CI&logo=github)](https://github.com/ao92265/claude-code-playbook/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/License-MIT-27A644?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
@@ -68,7 +68,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 <td width="50%">
 
 **Learn**
-- The **[docs site](https://ao92265.github.io/claude-code-playbook/)** — 69 guides organised by section, from [Getting Started](docs/getting-started.md) to enterprise governance, plus 58 news deep-reads
+- The **[docs site](https://ao92265.github.io/claude-code-playbook/)** — 69 guides organised by section, from [Getting Started](docs/getting-started.md) to enterprise governance, plus 59 news deep-reads
 - [24 prompt engineering patterns](docs/prompt-patterns.md) with copy-paste examples and a decision tree
 - [Quick-reference cheat sheet](docs/cheat-sheet.md) for commands, model routing, and session management
 - [Troubleshooting guide](docs/troubleshooting.md) with 15 common issues and diagnostic flowcharts
@@ -148,7 +148,7 @@ graph TB
 
 | Directory | Contents |
 |:----------|:---------|
-| **[docs/](docs/)** | 69 guides — patterns, configuration, architecture, enterprise, troubleshooting — plus [News & Research](docs/news/) with 58 deep-read article pages |
+| **[docs/](docs/)** | 69 guides — patterns, configuration, architecture, enterprise, troubleshooting — plus [News & Research](docs/news/) with 59 deep-read article pages |
 | **[skills/](skills/)** | 52 ready-to-use custom slash commands ([full reference below](#skills-reference)) |
 | **[hooks/](hooks/)** | 28 hook scripts — deterministic guard rails for commits, builds, secrets, and session state ([list below](#hooks)) |
 | **[templates/](templates/)** | 11 stack-specific CLAUDE.md files + a team onboarding template |
@@ -251,7 +251,7 @@ Then dive into the docs — the **[Complete Guide](docs/guide.md)** hub maps eve
 | [Skills & Extensibility](docs/skills-section.md) | The skills ecosystem, Skills 2.0, plugin authoring |
 | [Advanced](docs/advanced.md) | Multi-agent teams, multi-model orchestration, code containers |
 | [Enterprise](docs/enterprise.md) | Governance, regulated AI, security remediation, legacy modernization |
-| [News & Research](docs/news/) | 58 deep-read article pages behind the April 2026 briefing |
+| [News & Research](docs/news/) | 59 deep-read article pages behind the April 2026 briefing |
 
 <br/>
 
@@ -370,13 +370,10 @@ Every skill is a drop-in `/command` that teaches Claude a specific workflow. All
 | Skill | What It Does | When To Use |
 |:------|:------------|:------------|
 | **[test-first](skills/test-first/)** | TDD workflow: write failing tests, implement, verify green, refactor | Any new feature or bug fix where you want test discipline |
-| **[tdd-fix](skills/tdd-fix/)** | Strict TDD bug-fix loop: failing test first, minimal fix, full CI parity before PR | Bug-fix issues |
+| **[test-loop](skills/test-loop/)** | Merged TDD loop: bugfix mode (failing test first) and refactor mode (characterization tests first), shared CI-parity gate | Bug fixes and safe refactors |
 | **[refactor](skills/refactor/)** | Focused refactoring with zero behavior change — reverts if any test fails | When improving structure without changing behavior |
-| **[refactor-loop](skills/refactor-loop/)** | Characterization-test-first refactor loop: baseline tests committed, then iterate until they stay green | Safe refactors of untested code |
 | **[code-review](skills/code-review/)** | Structured code review with severity ratings and categorized feedback | After completing changes |
-| **[codex-prepush-review](skills/codex-prepush-review/)** | Automated code review triggered before `git push` | Every push |
 | **[dependency-audit](skills/dependency-audit/)** | Scans dependencies for vulnerabilities, outdated packages, and license issues | Before releases or periodically |
-| **[karpathy-guidelines](skills/karpathy-guidelines/)** | Pre-coding checklist to prevent over-engineering and unnecessary complexity | Before starting any feature |
 | **[debug](skills/debug/)** | Scientific debugging: hypothesis → test → narrow down → fix | When you need systematic root cause analysis |
 | **[perf-check](skills/perf-check/)** | Performance investigation: profile first, optimize second, measure before/after | When something is slow |
 | **[api-test](skills/api-test/)** | Interactive API endpoint testing with response validation | Verifying API behavior manually |
@@ -417,8 +414,7 @@ Every skill is a drop-in `/command` that teaches Claude a specific workflow. All
 |:------|:------------|:------------|
 | **[git-cleanup](skills/git-cleanup/)** | Clean up stale branches, prune remotes, tidy repository state | Periodic repo maintenance |
 | **[pr-batch-review](skills/pr-batch-review/)** | Reviews all open PRs in one pass with a consolidated summary table | PR management sessions |
-| **[pr-merge-queue](skills/pr-merge-queue/)** | Batched PR merge loop with checkpoints for triaging a backlog | Clearing an open-PR backlog interactively |
-| **[pr-fleet](skills/pr-fleet/)** | Overnight parallel PR processing: coordinator + one worker per PR in isolated worktrees | Autonomous backlog clearing at scale |
+| **[pr-fleet](skills/pr-fleet/)** | Parallel PR processing: coordinator + one worker per PR in isolated worktrees; --interactive mode adds batched checkpoints with user-confirmed merges | Backlog clearing, autonomous or supervised |
 
 </details>
 
@@ -442,7 +438,6 @@ Every skill is a drop-in `/command` that teaches Claude a specific workflow. All
 | **[handoff](skills/handoff/)** | Structured session summary: what's done, what's left, decisions, gotchas | End of every session |
 | **[reboot](skills/reboot/)** | Distills the current task into a clean reprompt so a bloated session can be cleared without losing the thread | When a session goes stale |
 | **[rest](skills/rest/)** | Persistent low-effort output mode: one bold answer line + one next step, plain words | Tired days |
-| **[task-observer](skills/task-observer/)** | Monitors task execution for patterns and corrections worth preserving as new skills | Long working sessions |
 
 </details>
 
@@ -473,9 +468,9 @@ Every skill is a drop-in `/command` that teaches Claude a specific workflow. All
 
 | Skill | What It Does | When To Use |
 |:------|:------------|:------------|
-| **[autoskill](skills/autoskill/)** | Analyzes your sessions to extract patterns and create new skills automatically | After sessions with lots of corrections |
 | **[skill-creator](skills/skill-creator/)** | Meta-skill for creating, testing, and refining new skills | When you need a new custom workflow |
 | **[skill-authoring](skills/skill-authoring/)** | Best practices for building skills, distilled from Anthropic's official guide | Writing or debugging a SKILL.md |
+| **[skill-capture](skills/skill-capture/)** | Unified skill extraction: corrections, conversation, workflow, and observe modes (merges autoskill, learner, skillify, task-observer) | End of sessions worth learning from |
 | **[myinsights](skills/myinsights/)** | Merged usage report over your entire local session corpus — quant rollups, narrative, ranked scorecard | A full, honest picture of how you actually use Claude Code |
 
 </details>
@@ -621,7 +616,7 @@ Token limits are a *scheduled* failure mode for long loops, not a surprise. The 
 | **Skills & Extensibility** | [Skills Ecosystem](docs/skills-ecosystem.md) · [Skills 2.0](docs/skills-v2.md) · [Plugin Authoring](docs/plugin-authoring.md) · [Agent Memory](docs/agent-memory.md) |
 | **Advanced** | [Continuous Development (ACT)](docs/continuous-development.md) · [Agent Teams](docs/agent-teams.md) · [Multi-Model Orchestration](docs/multi-model-orchestration.md) · [BMad Autonomous Development](docs/bmad.md) · [Planning Blueprint](docs/planning-blueprint.md) · [Code Container](docs/code-container.md) · [Local Models](docs/local-models.md) · [Cost & Observability](docs/cost-and-observability.md) · [Knowledge & Context](docs/knowledge-and-context.md) · [Advanced Tool Use](docs/advanced-tool-use.md) · [SDK vs CLI](docs/sdk-vs-cli.md) · [Opus 4.7 Reference](docs/opus-4-7.md) |
 | **Enterprise** | [Enterprise Governance](docs/enterprise-governance.md) · [Regulated AI](docs/regulated-ai.md) · [Security Remediation](docs/security-remediation.md) · [Legacy Modernization](docs/legacy-modernization.md) · [GitHub Actions](docs/github-actions.md) · [Team Setup](docs/team-setup.md) · [Adoption Playbook](docs/adoption-playbook.md) · [Case Studies](docs/case-studies.md) |
-| **News & Research** | [April 2026 Briefing](docs/april-2026-briefing.md) · [58 deep-read article pages](docs/news/) across 9 categories |
+| **News & Research** | [April 2026 Briefing](docs/april-2026-briefing.md) · [59 deep-read article pages](docs/news/) across 9 categories |
 | **Help** | [FAQ](docs/faq.md) · [Troubleshooting](docs/troubleshooting.md) · [Comparison](docs/comparison.md) · [Codex Parity](docs/codex-parity.md) · [Awesome Claude Code](docs/awesome-claude-code.md) |
 | **Resources** | [Launch Article](docs/article.md) · [Examples](examples/) · [Templates](templates/) · [Tribune](https://github.com/ao92265/tribune) — companion CLI for three-voice decision panels |
 

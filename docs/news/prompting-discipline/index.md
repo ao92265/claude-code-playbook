@@ -15,12 +15,14 @@ The April 2026 research converged on one finding: **the harness — CLAUDE.md, h
 - **The Agent Harness vocabulary** — Njenga's community-standard term for CLAUDE.md + hooks + skills + MCPs
 - **Karpathy's CLAUDE.md principles** — what each rule actually fixes
 - **The 235-skills audit** — Rezvani's field report on skill-library rot and the 4 categories that compound
+- **The carousel field-test** — CodeWithAltin's 3 audit prompts run against a 117-skill setup with session-log evidence: 95 unused, one 0-vs-327 trigger failure
 
 ## Featured in this category
 
 1. [Superpowers: Cialdini's Psychology Hack for LLMs]({{ site.baseurl }}/docs/news/superpowers-cialdini/) — $28K Wharton study, compliance 33% → 100%
 2. [Anthropic runs hundreds of skills — I published 235, 12 run weekly]({{ site.baseurl }}/docs/news/anthropic-hundreds-of-skills/) — the audit methodology with 4 complete SKILL.md templates
 3. [Agent Harness — what pros understand]({{ site.baseurl }}/docs/news/agent-harness/) — the community framing
+4. [The "upgrade your CLAUDE.md" carousel, field-tested]({{ site.baseurl }}/docs/news/carousel-audit-field-test/) — skills namespace 117→68, evidence-first method
 
 ## Why this category matters more on Opus 4.7
 
