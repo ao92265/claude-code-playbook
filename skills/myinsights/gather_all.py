@@ -34,10 +34,13 @@ def area_of(path):
     if not path: return "other"
     p = path.lower()
     # collapse to a coarse area from the project path
+    # NOTE: the scratch/worktree test must run BEFORE the /repos/ test. Worktrees now live at
+    # ~/Repos/.agent-worktrees/<id>, so /repos/ matched first and bucketed them as a repo named
+    # ".agent-worktrees" — leaving scratch/worktree absent and Isolation discipline scoring 0.
+    if "scratchpad" in p or "/tmp/" in p or "agent-worktrees" in p: return "scratch/worktree"
     if "/repos/" in p:
         m = re.search(r"/repos/([^/]+)", p);
         if m: return m.group(1)[:28]
-    if "scratchpad" in p or "/tmp/" in p or "agent-worktrees" in p: return "scratch/worktree"
     _home = os.path.expanduser("~").rstrip("/")
     if p.endswith(_home.replace("/", "-").lower()) or p.rstrip("/").endswith(os.path.basename(_home).lower()): return "home (~)"
     m = re.search(r"([^/]+)/?$", path.rstrip("/"))
