@@ -123,7 +123,7 @@ between operations is the common case, not the exception."
    independently) vs Workflow (operational step sequence, stable).
 4. **Save location:**
    - User-level (rare, only truly portable insights):
-     `${CLAUDE_CONFIG_DIR:-~/.claude}/skills/omc-learned/<skill-name>.md`
+     `${CLAUDE_CONFIG_DIR:-~/.claude}/skills/learned/<skill-name>.md`
    - Project-level (default, commit with the repo to share with the team):
      `.omc/skills/<skill-name>.md`
    - Note: in linked worktrees, uncommitted skills are worktree-local and
@@ -163,7 +163,7 @@ concrete skill draft, before it has to be rediscovered later.
    or documentation only (if it's not really repeatable, say so and stop).
 4. If drafting a learned skill file, use the same frontmatter requirement
    and save paths as `extract` mode above
-   (`${CLAUDE_CONFIG_DIR:-~/.claude}/skills/omc-learned/<skill-name>.md` or
+   (`${CLAUDE_CONFIG_DIR:-~/.claude}/skills/learned/<skill-name>.md` or
    `.omc/skills/<skill-name>.md`). Never write frontmatter-less markdown.
 5. Draft the full file: clear triggers, ordered steps, explicit success
    criteria (prefer these over vague prose), and pitfalls.

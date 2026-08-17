@@ -7,7 +7,7 @@ description: |
   "what are my another-projectns for", "pros and cons of".
 
   Do NOT use this skill for: implementation work, bug fixes, code review, planning (use
-  writing-plans or OMC omc-plan instead), simple questions with clear answers, or when the
+  writing-plans instead), simple questions with clear answers, or when the
   user says "design" in the context of UI/UX work. Don't trigger on "figure out how to" —
   that usually means the user wants implementation, not exploration.
 license: MIT

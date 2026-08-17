@@ -148,15 +148,13 @@ The r/vibecoding thread surfaces significant pushback:
 
 **Do not adopt without diligence.** `github.com/abhigyanpatwari/GitNexus` was mentioned as a credible OSS alternative to evaluate.
 
-The valuable part is the reframe — **retrieval is easy; memory is the hard problem** — which is directly applicable to OMC's notepad / project-memory / state layers and to any Claude Code skill that wants to persist across sessions.
+The valuable part is the reframe — **retrieval is easy; memory is the hard problem** — which applies to any per-project state you keep (notepad, project memory, handoffs) and to any Claude Code skill that wants to persist across sessions.
 
 ---
 
 ## How This Lands in Claude Code Today
 
-The OMC `wiki` skill (if you're running OMC) already implements the Karpathy pattern — it's described in the skill catalog as *"LLM Wiki — persistent markdown knowledge base that compounds across sessions (Karpathy model)."* Validates that the architecture generalises.
-
-For teams not on OMC:
+A skill implementing the Karpathy pattern is a persistent markdown knowledge base that compounds across sessions: ingest, query, lint. Build it yourself in four steps.
 
 1. Create a `docs/wiki/` directory in your repo with `raw/`, `concepts/`, `timelines/` subfolders and an `index.md`
 2. Add a skill / CLAUDE.md section with the three operations (Ingest / Query / Lint) as explicit commands

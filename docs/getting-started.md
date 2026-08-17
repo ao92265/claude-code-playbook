@@ -150,7 +150,7 @@ The smaller the scannable surface, the more accurate `Grep`/`Glob` answers will 
 
 **3. Prefer LSP over `grep` for symbol navigation.**
 
-If you have the OMC LSP tools (or any MCP server exposing `goto_definition` / `find_references` / `workspace_symbols`), use them for symbol lookups in typed codebases. `grep "handleAuth"` returns every comment, log line, and unrelated function with the same name. `lsp_find_references` returns only the actual call sites — which is what you almost always want.
+If you have LSP tools (any MCP server exposing `goto_definition` / `find_references` / `workspace_symbols`), use them for symbol lookups in typed codebases. `grep "handleAuth"` returns every comment, log line, and unrelated function with the same name. `lsp_find_references` returns only the actual call sites — which is what you almost always want.
 
 ---
 

@@ -15,7 +15,8 @@ A curated list of tools, plugins, MCP servers, and resources for Claude Code.
 
 | Plugin | What It Does |
 |:-------|:------------|
-| **[OMC (Oh My Claude Code)](https://github.com/nicobailey/oh-my-claudecode)** | Advanced session orchestration: autopilot, parallel agents, persistence loops, smart model routing |
+| **[superpowers](https://github.com/obra/superpowers)** | Brainstorming, planning, red-green TDD and systematic debugging, as skills that fire without being called |
+| **[OMC (Oh My Claude Code)](https://github.com/nicobailey/oh-my-claudecode)** | Session orchestration: autopilot, parallel agents, persistence loops, model routing. Removed from this stack on 17 Aug 2026 once Claude Code shipped equivalents natively |
 | **[BMAD](https://github.com/bmad-method/BMAD-METHOD)** | Multi-agent roles: Architect, Developer, QA, Security Auditor, Product Manager |
 | **[Context7](https://github.com/upstreamapi/context7)** | AI-powered documentation search — fetches up-to-date library docs and code examples |
 | **[PR Review Toolkit](https://github.com/anthropics/claude-code-plugins)** | Comprehensive PR review with specialized analysis agents |

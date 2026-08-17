@@ -37,8 +37,8 @@ Top Skills & Commands:
   /bad                         ████████████████████  10x/month
   /extra-usage                 ██████████████████░░   9x/month
   /ultraplan                   ████████░░░░░░░░░░░░   4x/month
-  /oh-my-claudecode:team       ██████░░░░░░░░░░░░░░   3x/month
-  /oh-my-claudecode:autopilot  ██████░░░░░░░░░░░░░░   3x/month
+  /goal                        ██████░░░░░░░░░░░░░░   3x/month
+  /afk                         ██████░░░░░░░░░░░░░░   3x/month
   /loop                        ██████░░░░░░░░░░░░░░   3x/month
   /model                       ██████░░░░░░░░░░░░░░   3x/month
   /compact                     ████░░░░░░░░░░░░░░░░   2x/month
@@ -47,7 +47,6 @@ Top Skills & Commands:
 Top MCP Servers:
   computer-use       ████████████████████  ~427 calls
   chrome-devtools    ████████████████░░░░  ~345 calls
-  oh-my-claudecode   ████████░░░░░░░░░░░░  ~164 calls
   historian          █░░░░░░░░░░░░░░░░░░░  ~11 calls
   context7           ░░░░░░░░░░░░░░░░░░░░  occasional
 ```
@@ -69,7 +68,7 @@ Top tool calls (past 30 days): Bash 24.6k · Read 11.8k · Edit 4.9k · Grep 3.5
 <!-- Only list MCPs the team actually uses. Drop anything you don't rely on. -->
 - [ ] **computer-use** — Desktop automation (screenshots, clicks, typing) for native macOS/Windows apps. Install the computer-use MCP package; approve app access per workflow.
 - [ ] **chrome-devtools** — Browser automation through the Chrome DevTools Protocol. Used for scraping, digesting tabs, and driving web apps. Install the Chrome DevTools MCP server.
-- [ ] **oh-my-claudecode (OMC)** — Multi-agent orchestration layer with skills like autopilot, ralph, team, ultrawork. Run `omc setup` or `/oh-my-claudecode:omc-setup`.
+- [ ] **superpowers** — Brainstorming, planning, test-first and systematic debugging as skills that fire on their own. `claude plugin install superpowers@claude-plugins-official`.
 - [ ] **context7** — On-demand library/SDK docs lookup. Configure via MCP settings.
 
 ### Skills to Know About
@@ -79,8 +78,8 @@ Top tool calls (past 30 days): Bash 24.6k · Read 11.8k · Edit 4.9k · Grep 3.5
 - [ ] **/bad** (~10x/mo) — BMAD autonomous development pipeline: parallel story implementation, each story isolated in its own worktree. Trigger for "run BAD" / "automate the sprint".
 - [ ] **/extra-usage** (~9x/mo) — Check your quota before kicking off heavy work.
 - [ ] **/ultraplan** (~4x/mo) — Consensus planning across Planner / Architect / Critic before execution. Use on high-risk changes.
-- [ ] **/oh-my-claudecode:team** (~3x/mo) — N coordinated Claude agents on a shared task list; stage-aware routing.
-- [ ] **/oh-my-claudecode:autopilot** (~3x/mo) — Full autonomous execution from idea to working code. Use for broad "build me X" requests.
+- [ ] **/goal** (~3x/mo) — A multi-step objective with a final verification pass. Use for broad "build me X" requests.
+- [ ] **/afk** (~3x/mo) — Unattended run. Banks the decisions it cannot make and keeps going instead of stopping to ask.
 - [ ] **/loop** (~3x/mo) — Run a prompt or slash command on a recurring interval. Good for polling builds, scheduling self-paced tasks, or babysitting PRs.
 - [ ] **/compact** (~2x/mo) — Compress conversation history mid-session before context rot kicks in.
 - [ ] **/check-env** — Pre-flight environment check (ports, Docker, `.env`, git status) before starting dev work.
@@ -95,7 +94,7 @@ Top tool calls (past 30 days): Bash 24.6k · Read 11.8k · Edit 4.9k · Grep 3.5
 - **Never push, PR, or deploy without explicit permission.** Auto mode is not a license to ship; same for destructive git ops.
 - **Check the environment first.** Run `/check-env` before starting dev — ports, Docker, `.env`, git state. Most "it doesn't work" moments are environmental.
 - **Run `npx tsc --noEmit` after multi-file TS changes.** Consider a hook to run this automatically on Edit/Write.
-- **Use skills, not ad-hoc prompts, for repeating workflows.** `/oh-my-claudecode:autopilot` for broad builds, `/loop` for recurring checks, `/schedule` for cloud cron, `/codex:rescue` when stuck.
+- **Use skills, not ad-hoc prompts, for repeating workflows.** `/goal` for broad builds, `/loop` for recurring checks, `/schedule` for cloud cron, `/codex:rescue` when stuck.
 - **Stay on low reasoning effort by default.** Use `/effort` to escalate only for genuinely hard problems — tokens are finite.
 - **Record fixes in `tasks/lessons.md`.** Format: `- **[date] Problem**: ... → **Fix**: ...`. Promote recurring patterns to CLAUDE.md weekly.
 - **Read the Claude playbook.** Live at https://ao92265.github.io/claude-code-playbook/, source at https://github.com/ao92265/claude-code-playbook. Covers skills, hooks, MCPs, workflows.

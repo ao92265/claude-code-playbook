@@ -19,7 +19,7 @@ The core session workflow stays on this page — the request/verify rhythm, cont
 | Plugins | [Skills Ecosystem](skills-ecosystem.md) |
 | MCP servers | [MCP Servers](mcp-servers.md) |
 | BMAD and autonomous development | [BMad Autonomous Development](bmad.md) |
-| OMC session and execution modes | [Multi-Model Orchestration](multi-model-orchestration.md) |
+| Session and execution modes | [Multi-Model Orchestration](multi-model-orchestration.md) |
 | Agent teams and worktrees | [Agent Teams](agent-teams.md) |
 | Slash commands and command reference | [CLI Reference](cli-reference.md) |
 | Troubleshooting | [Troubleshooting](troubleshooting.md) |

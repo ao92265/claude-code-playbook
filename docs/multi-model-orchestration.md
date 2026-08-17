@@ -235,61 +235,48 @@ Concrete implementation:
 3. `/codex:result` 30–120 seconds later
 4. Paste Codex's answer back into your Claude session and continue
 
-This pattern underpins OMC's built-in `ccg` workflow (Claude-Codex-Gemini tri-model) and Liu's adversarial-review flow. The community confirmation that it works is worth more than any benchmark.
+This pattern underpinned the `ccg` workflow (Claude-Codex-Gemini tri-model, since retired with the layer that shipped it) and Liu's adversarial-review flow. The community confirmation that it works is worth more than any benchmark.
 
 ---
 
-## OMC — Session Orchestration Modes
+## Session orchestration: what replaced OMC
 
-OMC (oh-my-claudecode) is the plugin most of this page's patterns run through. Beyond cross-model routing, it provides advanced session tools inside Claude Code itself: spawning parallel agents, managing context, running distributed workflows, and debugging Claude's decision-making.
+For most of this playbook's life the orchestration modes came from a third-party layer,
+oh-my-claudecode. **That layer was removed from this stack on 17 August 2026**, because Claude Code
+now ships the same capabilities natively. If you are reading an older page here that tells you to
+install it, this section is the correction.
 
-### Execution modes
+### What each mode became
 
-| Mode | Description |
-|------|-------------|
-| Autopilot | Flagship mode. Describe a goal, OMC handles the full lifecycle: planning, parallel execution, testing, and self-correction |
-| Ultrawork | Maximum parallelism with up to 5 concurrent worker agents. 3-5x faster than sequential |
-| Swarm | Coordinated agents pulling from a shared task pool. Prevents duplicate work |
-| Pipeline | Sequential agent chains with preset workflows for review, implement, and debug |
-| Ecomode | Token-efficient parallel execution with smart model routing. 30-50% token savings |
-| Ralph | Persistence mode — keeps working until the Architect agent verifies the goal is fully met |
-| TDD | Test-Driven Development workflow — write tests first, then implement |
+| Was | Now |
+|-----|-----|
+| Autopilot (idea to working code) | `/goal`, or plan mode followed by a normal run |
+| Ultrawork (parallel workers) | The Workflow tool, or several Agent calls in one message |
+| Swarm (shared task pool) | Agent teams |
+| Pipeline (sequential agent chain) | A Workflow script: stages, not a barrier per stage |
+| Ralph (persist until verified) | `/loop` with a done-condition and a verify command |
+| TDD | The test-first gate, plus the superpowers TDD skill |
+| Ecomode / model routing | `model=` on each subagent call, enforced by a hook |
 
-### Magic keywords
+### What survived, and why
 
-Type these keywords naturally in your prompt to trigger specific modes:
+Three skills stayed because nothing native replaces them:
 
-| Keyword | Effect |
-|---------|--------|
-| autopilot | Full autonomous execution from idea to code |
-| ralph | Persistence mode — runs until verified complete |
-| ralplan | Iterative planning with consensus structured deliberation |
-| ulw / ultrawork | Maximum parallelism with concurrent agents |
-| team | Spawns a team of coordinated agents |
-| deep-interview | Socratic questioning to clarify vague ideas before execution |
-| deepsearch | Enhanced search for finding files and modules across large codebases |
-| deep-analyze | Deep analysis of problems (e.g. why tests are failing) |
-| tdd | Test-Driven Development workflow |
-| plan | Planning interview before execution |
+| Skill | What it does |
+|-------|--------------|
+| `/afk` | Unattended run. Banks decisions it cannot make and keeps going rather than stopping to ask |
+| `/carryon` | One next-best action, then stops at the first real decision |
+| `/oneshot` | Idea to green PR with no interrupts |
 
-### Smart model routing
+Everything else went. The test for keeping any orchestration layer is simple: name the thing it
+does that the harness does not, and if you cannot, the layer is costing you context for nothing.
 
-OMC automatically routes tasks to the right model: Haiku for simple tasks, Sonnet for standard work, Opus for complex reasoning. This saves 30-50% on tokens with no manual configuration. For specialist tasks it can orchestrate other providers too — Codex for deep code review and security analysis, Gemini for visual analysis and 1M-token context on large files — which is where this page's CLI-vs-MCP framework applies.
+### The lesson worth generalising
 
-### Key commands
-
-| Command | Purpose |
-|---------|---------|
-| `/spawn` | Start a background agent on a specific task |
-| `/status` | Show status of all running agents |
-| `/focus` | Switch focus to a background agent |
-| `/merge` | Merge results from agents and terminate them |
-| `/kill` | Terminate a background agent |
-| `/log` | Show detailed logs for a specific agent |
-| `/oh-my-claudecode:autopilot` | Autonomous execution from idea to code |
-| `/oh-my-claudecode:ultrawork` | Parallel agent execution |
-| `/oh-my-claudecode:ralph` | Persistent execution until verified complete |
-| `stopomc` / `cancel` | Cancel active orchestration |
+A third-party layer that wraps the harness is borrowed time. Every capability it adds is a
+capability the harness vendor is also building, and when theirs lands, yours is a compatibility
+liability. Prefer layers that add a genuinely missing capability (unattended autonomy) over layers
+that rename what you already have (parallel agents, model routing, planning).
 
 ### /batch — parallel codebase changes
 
