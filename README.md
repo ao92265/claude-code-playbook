@@ -20,10 +20,10 @@
 
 <br/>
 
-<img src="https://img.shields.io/badge/52-Skills-5E6AD2?style=flat-square" alt="52 Skills"/>
+<img src="https://img.shields.io/badge/47-Skills-5E6AD2?style=flat-square" alt="47 Skills"/>
 <img src="https://img.shields.io/badge/12-Templates-FC7840?style=flat-square" alt="12 Templates"/>
 <img src="https://img.shields.io/badge/28-Hooks-EB5757?style=flat-square" alt="28 Hooks"/>
-<img src="https://img.shields.io/badge/69-Docs-4EA7FC?style=flat-square" alt="69 Docs"/>
+<img src="https://img.shields.io/badge/71-Docs-4EA7FC?style=flat-square" alt="71 Docs"/>
 <img src="https://img.shields.io/badge/5-Examples-27A644?style=flat-square" alt="5 Examples"/>
 <img src="https://img.shields.io/badge/24-Anti--Patterns-F0BF00?style=flat-square" alt="24 Anti-Patterns"/>
 
