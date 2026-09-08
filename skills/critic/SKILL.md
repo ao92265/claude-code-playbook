@@ -10,7 +10,7 @@ Adversarial second-opinion pass on a plan or proposal before execution begins.
 ## When to invoke
 
 - Plan file written, before ExitPlanMode approval
-- Long autopilot/ralph prompt drafted, before launch
+- Long autonomous-run prompt drafted, before launch
 - User asks "is this plan any good"
 - After a deep-interview produced a spec, before implementation
 
@@ -26,7 +26,7 @@ Adversarial second-opinion pass on a plan or proposal before execution begins.
    - If active plan file exists at `~/.claude/plans/*.md` (latest mtime) → use it
    - Else use the last assistant message in conversation
    - User can pass explicit path: `/critic <path>`
-2. Spawn `oh-my-claudecode:critic` agent (model=`opus`) with prompt:
+2. Spawn the `critic` agent (model=`opus`) with prompt:
 
    ```
    Review the attached plan. Find 3-10 specific issues across these axes:

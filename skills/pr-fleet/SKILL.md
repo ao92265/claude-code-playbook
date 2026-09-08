@@ -146,7 +146,7 @@ After each batch of 5 (or when the queue runs out, whichever is first):
 ### Step 4 — Exit cleanly
 
 - `git worktree prune` to remove any orphan worktrees
-- DO NOT cancel any active OMC mode; coordinator exits naturally
+- DO NOT cancel any active autonomous mode; the coordinator exits naturally
 
 ## Hard Rules (coordinator)
 

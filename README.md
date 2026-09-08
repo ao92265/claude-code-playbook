@@ -20,10 +20,10 @@
 
 <br/>
 
-<img src="https://img.shields.io/badge/52-Skills-5E6AD2?style=flat-square" alt="52 Skills"/>
+<img src="https://img.shields.io/badge/47-Skills-5E6AD2?style=flat-square" alt="47 Skills"/>
 <img src="https://img.shields.io/badge/12-Templates-FC7840?style=flat-square" alt="12 Templates"/>
 <img src="https://img.shields.io/badge/28-Hooks-EB5757?style=flat-square" alt="28 Hooks"/>
-<img src="https://img.shields.io/badge/69-Docs-4EA7FC?style=flat-square" alt="69 Docs"/>
+<img src="https://img.shields.io/badge/71-Docs-4EA7FC?style=flat-square" alt="71 Docs"/>
 <img src="https://img.shields.io/badge/5-Examples-27A644?style=flat-square" alt="5 Examples"/>
 <img src="https://img.shields.io/badge/24-Anti--Patterns-F0BF00?style=flat-square" alt="24 Anti-Patterns"/>
 
@@ -110,7 +110,7 @@ graph TB
     end
 
     subgraph "Plugins"
-        OMC["OMC<br/><em>Agent orchestration</em>"]
+        SP["superpowers<br/><em>Process discipline</em>"]
         BMAD["BMAD<br/><em>Multi-agent roles</em>"]
         C7["Context7<br/><em>Documentation</em>"]
     end
@@ -121,7 +121,7 @@ graph TB
         GH["GitHub CLI<br/><em>PRs & issues</em>"]
     end
 
-    CC --> OMC
+    CC --> SP
     CC --> BMAD
     CC --> C7
     CC --> BR
@@ -138,7 +138,7 @@ graph TB
     class CM success
     class SK info
     class HK danger
-    class OMC,BMAD,C7 warn
+    class SP,BMAD,C7 warn
     class BR,DB,GH dark
 ```
 
@@ -296,9 +296,9 @@ graph TB
 </td>
 <td width="50%" valign="top">
 
-### OMC — Session Orchestration
+### Execution modes
 
-Execution modes that control *how* Claude works:
+Modes that control *how* Claude works. These came from a third-party layer until Aug 2026; the native equivalents are named underneath each one:
 
 ```mermaid
 graph LR
@@ -614,7 +614,7 @@ Token limits are a *scheduled* failure mode for long loops, not a surprise. The 
 | **Configuration** | [Permissions](docs/permissions.md) · [MCP Servers](docs/mcp-servers.md) · [Model Comparison](docs/model-comparison.md) · [GLM on Claude Code (z.AI)](docs/glm-zai.md) · [Cost Guide](docs/cost-guide.md) · [Path-Scoped Rules](docs/path-scoped-rules.md) · [Auto Mode](docs/auto-mode.md) · [Verify Gate Hook](docs/verify-gate-hook.md) · [Daydream Hook](docs/daydream-hook.md) · [Audit Log Hook](docs/audit-log-hook.md) |
 | **Architecture** | [Harness](docs/harness.md) · [Harness Pattern](docs/harness-pattern.md) · [Steering Files](docs/steering-files.md) · [Setup Atlas](docs/setup-atlas.md) · [Setup Audit](docs/setup-audit.md) |
 | **Skills & Extensibility** | [Skills Ecosystem](docs/skills-ecosystem.md) · [Skills 2.0](docs/skills-v2.md) · [Plugin Authoring](docs/plugin-authoring.md) · [Agent Memory](docs/agent-memory.md) |
-| **Advanced** | [Continuous Development (ACT)](docs/continuous-development.md) · [Agent Teams](docs/agent-teams.md) · [Multi-Model Orchestration](docs/multi-model-orchestration.md) · [BMad Autonomous Development](docs/bmad.md) · [Planning Blueprint](docs/planning-blueprint.md) · [Code Container](docs/code-container.md) · [Local Models](docs/local-models.md) · [Cost & Observability](docs/cost-and-observability.md) · [Knowledge & Context](docs/knowledge-and-context.md) · [Advanced Tool Use](docs/advanced-tool-use.md) · [SDK vs CLI](docs/sdk-vs-cli.md) · [Opus 4.7 Reference](docs/opus-4-7.md) |
+| **Advanced** | [Continuous Development (ACT)](docs/continuous-development.md) · [Agent Teams](docs/agent-teams.md) · [Superpowers](docs/superpowers.md) · [Multi-Model Orchestration](docs/multi-model-orchestration.md) · [BMad Autonomous Development](docs/bmad.md) · [Planning Blueprint](docs/planning-blueprint.md) · [Code Container](docs/code-container.md) · [Local Models](docs/local-models.md) · [Cost & Observability](docs/cost-and-observability.md) · [Knowledge & Context](docs/knowledge-and-context.md) · [Advanced Tool Use](docs/advanced-tool-use.md) · [SDK vs CLI](docs/sdk-vs-cli.md) · [Opus 4.7 Reference](docs/opus-4-7.md) |
 | **Enterprise** | [Enterprise Governance](docs/enterprise-governance.md) · [Regulated AI](docs/regulated-ai.md) · [Security Remediation](docs/security-remediation.md) · [Legacy Modernization](docs/legacy-modernization.md) · [GitHub Actions](docs/github-actions.md) · [Team Setup](docs/team-setup.md) · [Adoption Playbook](docs/adoption-playbook.md) · [Case Studies](docs/case-studies.md) |
 | **News & Research** | [April 2026 Briefing](docs/april-2026-briefing.md) · [59 deep-read article pages](docs/news/) across 9 categories |
 | **Help** | [FAQ](docs/faq.md) · [Troubleshooting](docs/troubleshooting.md) · [Comparison](docs/comparison.md) · [Codex Parity](docs/codex-parity.md) · [Awesome Claude Code](docs/awesome-claude-code.md) |

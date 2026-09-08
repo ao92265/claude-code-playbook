@@ -298,7 +298,9 @@ Every session pays a fixed tax at startup for the skills registry, MCP tool sche
 
 Some context costs earn their keep. Do **not** archive the following in a routine prune:
 
-- **oh-my-claudecode (OMC).** OMC is the multi-agent orchestration backbone — its agent catalog, team runtime, skill registry, and hook/state wiring are load-bearing for any project using ralph, ultrawork, team, autopilot, or the `executor`/`planner`/`reviewer` subagent routing. Disabling OMC silently breaks orchestration skills that other playbook guidance assumes are available. Keep the plugin enabled globally; scope per-project via `enabledPlugins` in `~/.claude.json` only when you are certain no OMC-driven skill is invoked in that project.
+- **Your subagent definitions.** The `executor` / `planner` / `reviewer` style agents are what let you push work off the main context; deleting them to save a few hundred tokens costs you far more in the sessions that follow.
+
+> **Superseded 17 Aug 2026.** This slot used to say "never prune oh-my-claudecode, it is load-bearing". It was, until Claude Code shipped the same capabilities. Measured before removal: three of its skills were still in use, two had never been used once, and its block in the rule files was 79 lines of which half described features that no longer existed. Re-run that check on any layer you are told is load-bearing.
 - **Your team's workflow hooks.** `ts-check.sh`, `pre-commit-verify.sh`, `codex-prepush-review.sh`, and equivalents catch regressions before they ship. Their per-run cost is negligible (see *Cost by Hook* above).
 - **CLAUDE.md layers.** Global, project, and local CLAUDE.md files are shared across every session — keep them tight (<150 instructions total across layers) but do not delete rules you still rely on.
 

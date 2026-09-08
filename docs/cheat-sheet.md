@@ -160,9 +160,9 @@ decisions made, and gotchas. Save to SESSION_NOTES.md.
 ## Plugin Quick Install
 
 ```bash
-claude /plugin install Context7     # AI-powered documentation search
-claude /plugin install BMAD         # Multi-agent orchestration (Architect, Dev, QA, Security, PM)
-claude /plugin install OMC          # Advanced session management (autopilot, ralph, ultrawork)
+claude plugin install context7@claude-plugins-official     # current library docs
+claude plugin install superpowers@claude-plugins-official  # brainstorm, plan, TDD, debugging
+claude plugin install code-review@claude-plugins-official  # multi-agent PR review
 ```
 
 ---

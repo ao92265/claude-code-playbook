@@ -6,7 +6,7 @@ description: |
   implementation plan", "document the approach before we start".
 
   Do NOT use this skill for: executing plans (use executing-plans instead), verbal planning
-  discussions (use brainstorming), multi-agent planning (use OMC omc-plan or ralplan),
+  discussions (use brainstorming), multi-agent planning (use the Workflow tool),
   simple tasks, single-file changes, or when the user says "how should I implement" as a
   conversational question rather than a request for a written plan file.
 license: MIT

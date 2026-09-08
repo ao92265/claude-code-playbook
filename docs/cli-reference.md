@@ -101,8 +101,7 @@ These are not in most guides. All live in `.claude/settings.json` (project) or `
 | `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` | Auto-compact trigger threshold (1–99). |
 | `ENABLE_TOOL_SEARCH` | `auto:N` — switch to MCP tool search at N+ tools loaded. |
 | `CLAUDE_CODE_TASK_LIST_ID` | Share a task list across sessions. |
-| `DISABLE_OMC` | Kill switch for the oh-my-claudecode plugin layer. |
-| `OMC_SKIP_HOOKS` | Comma-separated list of hook names to skip. |
+| `OMC_SKIP_HOOKS` | Comma-separated list of hook names to skip for one command. Named after a layer that is gone; the variable stayed because every hook in this playbook reads it. |
 
 ## See Also
 

@@ -7,7 +7,7 @@ parent: Architecture
 
 Most "here's my CLAUDE.md" posts show the rules file and stop. The rules file is the smallest part of it. The thing that makes a setup productive is everything around it: the hooks that fire on every prompt, the agents work gets routed to, the gates that block a bad commit, and the proxies and control towers that let you run ten terminals at once.
 
-This page is one diagram of a complete working stack. It's the [oh-my-claudecode](https://github.com/) orchestration layer plus custom hooks, skills, and infrastructure, drawn as a single wall-chart so the layers are visible at once.
+This page is one diagram of a complete working stack. It's Claude Code plus custom hooks, skills, and infrastructure, drawn as a single wall-chart so the layers are visible at once.
 
 ![Full Claude Code setup atlas — request lifecycle with decision gates, agent and skill catalogs, hooks, MCP servers, scheduled daemons, and the multi-terminal fleet and proxy layer]({{ site.baseurl }}/assets/images/claude-setup-atlas.png)
 
@@ -35,7 +35,7 @@ The two loop-backs are the part that matters. The model gets trusted inside a fe
 **Infrastructure and the fleet (bottom bands).** This is the part nobody draws.
 
 - Hooks by event, every script across all eight hook events.
-- MCP servers, scheduled launchd daemons, plugins, and the `.omc/` state tree.
+- MCP servers, scheduled launchd daemons, plugins, and the per-project state tree.
 - The multi-terminal fleet. 6–10 Claude sessions in parallel, each with its own stop-handoff. `/morning` consolidates them into one briefing. A local triage board (`rohcna`) sorts the parked ones into needs-you / mid-task / resume / stale and jumps you straight to the iTerm pane.
 - Proxies in front of the model: a token-killing Bash-rewrite proxy (60–90% off), a context-compression proxy, and a 60-second re-auth daemon.
 - Headless and subscription: driving the CLI with `stream-json --resume` to build subscription-funded agents with no API key.

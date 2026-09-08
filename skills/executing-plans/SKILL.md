@@ -6,7 +6,7 @@ description: |
   "run the plan", "start working on the plan in docs/plans".
 
   Do NOT use this skill for: creating plans (use writing-plans), ad-hoc coding, tasks
-  without a written plan file, or autonomous execution (use OMC ralph/ultrawork/autopilot
+  without a written plan file, or autonomous execution (use /loop, /goal or /afk
   for multi-agent execution loops).
 license: MIT
 compatibility: marvin

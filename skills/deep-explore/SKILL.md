@@ -8,7 +8,7 @@ description: >
 
   Do NOT use this skill for: simple file lookups, single grep searches, known file
   locations, implementation tasks, or cross-repo searches (use cross-project-search).
-  Don't trigger when OMC's built-in Explore agent would suffice for a 1-3 file lookup.
+  Don't trigger when the built-in Explore agent would suffice for a 1-3 file lookup.
 context: fork
 agent: Explore
 title: "deep-explore"
