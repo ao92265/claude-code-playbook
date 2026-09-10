@@ -7,8 +7,8 @@
 
 [![Quick Start](https://img.shields.io/badge/Quick_Start-5E6AD2?style=for-the-badge&logo=rocket&logoColor=white)](#quick-start)
 [![Docs Site](https://img.shields.io/badge/Docs_Site-00B8CC?style=for-the-badge&logo=book&logoColor=white)](https://ao92265.github.io/claude-code-playbook/)
-[![Skills](https://img.shields.io/badge/Skills-47_included-5E6AD2?style=for-the-badge&logo=puzzle-piece&logoColor=white)](#skills-reference)
-[![Hooks](https://img.shields.io/badge/Hooks-28_included-EB5757?style=for-the-badge&logoColor=white)](#hooks)
+[![Skills](https://img.shields.io/badge/Skills-48_included-5E6AD2?style=for-the-badge&logo=puzzle-piece&logoColor=white)](#skills-reference)
+[![Hooks](https://img.shields.io/badge/Hooks-31_included-EB5757?style=for-the-badge&logoColor=white)](#hooks)
 [![CI](https://img.shields.io/github/actions/workflow/status/ao92265/claude-code-playbook/validate.yml?style=for-the-badge&label=CI&logo=github)](https://github.com/ao92265/claude-code-playbook/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/License-MIT-27A644?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/ao92265/claude-code-playbook?style=for-the-badge&logo=github&color=F0BF00)](https://github.com/ao92265/claude-code-playbook/stargazers)
@@ -20,10 +20,10 @@
 
 <br/>
 
-<img src="https://img.shields.io/badge/47-Skills-5E6AD2?style=flat-square" alt="47 Skills"/>
+<img src="https://img.shields.io/badge/48-Skills-5E6AD2?style=flat-square" alt="48 Skills"/>
 <img src="https://img.shields.io/badge/12-Templates-FC7840?style=flat-square" alt="12 Templates"/>
-<img src="https://img.shields.io/badge/28-Hooks-EB5757?style=flat-square" alt="28 Hooks"/>
-<img src="https://img.shields.io/badge/71-Docs-4EA7FC?style=flat-square" alt="71 Docs"/>
+<img src="https://img.shields.io/badge/31-Hooks-EB5757?style=flat-square" alt="31 Hooks"/>
+<img src="https://img.shields.io/badge/72-Docs-4EA7FC?style=flat-square" alt="72 Docs"/>
 <img src="https://img.shields.io/badge/5-Examples-27A644?style=flat-square" alt="5 Examples"/>
 <img src="https://img.shields.io/badge/24-Anti--Patterns-F0BF00?style=flat-square" alt="24 Anti-Patterns"/>
 
@@ -404,6 +404,7 @@ Every skill is a drop-in `/command` that teaches Claude a specific workflow. All
 | **[research-only](skills/research-only/)** | Enforces strict analysis-only mode: no Edit/Write tools, findings as markdown only | Investigations that must not touch code |
 | **[multiask](skills/multiask/)** | Cross-checks an answer across multiple AI CLIs in parallel with adversarial review | High-stakes decisions: security, prod incidents, irreversible changes |
 | **[loom-analyze](skills/loom-analyze/)** | Downloads a Loom share URL and produces a transcript plus keyframes for analysis | Turning recorded walkthroughs into actionable notes |
+| **[matcha](skills/matcha/)** | Delegates a bounded task to a headless Claude Code run on the Matcha gateway, billed to that account per token instead of your subscription. Read only by default, `--write` opts into edits | Second opinion, offloading bulk work, or continuing after your subscription window runs out |
 
 </details>
 
@@ -669,11 +670,11 @@ sequenceDiagram
     Claude-->>You: "Bug fixed, types clean"
 ```
 
-**28 hook scripts included.** 11 are auto-wired when you install the playbook as a plugin (via [hooks/hooks.json](hooks/hooks.json)); the rest are opt-in via your `settings.json`.
+**31 hook scripts included.** 11 are auto-wired when you install the playbook as a plugin (via [hooks/hooks.json](hooks/hooks.json)); the rest are opt-in via your `settings.json`.
 
 **Auto-wired (11):** [session-start-check.sh](hooks/session-start-check.sh) (environment validation) · [pre-commit-guard.sh](hooks/pre-commit-guard.sh) (debug statements) · [env-guard.sh](hooks/env-guard.sh) (secrets) · [firewall.sh](hooks/firewall.sh) (dangerous command blocker) · [protect-paths.sh](hooks/protect-paths.sh) (protected file guard) · [ts-check.sh](hooks/ts-check.sh) (type errors) · [lint-check.sh](hooks/lint-check.sh) (ESLint) · [format-check.sh](hooks/format-check.sh) (Prettier) · [build-check.sh](hooks/build-check.sh) (OOM-safe builds) · [daydream.sh](hooks/daydream.sh) (idle memory → ideas → quick PRD) · [daydream-surface.sh](hooks/daydream-surface.sh) (surface daydreams at session start)
 
-**Opt-in (17):** [verify-gate.sh](hooks/verify-gate.sh) (Stop-blocking verify gate with baseline diffing) · [audit-log.sh](hooks/audit-log.sh) (raw-prompt compliance log) · [secret-scanner.py](hooks/secret-scanner.py) (pattern-based secret detection) · [codex-prepush-review.sh](hooks/codex-prepush-review.sh) (second-model review on push) · [pre-commit-verify.sh](hooks/pre-commit-verify.sh) (typecheck before commit) · [commit-message-check.sh](hooks/commit-message-check.sh) (conventional commits) · [tdd-gate.sh](hooks/tdd-gate.sh) (warn on source edits without a failing test) · [plan-gate.sh](hooks/plan-gate.sh) (warn on edits without a plan) · [require-agent-model.sh](hooks/require-agent-model.sh) (block subagent spawns without an explicit model) · [research-only-guard.sh](hooks/research-only-guard.sh) (enforce analysis-only mode) · [test-on-save.sh](hooks/test-on-save.sh) (auto-run relevant tests) · [auto-simplify.sh](hooks/auto-simplify.sh) (simplification pass on commit) · [stop-handoff.sh](hooks/stop-handoff.sh) (write a "where I left off" handoff) · [sessionstart-handoff.sh](hooks/sessionstart-handoff.sh) (re-inject the last handoff) · [precompact-handoff.sh](hooks/precompact-handoff.sh) (preserve state before compaction) · [notify-local-tts.sh](hooks/notify-local-tts.sh) (TTS notifications) · [play-tts.sh](hooks/play-tts.sh) (TTS wrapper)
+**Opt-in (20):** [verify-gate.sh](hooks/verify-gate.sh) (Stop-blocking verify gate with baseline diffing) · [audit-log.sh](hooks/audit-log.sh) (raw-prompt compliance log) · [secret-scanner.py](hooks/secret-scanner.py) (pattern-based secret detection) · [codex-prepush-review.sh](hooks/codex-prepush-review.sh) (second-model review on push) · [pre-commit-verify.sh](hooks/pre-commit-verify.sh) (typecheck before commit) · [commit-message-check.sh](hooks/commit-message-check.sh) (conventional commits) · [tdd-gate.sh](hooks/tdd-gate.sh) (warn on source edits without a failing test) · [plan-gate.sh](hooks/plan-gate.sh) (warn on edits without a plan) · [require-agent-model.sh](hooks/require-agent-model.sh) (block subagent spawns without an explicit model) · [research-only-guard.sh](hooks/research-only-guard.sh) (enforce analysis-only mode) · [test-on-save.sh](hooks/test-on-save.sh) (auto-run relevant tests) · [auto-simplify.sh](hooks/auto-simplify.sh) (simplification pass on commit) · [stop-handoff.sh](hooks/stop-handoff.sh) (write a "where I left off" handoff) · [sessionstart-handoff.sh](hooks/sessionstart-handoff.sh) (re-inject the last handoff) · [precompact-handoff.sh](hooks/precompact-handoff.sh) (preserve state before compaction) · [notify-local-tts.sh](hooks/notify-local-tts.sh) (TTS notifications) · [play-tts.sh](hooks/play-tts.sh) (TTS wrapper) · [matcha-review.sh](hooks/matcha-review.sh) (second reviewer on the working diff, via Matcha, read only) · [matcha-surface.sh](hooks/matcha-surface.sh) (surfaces the Matcha review, warns when subscription quota is nearly gone) · [matcha-offload-gate.sh](hooks/matcha-offload-gate.sh) (blocks cheap subagent spawns under quota pressure, points them at Matcha)
 
 > See **[hooks/README.md](hooks/README.md)** for setup and **[config/hooks-example.json](config/hooks-example.json)** for an example configuration wiring 9 of the hook scripts.
 
