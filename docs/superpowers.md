@@ -104,3 +104,19 @@ yet.
 Less worth it if you already have that discipline enforced somewhere it cannot be argued with, in
 hooks or gates. Then you are paying for a second copy of your own rules, in a voice that insists it
 outranks them.
+
+## How it sits in the author's setup
+
+Superpowers leads: its brainstorming, test-driven-development, systematic-debugging,
+requesting-code-review and verification-before-completion skills are the default process, in
+Claude Code and (through an `AGENTS.md` block) in Codex too. What it does not own:
+
+- **The completion gate.** A `/done` skill and the `verify-gate` hook still decide "done".
+  Superpowers' verification is the first pass.
+- **Enforcement.** Anything that must always happen is a hook, not a skill. See
+  [Guard Hooks](guard-hooks.md).
+- **Reply shape.** Length and register rules are injected by a hook on every prompt and checked on
+  `Stop`, so the announce-every-skill habit stays to one line.
+
+The `<superpowers>` block in [`rules/global-CLAUDE.md`](../rules/global-CLAUDE.md) is the exact
+wording.

@@ -7,8 +7,8 @@
 
 [![Quick Start](https://img.shields.io/badge/Quick_Start-5E6AD2?style=for-the-badge&logo=rocket&logoColor=white)](#quick-start)
 [![Docs Site](https://img.shields.io/badge/Docs_Site-00B8CC?style=for-the-badge&logo=book&logoColor=white)](https://ao92265.github.io/claude-code-playbook/)
-[![Skills](https://img.shields.io/badge/Skills-47_included-5E6AD2?style=for-the-badge&logo=puzzle-piece&logoColor=white)](#skills-reference)
-[![Hooks](https://img.shields.io/badge/Hooks-28_included-EB5757?style=for-the-badge&logoColor=white)](#hooks)
+[![Skills](https://img.shields.io/badge/Skills-76_included-5E6AD2?style=for-the-badge&logo=puzzle-piece&logoColor=white)](#skills-reference)
+[![Hooks](https://img.shields.io/badge/Hooks-76_included-EB5757?style=for-the-badge&logoColor=white)](#hooks)
 [![CI](https://img.shields.io/github/actions/workflow/status/ao92265/claude-code-playbook/validate.yml?style=for-the-badge&label=CI&logo=github)](https://github.com/ao92265/claude-code-playbook/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/License-MIT-27A644?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/ao92265/claude-code-playbook?style=for-the-badge&logo=github&color=F0BF00)](https://github.com/ao92265/claude-code-playbook/stargazers)
@@ -20,10 +20,10 @@
 
 <br/>
 
-<img src="https://img.shields.io/badge/47-Skills-5E6AD2?style=flat-square" alt="47 Skills"/>
+<img src="https://img.shields.io/badge/76-Skills-5E6AD2?style=flat-square" alt="76 Skills"/>
 <img src="https://img.shields.io/badge/12-Templates-FC7840?style=flat-square" alt="12 Templates"/>
-<img src="https://img.shields.io/badge/28-Hooks-EB5757?style=flat-square" alt="28 Hooks"/>
-<img src="https://img.shields.io/badge/71-Docs-4EA7FC?style=flat-square" alt="71 Docs"/>
+<img src="https://img.shields.io/badge/76-Hooks-EB5757?style=flat-square" alt="76 Hooks"/>
+<img src="https://img.shields.io/badge/76-Docs-4EA7FC?style=flat-square" alt="76 Docs"/>
 <img src="https://img.shields.io/badge/5-Examples-27A644?style=flat-square" alt="5 Examples"/>
 <img src="https://img.shields.io/badge/24-Anti--Patterns-F0BF00?style=flat-square" alt="24 Anti-Patterns"/>
 
@@ -68,7 +68,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 <td width="50%">
 
 **Learn**
-- The **[docs site](https://ao92265.github.io/claude-code-playbook/)** — 69 guides organised by section, from [Getting Started](docs/getting-started.md) to enterprise governance, plus 59 news deep-reads
+- The **[docs site](https://ao92265.github.io/claude-code-playbook/)** — 76 guides organised by section, from [Getting Started](docs/getting-started.md) to enterprise governance, plus 59 news deep-reads
 - [24 prompt engineering patterns](docs/prompt-patterns.md) with copy-paste examples and a decision tree
 - [Quick-reference cheat sheet](docs/cheat-sheet.md) for commands, model routing, and session management
 - [Troubleshooting guide](docs/troubleshooting.md) with 15 common issues and diagnostic flowcharts
@@ -78,7 +78,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 <td width="50%">
 
 **Use**
-- [52 production-ready skills](skills/) (custom `/commands`) you can drop into any project
+- [76 production-ready skills](skills/) (custom `/commands`) you can drop into any project
 - [11 CLAUDE.md templates + 1 team onboarding template](templates/) — TypeScript, React, Node, Python, Full-stack, Go, Rust, Mobile, DevOps, Java, C#
 - [28 hook scripts](hooks/) that catch errors before they reach your commits
 - [5 annotated example sessions](examples/) showing real workflows in action
@@ -89,6 +89,17 @@ After months of daily production use — debugging at 2am, shipping features acr
 </table>
 
 <br/>
+
+## What's New (October 2026)
+
+The repo now mirrors the author's live setup, sanitised. Start with the
+**[Setup Inventory](docs/setup-inventory.md)**: every layer, what is included, and what was left out and why.
+
+- **[RTK](docs/rtk.md)**: a Bash hook that trims command output before it reaches context. 80% fewer output tokens over about 240,000 commands.
+- **[Guard Hooks](docs/guard-hooks.md)**: recorder plus gate pairs that block an edit until the right check has happened. Rules that were ignored as prose, enforced as hooks.
+- **[Session Lifecycle](docs/session-lifecycle.md)**: per-turn handoffs, `/reboot`, automatic rotation and an out-of-band referee for runaway sessions.
+- **[Background Jobs](docs/background-jobs.md)**: 13 launchd jobs, scripts in [`scripts/claude-ops/`](scripts/claude-ops/).
+- **[Superpowers](docs/superpowers.md)** as the default process layer, the **[rules layout](rules/)** (`CLAUDE.md` plus five @-imports), **[9 role agents](agents/)** and **[commands](commands/)**.
 
 ## Architecture Overview
 
@@ -111,8 +122,14 @@ graph TB
 
     subgraph "Plugins"
         SP["superpowers<br/><em>Process discipline</em>"]
-        BMAD["BMAD<br/><em>Multi-agent roles</em>"]
+        CX["Codex<br/><em>Second-model review</em>"]
         C7["Context7<br/><em>Documentation</em>"]
+    end
+
+    subgraph "Harness"
+        RTK["RTK<br/><em>Trims shell output</em>"]
+        GATE["Guard hooks<br/><em>Recorder + gate pairs</em>"]
+        OPS["launchd jobs<br/><em>Referee, rotation, sweeps</em>"]
     end
 
     subgraph "MCP Servers"
@@ -122,7 +139,10 @@ graph TB
     end
 
     CC --> SP
-    CC --> BMAD
+    CC --> CX
+    HK --> GATE
+    CC -->|"every Bash call"| RTK
+    OPS -.->|"watches"| CC
     CC --> C7
     CC --> BR
     CC --> DB
@@ -138,7 +158,8 @@ graph TB
     class CM success
     class SK info
     class HK danger
-    class SP,BMAD,C7 warn
+    class SP,CX,C7 warn
+    class RTK,GATE,OPS danger
     class BR,DB,GH dark
 ```
 
@@ -148,7 +169,7 @@ graph TB
 
 | Directory | Contents |
 |:----------|:---------|
-| **[docs/](docs/)** | 69 guides — patterns, configuration, architecture, enterprise, troubleshooting — plus [News & Research](docs/news/) with 59 deep-read article pages |
+| **[docs/](docs/)** | 76 guides — patterns, configuration, architecture, enterprise, troubleshooting — plus [News & Research](docs/news/) with 59 deep-read article pages |
 | **[skills/](skills/)** | 52 ready-to-use custom slash commands ([full reference below](#skills-reference)) |
 | **[hooks/](hooks/)** | 28 hook scripts — deterministic guard rails for commits, builds, secrets, and session state ([list below](#hooks)) |
 | **[templates/](templates/)** | 11 stack-specific CLAUDE.md files + a team onboarding template |
@@ -605,7 +626,7 @@ Token limits are a *scheduled* failure mode for long loops, not a surprise. The 
 
 ## Documentation
 
-69 docs organised into sections on the **[docs site](https://ao92265.github.io/claude-code-playbook/)** — highlights by section:
+76 docs organised into sections on the **[docs site](https://ao92265.github.io/claude-code-playbook/)** — highlights by section:
 
 | Section | Key Pages |
 |:--------|:----------|
@@ -614,7 +635,7 @@ Token limits are a *scheduled* failure mode for long loops, not a surprise. The 
 | **Configuration** | [Permissions](docs/permissions.md) · [MCP Servers](docs/mcp-servers.md) · [Model Comparison](docs/model-comparison.md) · [GLM on Claude Code (z.AI)](docs/glm-zai.md) · [Cost Guide](docs/cost-guide.md) · [Path-Scoped Rules](docs/path-scoped-rules.md) · [Auto Mode](docs/auto-mode.md) · [Verify Gate Hook](docs/verify-gate-hook.md) · [Daydream Hook](docs/daydream-hook.md) · [Audit Log Hook](docs/audit-log-hook.md) |
 | **Architecture** | [Harness](docs/harness.md) · [Harness Pattern](docs/harness-pattern.md) · [Steering Files](docs/steering-files.md) · [Setup Atlas](docs/setup-atlas.md) · [Setup Audit](docs/setup-audit.md) |
 | **Skills & Extensibility** | [Skills Ecosystem](docs/skills-ecosystem.md) · [Skills 2.0](docs/skills-v2.md) · [Plugin Authoring](docs/plugin-authoring.md) · [Agent Memory](docs/agent-memory.md) |
-| **Advanced** | [Continuous Development (ACT)](docs/continuous-development.md) · [Agent Teams](docs/agent-teams.md) · [Superpowers](docs/superpowers.md) · [Multi-Model Orchestration](docs/multi-model-orchestration.md) · [BMad Autonomous Development](docs/bmad.md) · [Planning Blueprint](docs/planning-blueprint.md) · [Code Container](docs/code-container.md) · [Local Models](docs/local-models.md) · [Cost & Observability](docs/cost-and-observability.md) · [Knowledge & Context](docs/knowledge-and-context.md) · [Advanced Tool Use](docs/advanced-tool-use.md) · [SDK vs CLI](docs/sdk-vs-cli.md) · [Opus 4.7 Reference](docs/opus-4-7.md) |
+| **Advanced** | [Continuous Development (ACT)](docs/continuous-development.md) · [Agent Teams](docs/agent-teams.md) · [Superpowers](docs/superpowers.md) · [RTK](docs/rtk.md) · [Guard Hooks](docs/guard-hooks.md) · [Session Lifecycle](docs/session-lifecycle.md) · [Background Jobs](docs/background-jobs.md) · [Setup Inventory](docs/setup-inventory.md) · [Multi-Model Orchestration](docs/multi-model-orchestration.md) · [BMad Autonomous Development](docs/bmad.md) · [Planning Blueprint](docs/planning-blueprint.md) · [Code Container](docs/code-container.md) · [Local Models](docs/local-models.md) · [Cost & Observability](docs/cost-and-observability.md) · [Knowledge & Context](docs/knowledge-and-context.md) · [Advanced Tool Use](docs/advanced-tool-use.md) · [SDK vs CLI](docs/sdk-vs-cli.md) · [Opus 4.7 Reference](docs/opus-4-7.md) |
 | **Enterprise** | [Enterprise Governance](docs/enterprise-governance.md) · [Regulated AI](docs/regulated-ai.md) · [Security Remediation](docs/security-remediation.md) · [Legacy Modernization](docs/legacy-modernization.md) · [GitHub Actions](docs/github-actions.md) · [Team Setup](docs/team-setup.md) · [Adoption Playbook](docs/adoption-playbook.md) · [Case Studies](docs/case-studies.md) |
 | **News & Research** | [April 2026 Briefing](docs/april-2026-briefing.md) · [59 deep-read article pages](docs/news/) across 9 categories |
 | **Help** | [FAQ](docs/faq.md) · [Troubleshooting](docs/troubleshooting.md) · [Comparison](docs/comparison.md) · [Codex Parity](docs/codex-parity.md) · [Awesome Claude Code](docs/awesome-claude-code.md) |

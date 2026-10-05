@@ -530,7 +530,11 @@ if (IS_BROWSER) {
   function generateSelector(el) {
     if (el === document.body) return 'body';
     if (el === document.documentElement) return 'html';
-    if (el.id) return '#' + CSS.escape(el.id);
+    // Read via getAttribute when `el.id` is not a string — a <form> with a
+    // named control (e.g. <input name="id">) shadows the builtin getter and
+    // returns the element, producing a garbage `#[object …]` selector (#407).
+    const elId = typeof el.id === 'string' ? el.id : (el.getAttribute('id') || '');
+    if (elId) return '#' + CSS.escape(elId);
 
     const parts = [];
     let current = el;
@@ -660,6 +664,7 @@ if (IS_BROWSER) {
       if (el.closest('.impeccable-overlay, .impeccable-label, .impeccable-banner, .impeccable-tooltip')) continue;
       if (el.closest('[id^="impeccable-live-"]')) continue;
       if (el === document.body || el === document.documentElement) continue;
+      if (!isRenderedForBrowserRule(el)) continue;
 
       const tag = el.tagName.toLowerCase();
       const style = getComputedStyle(el);
@@ -678,6 +683,10 @@ if (IS_BROWSER) {
 
       const reasons = collectVisualContrastReasons(el, style);
       if (reasons.length === 0) continue;
+      // Image-only mode filters here, inside the cap: gradient/opacity/filter
+      // candidates earlier in DOM order must not consume the budget and
+      // starve the url()-backed texts this mode exists to sample.
+      if (options.imageOnly && !reasons.includes('image background')) continue;
 
       const textColor = parseRgb(style.color);
       const fontSize = parseFloat(style.fontSize) || 16;
@@ -1091,6 +1100,7 @@ if (IS_BROWSER) {
       return { ...candidate, status: 'unresolved', confidence: 'none', reason: 'stale selector' };
     }
     if (!el) return { ...candidate, status: 'unresolved', confidence: 'none', reason: 'missing element' };
+    if (!isRenderedForBrowserRule(el)) return { ...candidate, status: 'unresolved', confidence: 'none', reason: 'hidden element' };
 
     const blockingReason = (candidate.reasons || []).find(reason =>
       reason === 'background-clip text' ||
@@ -1169,6 +1179,7 @@ if (IS_BROWSER) {
   }
 
   async function analyzeVisualContrast(options = {}) {
+    // imageOnly is enforced inside the collector, before the candidate cap.
     const candidates = collectVisualContrastCandidates(options);
     const results = [];
     const shouldScrollOffscreen = options.scrollOffscreen === true;
@@ -1220,8 +1231,13 @@ if (IS_BROWSER) {
         return {
           type: f.type || f.id,
           category: ap ? ap.category : 'quality',
-          severity: ap?.severity || 'warning',
+          severity: f.severity || ap?.severity || 'warning',
+          // Advisory findings (em-dash overuse, etc.) are surfaced but never
+          // treated as failures; carry the flag so the overlay/extension can
+          // render them with the mildest affordance and consumers can filter.
+          advisory: (ap && ap.advisory === true) || f.advisory === true,
           detail: f.detail || f.snippet,
+          ignoreValue: f.ignoreValue || f.value || '',
           name: ap ? ap.name : (f.type || f.id),
           description: ap ? ap.description : '',
         };
@@ -1249,29 +1265,229 @@ if (IS_BROWSER) {
 
   function addBrowserFindings(groupMap, el, findings) {
     if (!findings || findings.length === 0) return;
+    // Element-scoped waivers: a data-impeccable-ignore ancestor suppresses
+    // matching findings for its whole subtree. Applied at this choke point so
+    // every per-element attribution (checks, layout, occlusion, rhythm)
+    // honors it; page-level findings attributed to <body> pass through
+    // untouched, since body has no ignoring ancestor.
+    const kept = findings.filter(f => !scopedIgnoreActive(el, f.type));
+    if (kept.length === 0) return;
     const existing = groupMap.get(el);
-    if (existing) existing.push(...findings);
-    else groupMap.set(el, [...findings]);
+    if (existing) existing.push(...kept);
+    else groupMap.set(el, [...kept]);
   }
 
   function browserFindingsFromMap(groupMap) {
     return [...groupMap.entries()].map(([el, findings]) => ({ el, findings }));
   }
 
+  const DESIGN_COLOR_TOLERANCE = 6;
+  const DESIGN_RADIUS_TOLERANCE_PX = 0.5;
+  const DESIGN_SKIP_TAGS = new Set(['head', 'title', 'meta', 'link', 'style', 'script', 'noscript', 'template', 'source']);
+
+  function normalizeBrowserFontName(value) {
+    return String(value || '')
+      .trim()
+      .replace(/^["']|["']$/g, '')
+      .replace(/\+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .toLowerCase();
+  }
+
+  function browserPrimaryFont(stack) {
+    if (!stack || /var\(/i.test(stack)) return '';
+    return String(stack || '')
+      .split(',')
+      .map(normalizeBrowserFontName)
+      .find(font => font && !GENERIC_FONTS.has(font)) || '';
+  }
+
+  function browserDesignSystemConfig() {
+    const raw = window.__IMPECCABLE_CONFIG__?.designSystem;
+    if (!raw?.present) return null;
+    const allowedFonts = new Set((raw.allowedFonts || []).map(normalizeBrowserFontName).filter(Boolean));
+    const allowedColors = (raw.allowedColors || [])
+      .filter(color => color && Number.isFinite(color.r) && Number.isFinite(color.g) && Number.isFinite(color.b))
+      .map(color => ({ r: color.r, g: color.g, b: color.b }));
+    const allowedRadii = (raw.allowedRadii || [])
+      .map(Number)
+      .filter(px => Number.isFinite(px));
+    return {
+      present: true,
+      hasFonts: raw.hasFonts === true && allowedFonts.size > 0,
+      allowedFonts,
+      hasColors: raw.hasColors === true && allowedColors.length > 0,
+      allowedColors,
+      hasRadii: raw.hasRadii === true && allowedRadii.length > 0,
+      allowedRadii,
+      hasPillRadius: raw.hasPillRadius === true,
+    };
+  }
+
+  function browserColorsClose(a, b) {
+    if (!a || !b) return false;
+    return Math.max(
+      Math.abs(a.r - b.r),
+      Math.abs(a.g - b.g),
+      Math.abs(a.b - b.b),
+    ) <= DESIGN_COLOR_TOLERANCE;
+  }
+
+  function isBrowserDesignColorAllowed(raw, designSystem) {
+    if (!designSystem?.hasColors) return true;
+    const text = String(raw || '').trim().toLowerCase();
+    if (!text || text === 'transparent' || text === 'currentcolor' || text === 'inherit' || text === 'initial') return true;
+    if (text.includes('var(')) return true;
+    const parsed = parseAnyColor(text);
+    if (!parsed) return true;
+    if ((parsed.a ?? 1) <= 0.05) return true;
+    return designSystem.allowedColors.some(color => browserColorsClose(parsed, color));
+  }
+
+  function isBrowserTransparentCss(value) {
+    const text = String(value || '').trim().toLowerCase();
+    if (!text || text === 'transparent') return true;
+    const parsed = parseAnyColor(text);
+    return parsed ? (parsed.a ?? 1) <= 0.05 : false;
+  }
+
+  function isBrowserDesignRadiusAllowed(raw, designSystem) {
+    if (!designSystem?.hasRadii) return true;
+    const text = String(raw || '').trim().toLowerCase();
+    if (!text || text === '0' || text === 'none' || text === 'initial' || text === 'inherit') return true;
+    if (text.includes('var(') || text.includes('%')) return true;
+    const px = resolveLengthPx(text, 16);
+    if (px == null || !Number.isFinite(px) || px <= DESIGN_RADIUS_TOLERANCE_PX) return true;
+    if (designSystem.hasPillRadius && px >= 99) return true;
+    return designSystem.allowedRadii.some(allowed => Math.abs(allowed - px) <= DESIGN_RADIUS_TOLERANCE_PX);
+  }
+
+  function browserRadiusTokens(value) {
+    return String(value || '')
+      .replace(/\s*\/\s*/g, ' ')
+      .split(/\s+/)
+      .map(token => token.trim())
+      .filter(Boolean);
+  }
+
+  function browserHasDirectText(el) {
+    return [...(el.childNodes || [])].some(node => node.nodeType === 3 && node.textContent.trim().length > 0);
+  }
+
+  function browserSampleText(el) {
+    const text = String(el.textContent || '').replace(/\s+/g, ' ').trim();
+    return text ? ` "${text.slice(0, 40)}"` : '';
+  }
+
+  function shouldSkipDesignElement(el) {
+    const tag = el.tagName?.toLowerCase?.() || '';
+    return DESIGN_SKIP_TAGS.has(tag) || isElementHidden(el);
+  }
+
+  function checkElementDesignSystemDOM(el, designSystem, seen) {
+    if (!designSystem?.present || shouldSkipDesignElement(el)) return [];
+    const findings = [];
+    const tag = el.tagName?.toLowerCase?.() || 'unknown';
+    const style = getComputedStyle(el);
+
+    if (designSystem.hasFonts && browserHasDirectText(el)) {
+      const font = browserPrimaryFont(style.fontFamily || '');
+      if (font && !designSystem.allowedFonts.has(font) && !seen.fonts.has(font)) {
+        seen.fonts.add(font);
+        findings.push({
+          type: 'design-system-font',
+          detail: `${tag}${browserSampleText(el)} uses ${font}; not declared in DESIGN.md typography`,
+          ignoreValue: font,
+        });
+      }
+    }
+
+    if (designSystem.hasColors) {
+      const colorChecks = [];
+      if (browserHasDirectText(el)) colorChecks.push(['text color', style.color]);
+      if (!isBrowserTransparentCss(style.backgroundColor)) colorChecks.push(['background', style.backgroundColor]);
+      for (const side of ['Top', 'Right', 'Bottom', 'Left']) {
+        if ((parseFloat(style[`border${side}Width`]) || 0) > 0) {
+          colorChecks.push([`border-${side.toLowerCase()}`, style[`border${side}Color`]]);
+        }
+      }
+      if ((parseFloat(style.outlineWidth) || 0) > 0) colorChecks.push(['outline', style.outlineColor]);
+
+      for (const [kind, raw] of colorChecks) {
+        const label = String(raw || '').trim().replace(/\s+/g, ' ');
+        if (isBrowserDesignColorAllowed(label, designSystem)) continue;
+        const key = `${kind}:${label}`;
+        if (seen.colors.has(key)) continue;
+        seen.colors.add(key);
+        findings.push({
+          type: 'design-system-color',
+          detail: `${kind} ${label} on ${tag}${browserSampleText(el)} is outside DESIGN.md colors`,
+          ignoreValue: label,
+        });
+      }
+    }
+
+    if (designSystem.hasRadii) {
+      for (const token of browserRadiusTokens(style.borderRadius || '')) {
+        if (isBrowserDesignRadiusAllowed(token, designSystem)) continue;
+        if (seen.radii.has(token)) continue;
+        seen.radii.add(token);
+        findings.push({
+          type: 'design-system-radius',
+          detail: `border-radius ${token} on ${tag}${browserSampleText(el)} is outside the DESIGN.md rounded scale`,
+          ignoreValue: token,
+        });
+      }
+    }
+
+    return findings;
+  }
+
+  function decodeBrowserGoogleFamily(value) {
+    const family = String(value || '').split(':')[0].replace(/\+/g, ' ');
+    try {
+      return decodeURIComponent(family);
+    } catch {
+      return family;
+    }
+  }
+
+  function checkBrowserDesignSystemSources(designSystem, seen) {
+    if (!designSystem?.hasFonts) return [];
+    const findings = [];
+    for (const link of document.querySelectorAll('link[href*="fonts.googleapis.com/css"]')) {
+      const href = link.getAttribute('href') || '';
+      for (const match of href.matchAll(/[?&]family=([^&]+)/g)) {
+        const display = decodeBrowserGoogleFamily(match[1]);
+        const font = normalizeBrowserFontName(display);
+        if (!font || designSystem.allowedFonts.has(font) || seen.fonts.has(font)) continue;
+        seen.fonts.add(font);
+        findings.push({
+          type: 'design-system-font',
+          detail: `Google Fonts: ${display} is not declared in DESIGN.md typography`,
+          ignoreValue: display,
+        });
+      }
+    }
+    return findings;
+  }
+
   function collectBrowserFindings() {
     const groupMap = new Map();
     const _disabled = EXTENSION_MODE ? (window.__IMPECCABLE_CONFIG__?.disabledRules || []) : [];
     const _ruleOk = (id) => !_disabled.length || !_disabled.includes(id);
-    // Note: provider-gated rules (--gpt / --gemini) are NOT filtered here. In a
-    // real browser env (detector page, live overlay, extension) running every
-    // check is free, so we always surface them; the gating is purely a CLI
-    // output concern, applied in the Node engines' detect* return paths.
+    const designSystem = browserDesignSystemConfig();
+    const designSeen = { fonts: new Set(), colors: new Set(), radii: new Set() };
+    // All deterministic rules run in the browser and extension path.
 
     for (const el of document.querySelectorAll('*')) {
       // Skip impeccable's own elements and any descendants (overlays, labels, banner, nav buttons)
       if (el.closest('.impeccable-overlay, .impeccable-label, .impeccable-banner, .impeccable-tooltip')) continue;
-      // Skip browser extension elements (Claude, etc.)
-      const elId = el.id || '';
+      // Skip browser extension elements (Claude, etc.). Use getAttribute when
+      // `el.id` is not a string: a <form> with a named control like
+      // <input name="id"> shadows the builtin `id` getter and returns the
+      // element, whose `.startsWith` throws (issue #407).
+      const elId = typeof el.id === 'string' ? el.id : (el.getAttribute('id') || '');
       if (elId.startsWith('claude-') || elId.startsWith('cic-')) continue;
       // Skip the impeccable live-mode overlay (highlight, tooltip, bar, picker, toast).
       // These are inspector chrome, not part of the user's design.
@@ -1281,10 +1497,12 @@ if (IS_BROWSER) {
 
       const findings = [
         ...checkElementBordersDOM(el).map(f => ({ type: f.id, detail: f.snippet })),
+        ...checkElementPseudoStripeDOM(el).map(f => ({ type: f.id, detail: f.snippet })),
         ...checkElementColorsDOM(el).map(f => ({ type: f.id, detail: f.snippet })),
         ...checkElementMotionDOM(el).map(f => ({ type: f.id, detail: f.snippet })),
         ...checkElementGlowDOM(el).map(f => ({ type: f.id, detail: f.snippet })),
         ...checkElementAIPaletteDOM(el).map(f => ({ type: f.id, detail: f.snippet })),
+        ...checkElementRadialSpotlightDOM(el).map(f => ({ type: f.id, detail: f.snippet })),
         ...checkElementIconTileDOM(el).map(f => ({ type: f.id, detail: f.snippet })),
         ...checkElementItalicSerifDOM(el).map(f => ({ type: f.id, detail: f.snippet })),
         ...checkElementQualityDOM(el).map(f => ({ type: f.id, detail: f.snippet })),
@@ -1292,6 +1510,8 @@ if (IS_BROWSER) {
         ...checkElementClippedOverflowDOM(el).map(f => ({ type: f.id, detail: f.snippet })),
         ...checkElementGptBorderShadowDOM(el).map(f => ({ type: f.id, detail: f.snippet })),
         ...checkElementTextOverflowDOM(el).map(f => ({ type: f.id, detail: f.snippet })),
+        ...checkElementBlinkingCursorDOM(el).map(f => ({ type: f.id, detail: f.snippet, ...(f.severity ? { severity: f.severity } : {}) })),
+        ...checkElementDesignSystemDOM(el, designSystem, designSeen),
       ].filter(f => _ruleOk(f.type));
 
       addBrowserFindings(groupMap, el, findings);
@@ -1308,13 +1528,20 @@ if (IS_BROWSER) {
 
     const pageLevelFindings = [];
 
+    const designSourceFindings = checkBrowserDesignSystemSources(designSystem, designSeen)
+      .filter(f => _ruleOk(f.type));
+    if (designSourceFindings.length > 0) {
+      pageLevelFindings.push(...designSourceFindings);
+      addBrowserFindings(groupMap, document.body, designSourceFindings);
+    }
+
     const typoFindings = checkTypography().filter(f => _ruleOk(f.type));
     if (typoFindings.length > 0) {
       pageLevelFindings.push(...typoFindings);
       addBrowserFindings(groupMap, document.body, typoFindings);
     }
 
-    const sectionKickerFindings = checkRepeatedSectionKickersDOM()
+    const sectionKickerFindings = checkKickerAboveHeadingDOM()
       .map(f => ({ type: f.id, detail: f.snippet }))
       .filter(f => _ruleOk(f.type));
     if (sectionKickerFindings.length > 0) {
@@ -1322,10 +1549,64 @@ if (IS_BROWSER) {
       addBrowserFindings(groupMap, document.body, sectionKickerFindings);
     }
 
+    const numberedLabelFindings = checkNumberedSectionLabelsDOM()
+      .map(f => ({ type: f.id, detail: f.snippet }))
+      .filter(f => _ruleOk(f.type));
+    if (numberedLabelFindings.length > 0) {
+      pageLevelFindings.push(...numberedLabelFindings);
+      addBrowserFindings(groupMap, document.body, numberedLabelFindings);
+    }
+
+    const repeatedTextFindings = checkRepeatedContainerTextDOM()
+      .map(f => ({ type: f.id, detail: f.snippet }))
+      .filter(f => _ruleOk(f.type));
+    if (repeatedTextFindings.length > 0) {
+      pageLevelFindings.push(...repeatedTextFindings);
+      addBrowserFindings(groupMap, document.body, repeatedTextFindings);
+    }
+
+    // Em-dash overuse (advisory): browser parity with the static/regex path.
+    // Reads rendered body text so it catches dashes written as HTML entities.
+    // serializeFindings stamps the advisory flag from the registry.
+    const emDashFindings = checkEmDashOveruseDOM()
+      .map(f => ({ type: f.id, detail: f.snippet }))
+      .filter(f => _ruleOk(f.type));
+    if (emDashFindings.length > 0) {
+      pageLevelFindings.push(...emDashFindings);
+      addBrowserFindings(groupMap, document.body, emDashFindings);
+    }
+
     const layoutFindings = checkLayout().filter(f => _ruleOk(f.type));
     for (const f of layoutFindings) {
       const el = f.el || document.body;
       addBrowserFindings(groupMap, el, [{ type: f.type, detail: f.detail || f.snippet }]);
+    }
+
+    // Heading rhythm (browser-only: needs real layout for the gap math)
+    const headingRhythmFindings = checkHeadingRhythmDOM().filter(f => _ruleOk(f.type));
+    for (const f of headingRhythmFindings) {
+      addBrowserFindings(groupMap, f.el || document.body, [{ type: f.type, detail: f.detail }]);
+    }
+
+    // Edge-flush cards in horizontal scrollers (browser-only: needs real
+    // layout for the scroller clip box vs card rect math)
+    const edgeFlushFindings = checkEdgeFlushCardsDOM().filter(f => _ruleOk(f.type));
+    for (const f of edgeFlushFindings) {
+      addBrowserFindings(groupMap, f.el || document.body, [{ type: f.type, detail: f.detail }]);
+    }
+
+    // Text occlusion / element overlap (browser-only: needs real layout +
+    // elementFromPoint to confirm what actually paints on top)
+    const occlusionFindings = checkTextOcclusionDOM().filter(f => _ruleOk(f.type));
+    for (const f of occlusionFindings) {
+      addBrowserFindings(groupMap, f.el || document.body, [{ type: f.type, detail: f.detail }]);
+    }
+
+    // First-viewport column overflow — the stretched-hero signature
+    // (browser-only: needs real layout for the content-extent math)
+    const colOverflowFindings = checkFirstViewportColumnOverflowDOM().filter(f => _ruleOk(f.type));
+    for (const f of colOverflowFindings) {
+      addBrowserFindings(groupMap, f.el || document.body, [{ type: f.type, detail: f.detail }]);
     }
 
     // Page-level quality checks (headings, etc.)
@@ -1351,9 +1632,45 @@ if (IS_BROWSER) {
     for (const node of docClone.querySelectorAll('[id^="impeccable-live-"]')) {
       node.remove();
     }
-    const htmlPatternFindings = checkHtmlPatterns(docClone.outerHTML);
-    if (htmlPatternFindings.length > 0) {
-      const mapped = htmlPatternFindings.map(f => ({ type: f.id, detail: f.snippet })).filter(f => _ruleOk(f.type));
+    // Regex findings that name a live selector resolve against the real DOM:
+    // pseudo-element/class segments are stripped (the host element is the
+    // anchor), a selector that matches nothing on this page drops the finding
+    // (the CSS ships here, but the pattern never renders — the live DOM is
+    // ground truth in the browser), and a match under a data-impeccable-ignore
+    // ancestor is waived. Selector-less findings stay page-level.
+    const scopedHtmlFindings = checkHtmlPatterns(docClone.outerHTML).filter(f => {
+      if (!f.selector) return true;
+      const query = String(f.selector).replace(/::?[a-zA-Z-]+(\([^)]*\))?/g, '').trim().replace(/,\s*(?=,|$)/g, '');
+      if (!query || /^[,\s]*$/.test(query)) return true;
+      let matches;
+      try {
+        matches = document.querySelectorAll(query);
+      } catch {
+        return true;
+      }
+      if (matches.length === 0) return false;
+      return [...matches].some(el => !scopedIgnoreActive(el, f.id));
+    });
+    if (scopedHtmlFindings.length > 0) {
+      const mapped = scopedHtmlFindings.map(f => {
+        const item = { type: f.id, detail: f.snippet };
+        if (f.severity) {
+          item.severity = f.severity;
+        } else if (f.id === 'pulsing-dot' && f.selector) {
+          // The string scan promotes header/nav dots on its own; with a live
+          // layout also promote dots resting in the first ~900px of the page
+          // (the hero region), which the source scan cannot measure.
+          try {
+            const dotEl = document.querySelector(f.selector);
+            if (dotEl) {
+              const rect = dotEl.getBoundingClientRect();
+              const pageTop = rect.top + (window.scrollY || 0);
+              if (pageTop <= 900) item.severity = 'error';
+            }
+          } catch { /* unresolvable selector: keep registry severity */ }
+        }
+        return item;
+      }).filter(f => _ruleOk(f.type));
       pageLevelFindings.push(...mapped);
       addBrowserFindings(groupMap, document.body, mapped);
     }
@@ -1365,8 +1682,27 @@ if (IS_BROWSER) {
     };
   }
 
+  // Visual contrast has three modes. Explicit true runs the full sampled
+  // pass; explicit false disables it entirely (the deterministic-only mode
+  // the test suites use). Unset — the default overlay run — samples ONLY
+  // image-backed text: the one class the analytic walk deliberately skips,
+  // because a url() layer's pixels are unknowable without looking. In-page
+  // sampling draws the source image alone to a canvas (glyph ink never
+  // pollutes it), and a cross-origin image without CORS reports unresolved
+  // instead of guessing.
+  function visualContrastMode(options = {}) {
+    const explicit = typeof options.visualContrast === 'boolean'
+      ? options.visualContrast
+      : typeof window.__IMPECCABLE_CONFIG__?.visualContrast === 'boolean'
+        ? window.__IMPECCABLE_CONFIG__.visualContrast
+        : null;
+    if (explicit === true) return 'full';
+    if (explicit === false) return false;
+    return 'image-only';
+  }
+
   function shouldRunVisualContrast(options = {}) {
-    return options.visualContrast === true || window.__IMPECCABLE_CONFIG__?.visualContrast === true;
+    return visualContrastMode(options) !== false;
   }
 
   function visualContrastOptions(options = {}) {
@@ -1543,6 +1879,7 @@ if (IS_BROWSER) {
       return [];
     }
     const resolvedOptions = visualContrastOptions(options);
+    if (visualContrastMode(options) === 'image-only') resolvedOptions.imageOnly = true;
     const analyses = await analyzeVisualContrast(resolvedOptions);
     if (runtime.generation && runtime.generation !== scanGeneration) return analyses;
     lastVisualContrastAnalyses = analyses;
@@ -1727,6 +2064,9 @@ if (IS_BROWSER) {
   window.impeccableDetectAsync = detectAsync;
   window.impeccableScan = scan;
   window.impeccableScanAsync = scanAsync;
+  // Raw measurement for the URL engine's content-hidden-at-rest pass: it
+  // drives a reveal sweep from Node and thresholds the result itself.
+  window.impeccableMeasureHiddenText = measureHiddenTextDOM;
   window.impeccableCollectVisualContrastCandidates = collectVisualContrastCandidates;
   window.impeccableAnalyzeVisualContrast = analyzeVisualContrast;
   window.impeccableGetLastVisualContrastAnalyses = () => lastVisualContrastAnalyses.slice();

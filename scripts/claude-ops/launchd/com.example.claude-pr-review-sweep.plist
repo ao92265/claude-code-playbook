@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.example.claude-pr-review-sweep</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string>
+    <string>-lc</string>
+    <string>~/.claude/scripts/pr-review-sweep.sh &gt;&gt; ~/.claude/logs/com.example.claude-pr-review-sweep.log 2&gt;&amp;1</string>
+  </array>
+  <key>EnvironmentVariables</key>
+  <dict><key>PATH</key><string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string></dict>
+  <key>StandardOutPath</key><string>~/.claude/logs/com.example.claude-pr-review-sweep.launchd.log</string>
+  <key>StandardErrorPath</key><string>~/.claude/logs/com.example.claude-pr-review-sweep.launchd.log</string>
+  <key>StartCalendarInterval</key>
+  <dict><key>Hour</key><integer>7</integer><key>Minute</key><integer>15</integer></dict>
+  <key>RunAtLoad</key><false/>
+</dict>
+</plist>

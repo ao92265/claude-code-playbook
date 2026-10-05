@@ -1,4 +1,5 @@
 ---
+disable-model-invocation: true
 name: morning
 description: >
   Cross-terminal morning briefing. Consolidates every parked Claude Code session
@@ -6,8 +7,9 @@ description: >
   resume 6-10 terminals without rereading each. Triggers: "morning", "morning
   briefing", "what were my terminals doing", "where did I leave off", "/morning".
 
-  Do NOT use this skill for: a single-session recap (open that session's handoff
-  directly), or planning new work.
+  Do NOT use this skill for: a catch-up on the ONE terminal you are sitting in
+  (that's /where-was-i, which also verifies live git state and proposes next
+  actions), or planning new work.
 metadata:
   user-invocable: true
   slash-command: /morning
@@ -28,7 +30,12 @@ automatically by the `stop-handoff.sh` Stop hook), so you can pick up cleanly.
    ```bash
    bash ~/.claude/scripts/morning.sh        # full detail for the 6 most-recent
    bash ~/.claude/scripts/morning.sh 12     # show more
+   bash ~/.claude/scripts/morning.sh 6 all  # every parked session, not just the last 18h
    ```
+
+   The list defaults to the same recent batch `restore-sessions.sh` reopens, and it
+   expands the per-session handoffs — so several sessions run from `$HOME` each get
+   their own line instead of collapsing into one.
 
    If the script is missing, fall back to listing the store directly:
    `ls -t ~/.claude/handoffs/*.md | grep -v compact` and `cat` the top few.
@@ -50,5 +57,8 @@ automatically by the `stop-handoff.sh` Stop hook), so you can pick up cleanly.
   `git status` / branch in the actual worktree before acting.
 - For a curated, human-authored handoff of a single session, use `/handoff`
   (writes `SESSION_NOTES.md`); this skill is the cross-session roll-up.
+- Inside one restored terminal, `/where-was-i` is the right command — it reads that
+  session's own handoff, checks branch/dirty/PR state, and proposes next actions.
+  `restore-sessions.sh --go` runs that brief automatically in every pane it opens.
 - Pair with the **recon** TUI for live "which session needs input right now"
   status; `/morning` is the narrative catch-up, recon is the live overlay.

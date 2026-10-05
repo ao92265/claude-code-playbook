@@ -71,7 +71,9 @@ def test_export_clamps_negative_reliability():
 
 def test_no_network_code_paths():
     """No-config-no-network regression: no skill module may import a network-capable
-    library. The skill has no submission endpoint yet; nothing may phone home."""
+    library. Report generation must never phone home — leaderboard submission is a
+    separate, explicitly user-confirmed flow that goes through the gh CLI, not these
+    modules."""
     banned = re.compile(
         r"^\s*(import|from)\s+(urllib|requests|http\.client|httpx|socket|aiohttp)\b",
         re.M)

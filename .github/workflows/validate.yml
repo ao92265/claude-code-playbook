@@ -76,15 +76,19 @@ jobs:
             clean=$(mktemp)
             tr -d '\r' < "$hook" > "$clean"
 
-            # Check shebang (accept both /bin/bash and portable env bash)
-            if ! head -1 "$clean" | grep -qE "^#!(/bin/bash|/usr/bin/env bash)"; then
-              echo "ERROR: $hook missing bash shebang (#!/bin/bash or #!/usr/bin/env bash)"
+            # Check shebang (bash or zsh, direct or via env)
+            if ! head -1 "$clean" | grep -qE "^#!(/bin/(bash|zsh)|/usr/bin/env (bash|zsh))"; then
+              echo "ERROR: $hook missing bash or zsh shebang"
               errors=$((errors + 1))
               file_errors=$((file_errors + 1))
             fi
 
-            # Check syntax on normalized file
-            if ! bash -n "$clean" 2>/dev/null; then
+            # Check syntax on normalized file with the shell it declares
+            shell=bash
+            if head -1 "$clean" | grep -q zsh; then
+              if command -v zsh >/dev/null; then shell=zsh; else echo "SKIP: $hook (zsh not installed)"; rm -f "$clean"; continue; fi
+            fi
+            if ! "$shell" -n "$clean" 2>/dev/null; then
               echo "ERROR: $hook has syntax errors"
               errors=$((errors + 1))
               file_errors=$((file_errors + 1))

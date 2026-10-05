@@ -20,6 +20,8 @@ Before writing a single word, confirm:
 
 If ANY are unspecified and not obvious from context → ASK before drafting. Single batched question.
 
+7. **Persona check:** recipient is a named person? Check the mindmirror persona bank first (`/persona` skill → `ask "<person>" "<their message>"`). If a card exists, use its read + response guidance to shape tone and framing. No card / CLI missing → proceed without it, don't block.
+
 ## Drafting Rules
 
 - Non-technical audience → no bullets unless explicitly requested. Conversational prose.
@@ -30,6 +32,8 @@ If ANY are unspecified and not obvious from context → ASK before drafting. Sin
 ## Output
 
 Single draft. No "let me know if you want changes" coda — user will iterate naturally.
+
+**MANDATORY final pass:** before presenting any publishable draft, run it through the `anti-ai-prose` skill to strip AI tells (standing rule — do not ask first). Prose only; never on code, commits, or technical reviews. If `anti-ai-prose` is unavailable, de-slop manually (cut hedging, em-dash pile-ups, "it's worth noting", rule-of-three padding).
 
 ## Attribution
 

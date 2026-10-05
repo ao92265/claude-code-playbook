@@ -1,0 +1,127 @@
+{
+  "slug": "example-plan",
+  "title": "Northwind Rebuild · The Ten-Week Plan",
+  "nav_brand": "Northwind Rebuild",
+  "nav_subtitle": "Delivery office · 04 May 2027",
+
+  "inject": {
+    "replacements": [
+      {
+        "label": "figure 1: the document chain",
+        "find": "This plan sits on top of the brief, the discovery notes and the estimate.",
+        "keep_anchor": true,
+        "replace": "```mermaid\nflowchart LR\n  B[The brief] --> D[Discovery notes]\n  D --> E[The estimate]\n  E --> P[This plan]\n```"
+      },
+      {
+        "label": "figure 2: the system",
+        "find": "The shape of the system is four parts and one queue.",
+        "replace": "```mermaid\nflowchart TB\n  subgraph Front\n    W[Web client]\n  end\n  subgraph Core\n    S[Service tier] --> Q[(Work queue)]\n    Q --> R[(Reporting store)]\n  end\n  W --> S\n```"
+      },
+      {
+        "label": "figure 3: one order end to end",
+        "find": "An order takes six hops from the shop front to the ledger.",
+        "replace": "```mermaid\nsequenceDiagram\n  participant C as Customer\n  participant W as Web client\n  participant S as Service tier\n  participant L as Ledger\n  C->>W: places an order\n  W->>S: submits it\n  S->>L: posts the entry\n  L-->>C: confirmation\n```"
+      },
+      {
+        "label": "the gantt slot",
+        "find": "The schedule chart belongs here.",
+        "replace": "<div class=\"gantt-slot\"></div>"
+      },
+      {
+        "label": "the stat tiles slot",
+        "find": "The headline numbers belong here.",
+        "replace": "<div class=\"tldr-stats\"></div>"
+      }
+    ]
+  },
+
+  "chapter_count": 12,
+  "acts": [
+    { "first": 1, "last": 4, "name": "The case" },
+    { "first": 5, "last": 9, "name": "The plan" },
+    { "first": 10, "last": 12, "name": "Keeping it honest" }
+  ],
+  "gate_count": 4,
+
+  "figure_labels": [
+    "The documents behind this plan, in order",
+    "The system: web client, service tier, queue and reporting store",
+    "One order through the system, from the shop front to the ledger"
+  ],
+
+  "stream_pills": {
+    "PLATFORM": "p",
+    "QUALITY": "a",
+    "ROLLOUT": "d",
+    "ALL": "all"
+  },
+
+  "stats": [
+    { "value": "10 weeks", "caption": "build to the cutover gate" },
+    { "value": "3 streams", "caption": "platform, quality, rollout" },
+    { "value": "9 people", "caption": "the existing squad, no hires" },
+    { "value": "Week 3", "caption": "the first read-only slice in front of users" },
+    { "value": "4 gates", "caption": "each with a pre-written failure action" },
+    { "value": "2 regions", "caption": "live at the end of quarter two" }
+  ],
+
+  "artwork_dir": "art",
+  "hero": {
+    "meta": ["4 May 2027", "Cites PRD v1.0"],
+    "summary": "Rebuild Northwind in ten weeks with three streams and nine people, behind four gates."
+  },
+  "hero_art": {
+    "name": "hero",
+    "alt": "Tangled paper threads resolving into three straight parallel lines"
+  },
+  "divider_art": [
+    { "chapter": 1, "name": "act-one", "alt": "Scattered squares snapping into an ordered grid" },
+    { "chapter": 5, "name": "act-two", "alt": "Three tracks running through checkpoints to one finish line" },
+    { "chapter": 10, "name": "act-three", "alt": "A balanced scale standing over a row of checkpoint markers" },
+    { "chapter": 12, "name": "act-close", "alt": "A built structure on a solid base with three flags planted" }
+  ],
+
+  "gantt": {
+    "weeks": 10,
+    "tail_pct": 20,
+    "tail_label": "Quarter two",
+    "week_row_label": "Week",
+    "gate_row_label": "The four gates",
+    "aria_label": "Gantt chart: week 0 together, then three workstreams in parallel to the week-10 cutover gate, then hardening across quarter two.",
+    "bands": [
+      { "left": "0", "width": "24%", "label": "Discovery · weeks 0 to 3" },
+      { "left": "24%", "width": "56%", "label": "Build and pilot · weeks 3 to 10" },
+      { "left": "80%", "width": "20%", "label": "Hardening" }
+    ],
+    "gates": [
+      { "week": 0, "label": "Gate 1", "class": "edge-l" },
+      { "week": 3, "label": "Gate 2", "class": "" },
+      { "week": 6, "label": "Gate 3", "class": "" },
+      { "week": 9, "label": "Cutover", "class": "" }
+    ],
+    "rows": [
+      { "section": "PLATFORM", "class": "p" },
+      { "id": "P1", "name": "The environment and the empty service", "class": "p", "from": 0, "to": 2, "text": "wk 0 to 2" },
+      { "id": "P2", "name": "Read-only slice live <small>the Gate 2 exit</small>", "class": "p", "from": 2, "to": 4, "text": "wk 2 to 4" },
+      { "id": "P3", "name": "The reporting store <small>capacity permitting</small>", "class": "p risk", "from": 2, "to": 7, "text": "wk 2 to 7" },
+      { "id": "P4", "name": "Keeping it running, and hardening", "html": "<div class=\"g-bar p\" style=\"left:48.00%;width:52.00%\">wk 6 to 10, then quarter two</div>" },
+      { "section": "QUALITY", "class": "a" },
+      { "id": "Q1", "name": "The test plan and the first fixture <small>Gate 2a</small>", "class": "a", "from": 1, "to": 2, "text": "", "title": "weeks 1 to 2" },
+      { "id": "Q2", "name": "The regression suite, fail-closed", "class": "a", "from": 3, "to": 10, "text": "wk 3 to 10" },
+      { "id": "Q3", "name": "Accessibility and performance budgets", "class": "a", "from": 0, "to": 7, "text": "wk 0 to 7" },
+      { "id": "Q4", "name": "Dependency and supply chain checks", "class": "a", "from": 3, "to": 10, "text": "wk 3 to 10" },
+      { "section": "ROLLOUT", "class": "d" },
+      { "id": "R1", "name": "Readiness <small>the week-2 checkpoint</small>", "class": "d", "from": 0, "to": 2, "text": "wk 0 to 2" },
+      { "id": "R2", "name": "First branch onboarding", "class": "d", "from": 4, "to": 6, "text": "wk 4 to 6" },
+      { "id": "R3", "name": "Holding usage to the cutover", "class": "d", "from": 6, "to": 10, "text": "wk 6 to 10" },
+      { "id": "R4", "name": "Beyond the first branch", "html": "<div class=\"g-bar d\" style=\"left:80%;width:20%\">quarter two</div>" }
+    ],
+    "legend": [
+      { "class": "chip p", "label": "Platform" },
+      { "class": "chip a", "label": "Quality" },
+      { "class": "chip d", "label": "Rollout" },
+      { "class": "chip risk", "label": "Capacity permitting" },
+      { "class": "dia", "label": "Gate moment" }
+    ]
+  }
+}

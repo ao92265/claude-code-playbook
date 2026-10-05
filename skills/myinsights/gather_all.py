@@ -8,6 +8,15 @@ import json, glob, os, collections, re, sys
 UD = os.path.expanduser(os.environ.get("CLAUDE_CONFIG_DIR", "~/.claude") + "/usage-data")
 SM = glob.glob(os.path.join(UD, "session-meta", "*.json"))
 FC = glob.glob(os.path.join(UD, "facets", "*.json"))
+# locally harvested meta (harvest_local.py) for sessions the official pipeline missed;
+# official session-meta wins on duplicate session id
+LM = glob.glob(os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "local-meta", "*.json"))
+_official_ids = set(map(os.path.basename, SM))
+SM += sorted(f for f in LM if os.path.basename(f) not in _official_ids)
+# locally harvested facets (facet filenames are session ids); official facets win on duplicates
+LF = glob.glob(os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "local-facets", "*.json"))
+_official_facet_ids = set(map(os.path.basename, FC))
+FC += sorted(f for f in LF if os.path.basename(f) not in _official_facet_ids)
 OUT = sys.argv[1] if len(sys.argv) > 1 else "."
 os.makedirs(OUT, exist_ok=True)
 
@@ -68,7 +77,7 @@ for f in SM:
     for k, v in (d.get("tool_counts") or {}).items(): tools[k] += v
     for k, v in (d.get("languages") or {}).items(): langs[k] += v
     for k, v in (d.get("tool_error_categories") or {}).items(): errcats[k] += v
-    st = d.get("start_time", "")
+    st = d.get("start_time") or ""
     if st[:10]: byday[st[:10]] += 1
     for h in (d.get("message_hours") or []):
         try: byhour[int(h)] += 1
@@ -111,7 +120,7 @@ for f in FC:
     fr = list((d.get("friction_counts") or {}).keys())
     gc = list((d.get("goal_categories") or {}).keys())
     compact.append(dict(
-        goal=d.get("underlying_goal", "")[:200],
+        goal=(d.get("underlying_goal") or "")[:200],
         outcome=d.get("outcome"),
         primary_success=d.get("primary_success"),
         frictions=fr,

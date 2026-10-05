@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-case ",${OMC_SKIP_HOOKS:-}," in *,codex-prepush-review,*) exit 0 ;; esac
+SKIP_HOOKS="${CLAUDE_SKIP_HOOKS:-}${CLAUDE_SKIP_HOOKS:+,}${OMC_SKIP_HOOKS:-}"
+case ",${SKIP_HOOKS}," in *,codex-prepush-review,*) exit 0 ;; esac
 # Codex pre-push review — fires on Bash tool calls matching "git push"
 # Uses codex (gpt-5 xhigh) review of HEAD vs main/master. Blocks on [P1] findings.
 

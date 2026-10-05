@@ -1,6 +1,7 @@
 ---
 name: rest
 description: Persistent low-effort output mode for tired days. Make every reply dead-simple to read — a bold one-line answer, then one next step, nothing else unless asked. Plain everyday words, no jargon, no options menus, no preamble. Stays on across turns until turned off. Triggers "/rest", "rest mode", "tired mode", "im tired", "i'm tired", "keep it simple", "low effort", "low battery", "too much", "blahhh", "make it simple". Do NOT use to draft messages to other people (that's draft-reply), and never compress security warnings, destructive-action confirmations, or exact error text.
+effort: low
 ---
 
 # rest
