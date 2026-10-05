@@ -1,5 +1,6 @@
 #!/bin/bash
-case ",${OMC_SKIP_HOOKS:-}," in *,tdd-gate,*) exit 0 ;; esac
+SKIP_HOOKS="${CLAUDE_SKIP_HOOKS:-}${CLAUDE_SKIP_HOOKS:+,}${OMC_SKIP_HOOKS:-}"
+case ",${SKIP_HOOKS}," in *,tdd-gate,*) exit 0 ;; esac
 # PreToolUse hook: warn (or block, if TDD_GATE_BLOCK=1) when Claude edits a
 # production source file that has no matching test file. Pairs with the
 # `test-first` skill — soft default is warn-only so it does not get in the
@@ -88,10 +89,27 @@ esac
 
 if [[ ${#matches[@]} -gt 0 ]]; then exit 0; fi
 
-# No test found.
+# No test found. Log the firing (ISO date, repo dir, target file, action) so
+# gate effectiveness can be audited later.
+action="warn"
+if [[ "${TDD_GATE_BLOCK:-0}" == "1" ]]; then action="block"; fi
+log_dir="${HOME}/.claude/hooks/.omc"
+mkdir -p "$log_dir" 2>/dev/null || true
+repo_dir="$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
+printf '%s\t%s\t%s\t%s\n' \
+  "$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || echo unknown)" "$repo_dir" "$file" "$action" \
+  >> "$log_dir/tdd-gate.log" 2>/dev/null || true
+
 echo "TDD gate: no test file found for $file" >&2
 echo "  Expected one of: ${name}.test.${ext}, ${name}.spec.${ext}, test_${name}.py, ${name}_test.go ..." >&2
 echo "  Add a test alongside this change (see /test-first skill), or bypass with TDD_GATE_DISABLED=1." >&2
+# Prove the red is real. Measured 17 Aug 2026 in the Superpowers trial: the run's
+# first "failing test" was the test runner erroring, not the assertion. A missing
+# module, an import error or a broken runner is NOT red, and a fix written against
+# it produces a test that has never once guarded the behaviour it claims to.
+echo "  When you do write the test: run it and read WHY it failed. Red means your" >&2
+echo "  assertion failed. A missing module, import error, syntax error or runner" >&2
+echo "  crash is not red. Prove the real failure first, then write the fix." >&2
 
 if [[ "${TDD_GATE_BLOCK:-0}" == "1" ]]; then exit 2; fi
 exit 1

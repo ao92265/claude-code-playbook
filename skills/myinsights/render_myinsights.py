@@ -87,7 +87,7 @@ FR_LABELS = {"buggy_code":"Buggy code","wrong_approach":"Wrong approach","misund
 TOOL_LABELS = {"mcp__claude-in-chrome__computer":"chrome:computer","mcp__claude-in-chrome__javascript_tool":"chrome:js",
                "mcp__chrome-devtools__evaluate_script":"devtools:js","mcp__chrome-devtools__navigate_page":"devtools:nav"}
 
-areas = q.get("top_project_areas", [])
+areas = q.get("top_project_areas") or []
 scratch = next((v for nm,v in areas if nm=="scratch/worktree"), 0)
 named = [(nm,v) for nm,v in areas if nm!="scratch/worktree"][:9]
 est_upper = q.get("input_tokens",0)/1e6*5 + q.get("output_tokens",0)/1e6*25
@@ -106,11 +106,15 @@ def scaffold_tag(s): return f'<span class="scaf">{E(str(s))}</span>' if s else "
 # ================= SCORECARD =================
 # Formulas live in scorecard.py (shared with export_scores.py and any future
 # leaderboard client). variant="report" is bit-identical to the historical
-# inline implementation — leaderboard clamping only exists in variant="export".
+# inline implementation; leaderboard clamping only exists in variant="export".
+# The report renders variant="calibrated" (v2): same nine measurements, each mapped
+# from its realistic operating band onto the full 0-100 scale. v1 parked every
+# plausible profile in the B/B+ band. The wire format stays on v1 so submitted
+# scores remain comparable.
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from scorecard import compute_scores, grade_of, grade_color
 
-FACTORS, COMPOSITE = compute_scores(q, variant="report")
+FACTORS, COMPOSITE = compute_scores(q, variant="calibrated")
 COMP_GRADE = grade_of(COMPOSITE); COMP_COL = grade_color(COMPOSITE)
 
 def gauge():
@@ -360,8 +364,8 @@ footer{{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:
   <section class="section">
     {h2("What you used ", badge_full())}
     <div class="grid two">
-      <div class="card"><div class="mono" style="font-size:12px;color:var(--muted);margin-bottom:10px">TOOL CALLS</div>{bars(q.get("top_tools",[])[:10], C['indigo'], TOOL_LABELS)}</div>
-      <div class="card"><div class="mono" style="font-size:12px;color:var(--muted);margin-bottom:10px">LANGUAGES</div>{bars(q.get("top_languages",[])[:8], C['blue'])}</div>
+      <div class="card"><div class="mono" style="font-size:12px;color:var(--muted);margin-bottom:10px">TOOL CALLS</div>{bars((q.get("top_tools") or [])[:10], C['indigo'], TOOL_LABELS)}</div>
+      <div class="card"><div class="mono" style="font-size:12px;color:var(--muted);margin-bottom:10px">LANGUAGES</div>{bars((q.get("top_languages") or [])[:8], C['blue'])}</div>
     </div>
     <div class="grid three" style="margin-top:16px">
       <div class="card stat"><div class="n" style="color:var(--teal)">{q.get('task_agent_sessions',0)}</div><div class="l">sessions using task agents</div></div>
@@ -372,7 +376,7 @@ footer{{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:
 
   <section class="section">
     {h2("When you work ", badge_full() + '<span style="color:var(--faint)">— messages by hour</span>')}
-    <div class="card">{hour_spark()}<p class="cap">Lit bars = 08:00–20:00. Busiest day: {q.get('busiest_days',[['—',0]])[0][0]} ({q.get('busiest_days',[['—',0]])[0][1]} sessions). A rhythm, not a login-detector.</p></div>
+    <div class="card">{hour_spark()}<p class="cap">Lit bars = 08:00–20:00. Busiest day: {(q.get('busiest_days') or [['—',0]])[0][0]} ({(q.get('busiest_days') or [['—',0]])[0][1]} sessions). A rhythm, not a login-detector.</p></div>
   </section>
 
   <section class="section">

@@ -20,6 +20,7 @@ metadata:
   user-invocable: true
   slash-command: /done
   proactive: true
+effort: high
 ---
 
 # Done — Verification Gate
@@ -33,7 +34,7 @@ skill makes the gate mechanical.
    - If `jq -e '.scripts."ci:local"' package.json` succeeds → run `npm run ci:local`.
    - Else discover available scripts: `typecheck`, `lint`, `test`, `build`. Run
      them in that order. Skip silently if a script does not exist.
-   - For monorepos with `frontend/` and `backend/` workspaces (Wraith pattern):
+   - For monorepos with `frontend/` and `backend/` workspaces (project-a pattern):
      also run the frontend variants (`typecheck:frontend`, `lint:frontend`,
      `test:frontend`).
 
@@ -52,9 +53,9 @@ skill makes the gate mechanical.
 4. **On full pass:** print `STATUS: PASS — all gates green.` Then proceed with
    whatever the user asked next (commit, PR, summary, etc.).
 
-## Reference — Wraith Repo Specifics
+## Reference — project-a Repo Specifics
 
-`/Users/aoreilly/Repos/Wraith` exposes `npm run ci:local` which expands to:
+`~/Repos/project-a` exposes `npm run ci:local` which expands to:
 
 ```
 npm run lint && npm run typecheck && npm run test:backend \

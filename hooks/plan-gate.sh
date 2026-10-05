@@ -9,7 +9,8 @@
 #   - PLAN.md or SPEC.md at repo root
 #
 # Window defaults to 14 days. Override with PLAN_GATE_WINDOW_DAYS=N.
-# Disable with PLAN_GATE_DISABLED=1.
+# Disable with PLAN_GATE_DISABLED=1, exported before `claude` starts. A hook
+# cannot see a variable exported inside a session.
 #
 # Exit codes:
 #   0  plan present OR irrelevant file
@@ -52,5 +53,6 @@ found="$(find "$repo" \
 
 echo "Plan gate: no plan/spec found (looked for tasks/, plans/, .omc/plans/, *.spec.md, PLAN.md, SPEC.md modified within ${window}d)." >&2
 echo "  Consider writing a brief plan first (see /writing-plans skill or BMAD/RPI)." >&2
-echo "  Bypass: export PLAN_GATE_DISABLED=1." >&2
+echo "  This is a warning, not a block: nothing is stopping the edit." >&2
+echo "  Silencing it needs PLAN_GATE_DISABLED=1 exported before the session starts." >&2
 exit 1

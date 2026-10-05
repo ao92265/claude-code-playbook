@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.example.claude-pr-review-check</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>~/.claude/scripts/pr-review-sweep-check.sh</string>
+  </array>
+  <key>StandardOutPath</key>
+  <string>~/.claude/logs/com.example.claude-pr-review-check.log</string>
+  <key>StandardErrorPath</key>
+  <string>~/.claude/logs/com.example.claude-pr-review-check.log</string>
+  <key>StartCalendarInterval</key>
+  <dict><key>Hour</key><integer>7</integer><key>Minute</key><integer>47</integer></dict>
+  <key>RunAtLoad</key><false/>
+</dict>
+</plist>

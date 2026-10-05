@@ -1,17 +1,22 @@
 #!/usr/bin/env python3
 """
-PreToolUse hook: regex-scan Edit/Write content for credential patterns.
+Secret scanner hook — two directions, one pattern table.
 
-Wider net than env-guard.sh (which only checks `git add`/`git commit` on the
-shell side). This catches secrets the moment Claude tries to write them into
-any file. Exit 2 blocks the write so the model retries without the secret.
+PreToolUse (Edit|Write|MultiEdit|NotebookEdit): scan content Claude is about
+to WRITE. Exit 2 blocks the write so the model retries without the secret.
+
+PostToolUse (Read|Bash|Grep|WebFetch): scan tool OUTPUT before Claude builds
+on it. The text is already in context (can't be unread), but exit 2 injects a
+warning telling Claude to treat the value as radioactive: no commits, no PR
+bodies, no artifacts, no messages containing it.
 
 Exit codes:
   0  no match
   1  low/medium-severity match (warn, do not block)
-  2  high/critical-severity match (block)
+  2  high/critical-severity match (block write / warn Claude on output)
 
-Emergency disable: SECRET_SCANNER_DISABLED=1.
+Emergency disable: SECRET_SCANNER_DISABLED=1, exported before `claude` starts
+(the user only). A hook never sees a variable exported inside a session.
 """
 from __future__ import annotations
 
@@ -68,9 +73,7 @@ def main() -> int:
         return 0
 
     tool = payload.get("tool_name", "")
-    if tool not in ("Edit", "Write", "MultiEdit", "NotebookEdit"):
-        return 0
-
+    event = payload.get("hook_event_name", "PreToolUse")
     inp = payload.get("tool_input", {}) or {}
     file_path = inp.get("file_path", "") or inp.get("notebook_path", "")
 
@@ -80,21 +83,38 @@ def main() -> int:
         return 0
 
     blobs: list[str] = []
-    for k in ("content", "new_string", "new_str"):
-        v = inp.get(k)
-        if isinstance(v, str):
-            blobs.append(v)
-    edits = inp.get("edits")
-    if isinstance(edits, list):
-        for e in edits:
-            if isinstance(e, dict):
-                v = e.get("new_string") or e.get("new_str")
-                if isinstance(v, str):
-                    blobs.append(v)
+    if event == "PostToolUse":
+        if tool not in ("Read", "Bash", "Grep", "WebFetch"):
+            return 0
+        resp = payload.get("tool_response")
+        if resp is None:
+            return 0
+        if isinstance(resp, str):
+            blobs.append(resp)
+        else:
+            try:
+                blobs.append(json.dumps(resp))
+            except (TypeError, ValueError):
+                blobs.append(str(resp))
+    else:
+        if tool not in ("Edit", "Write", "MultiEdit", "NotebookEdit"):
+            return 0
+        for k in ("content", "new_string", "new_str"):
+            v = inp.get(k)
+            if isinstance(v, str):
+                blobs.append(v)
+        edits = inp.get("edits")
+        if isinstance(edits, list):
+            for e in edits:
+                if isinstance(e, dict):
+                    v = e.get("new_string") or e.get("new_str")
+                    if isinstance(v, str):
+                        blobs.append(v)
     if not blobs:
         return 0
 
-    text = "\n".join(blobs)
+    # Cap scan size — huge Bash/Read outputs shouldn't stall the hook.
+    text = "\n".join(blobs)[:2_000_000]
     hits: list[tuple[str, str, str]] = []
     for name, sev, rx in PATTERNS:
         m = rx.search(text)
@@ -116,9 +136,18 @@ def main() -> int:
     print("Secret scanner matches:", file=sys.stderr)
     for name, sev, sample in hits:
         print(f"  [{sev.upper()}] {name}: {sample}", file=sys.stderr)
-    print(f"  → file: {file_path or '<unknown>'}", file=sys.stderr)
-    print("  Move the value to an env var or .env (gitignored), or use a placeholder.", file=sys.stderr)
-    print("  Bypass for one session: export SECRET_SCANNER_DISABLED=1", file=sys.stderr)
+    if event == "PostToolUse":
+        print(f"  → source: {tool} output ({file_path or inp.get('command', '')[:80] or '<unknown>'})", file=sys.stderr)
+        print("  A credential-shaped value just entered context. Treat it as radioactive:", file=sys.stderr)
+        print("  do NOT repeat it in files, commits, PR bodies, artifacts, or messages.", file=sys.stderr)
+        print("  Refer to it only by its pattern name above.", file=sys.stderr)
+    else:
+        print(f"  → file: {file_path or '<unknown>'}", file=sys.stderr)
+        print("  Move the value to an env var or .env (gitignored), or use a placeholder.", file=sys.stderr)
+    print("  No in-session bypass: exporting SECRET_SCANNER_DISABLED inside a session", file=sys.stderr)
+    print("  cannot reach this hook. If the value is a deliberate example, split the", file=sys.stderr)
+    print("  literal so it is not a real-looking key, or ask the user to relaunch with", file=sys.stderr)
+    print("  SECRET_SCANNER_DISABLED=1 exported.", file=sys.stderr)
 
     if worst in ("critical", "high"):
         return 2

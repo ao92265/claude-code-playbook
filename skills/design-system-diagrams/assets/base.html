@@ -1,0 +1,97 @@
+<!doctype html>
+<!--
+  design-system-diagrams — base template.
+  Self-contained: no external fonts, scripts, stylesheets or images.
+  Replace the :root block with tokens from the chosen design system, then build
+  inside .canvas. Delete this comment and every unused rule before shipping.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Diagram</title>
+<style>
+  :root {
+    /* colour — replace from references/tokens.md */
+    --surface: #ffffff;
+    --surface-alt: #f5f5f4;
+    --ink: #1c1917;
+    --ink-muted: #78716c;
+    --border: #e7e5e4;
+    --accent: #1c1917;
+    --accent-ink: #ffffff;
+
+    /* type */
+    --font: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", sans-serif;
+    --size-title: 56px;
+    --size-lead: 32px;
+    --size-label: 22px;
+    --size-caption: 17px;
+
+    /* space */
+    --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
+    --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px; --s9: 96px;
+
+    --radius: 0px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--surface-alt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: var(--font);
+  }
+
+  /* Fixed canvas — screenshot this element, not the page. */
+  .canvas {
+    width: 1600px;
+    height: 900px;
+    background: var(--surface);
+    color: var(--ink);
+    padding: var(--s9);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .title {
+    font-size: var(--size-title);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    max-width: 22ch;
+  }
+
+  .lead    { font-size: var(--size-lead);    font-weight: 600; line-height: 1.2; }
+  .label   { font-size: var(--size-label);   font-weight: 600; line-height: 1.25; }
+  .caption { font-size: var(--size-caption); font-weight: 400; line-height: 1.45;
+             color: var(--ink-muted); }
+
+  .stage { flex: 1; display: flex; align-items: center; }
+
+  .footnote {
+    font-size: var(--size-caption);
+    color: var(--ink-muted);
+    margin-top: auto;
+  }
+
+  /* Accent carries the message. Exactly one element should use it. */
+  .is-accent { background: var(--accent); color: var(--accent-ink); }
+  .accent-text { color: var(--accent); }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <h1 class="title">A claim, not a topic</h1>
+    <div class="stage">
+      <!-- build here -->
+    </div>
+    <p class="footnote">Optional takeaway or source line.</p>
+  </div>
+</body>
+</html>

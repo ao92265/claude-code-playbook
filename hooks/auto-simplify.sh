@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-case ",${OMC_SKIP_HOOKS:-}," in *,auto-simplify,*) exit 0 ;; esac
+SKIP_HOOKS="${CLAUDE_SKIP_HOOKS:-}${CLAUDE_SKIP_HOOKS:+,}${OMC_SKIP_HOOKS:-}"
+case ",${SKIP_HOOKS}," in *,auto-simplify,*) exit 0 ;; esac
 # Auto-simplify hook — runs on Bash tool calls matching "git commit"
 # Uses codex (gpt-5 xhigh) review of staged diff. Blocks on [P1] findings.
 

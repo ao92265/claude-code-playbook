@@ -22,7 +22,14 @@ trigger=$(printf '%s' "$input" | jq -r '.trigger // "auto"' 2>/dev/null || true)
 
 HANDOFF_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/handoffs"
 mkdir -p "$HANDOFF_DIR" 2>/dev/null || true
-slug=$(printf '%s' "$cwd" | sed 's#^/##; s#[/ ]#-#g')
+# shellcheck source=lib/handoff-key.sh
+. "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/lib/handoff-key.sh"
+# Name via stdin > env > native registry — must resolve identically to stop-handoff.sh
+# and sessionstart-handoff.sh or this hook writes to a key nobody reads.
+# shellcheck source=lib/session-ident.sh
+. "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/lib/session-ident.sh"
+sname=$(session_ident_resolve "$input")
+slug=$(handoff_key "$cwd" "$sname")
 out="$HANDOFF_DIR/${slug}.compact.md"
 ts=$(date '+%Y-%m-%d %H:%M')
 
@@ -40,6 +47,23 @@ if [ -n "$transcript" ] && [ -f "$transcript" ]; then
                  | select(.type=="tool_use" and (.name=="Edit" or .name=="Write" or .name=="MultiEdit" or .name=="NotebookEdit"))
                  | .input.file_path // empty' "$transcript" 2>/dev/null \
     | sort -u | head -30 || true)
+fi
+
+# Identity header, written once at file creation. sessionstart uses these fields to prove
+# a handoff found under an ambiguous historical key really belongs to the session reading
+# it (see handoff_owns in lib/handoff-key.sh). Without them every .compact.md written
+# before 2026-08-05 is unclaimable, because ownership cannot be read off a filename.
+if [ ! -f "$out" ]; then
+  _pc_branch=$(git -C "$cwd" branch --show-current 2>/dev/null || true)
+  {
+    echo "# Pre-compaction handoff"
+    echo
+    echo "## State"
+    echo "- Path: \`$cwd\`"
+    [ -n "$sname" ] && echo "- Session: $sname"
+    [ -n "$_pc_branch" ] && echo "- Branch: \`$_pc_branch\`"
+    echo
+  } >> "$out" 2>/dev/null || true
 fi
 
 {

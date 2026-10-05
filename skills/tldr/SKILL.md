@@ -1,6 +1,14 @@
 ---
 name: tldr
 description: Restate my previous answer in plain English for a non-technical reader and end with the concrete next steps. Lead with a one-line TLDR, then a short plain-language explanation, then a Next steps list; define or avoid jargon, no new content. Triggers "/tldr", "tldr", "in plain english", "in english", "layman", "explain that simpler", "dumb it down", "eli5", "that was too technical". Do NOT use for drafting messages to other people (that's draft-reply), and not on code, commits, or technical reviews.
+hooks:
+  Stop:
+    - matcher: "*"
+      hooks:
+        - type: command
+          command: "python3 ~/.claude/hooks/tldr-mode.py"
+          once: true
+effort: low
 ---
 
 # tldr

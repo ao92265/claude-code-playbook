@@ -20,40 +20,87 @@ import fs from 'node:fs';
 import path from 'node:path';
 import net from 'node:net';
 import { fileURLToPath } from 'node:url';
-import { parseDesignMd } from './design-parser.mjs';
-import { resolveContextDir } from './context.mjs';
-import { createLiveSessionStore } from './live-session-store.mjs';
-import { validateEvent } from './live-event-validation.mjs';
+import { parseDesignMd } from './lib/design-parser.mjs';
+import { loadContext } from './context.mjs';
+import {
+  assembleLiveBrowserScript,
+  assertLiveBrowserScriptParts,
+  readLiveBrowserScriptParts,
+  resolveLiveBrowserScriptParts,
+} from './live/browser-script-parts.mjs';
+import { createLiveSessionStore, GENERATION_FENCED_PHASES } from './live/session-store.mjs';
+import { runGenerationPreflight } from './live/generation-preflight.mjs';
+import { validateEvent } from './live/event-validation.mjs';
+import { selectAvailablePendingEvent } from './live/poll-lanes.mjs';
+import { createManualEditRoutes } from './live/manual-edit-routes.mjs';
+import {
+  LIVE_COMMANDS,
+  VARIANT_PROGRESS_CHECKPOINT_REASONS as VARIANT_PROGRESS_CHECKPOINT_REASON_LIST,
+} from './live/vocabulary.mjs';
 import {
   getDesignSidecarPath,
   getLiveDir,
   getLiveAnnotationsDir,
+  IMPECCABLE_COMMAND_PREFIX,
   readLiveServerInfo,
   removeLiveServerInfo,
   resolveDesignSidecarPath,
   writeLiveServerInfo,
-} from './impeccable-paths.mjs';
+} from './lib/impeccable-paths.mjs';
+import { countByPage as countPendingByPage } from './live/manual-edits-buffer.mjs';
 import {
-  countByPage as countPendingByPage,
-  readBuffer as readManualEditsBuffer,
-  removeEntries as removeManualEditEntries,
-  stageEntry as stageManualEditEntry,
-  truncateBuffer as truncateManualEditsBuffer,
-} from './live-manual-edits-buffer.mjs';
-import { buildManualEditEvidence } from './live-manual-edit-evidence.mjs';
-import { commitManualEdits } from './live-commit-manual-edits.mjs';
+  createManualApplyController,
+  summarizeManualApplyFailures,
+} from './live/manual-apply.mjs';
 import {
   applyDeferredSvelteComponentAccepts,
+  bumpSvelteComponentPreviewRevision,
+  compileCheckVariants,
   removeAllSvelteComponentSessions,
-} from './live-svelte-component.mjs';
+  sweepInactiveSvelteComponentSessions,
+} from './live/svelte-component.mjs';
+import { enterLiveRoot } from './live/roots.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-// PRODUCT.md / DESIGN.md live wherever context.mjs resolves. The generated
-// DESIGN sidecar is project-local at .impeccable/design.json, with legacy
-// DESIGN.json fallback for existing projects.
-const CONTEXT_DIR = resolveContextDir(process.cwd());
+// Anchor the whole process on the live roots manifest before anything derives
+// a path from cwd. A server started from the wrong directory re-roots itself
+// onto the appRoot the boot decided on instead of minting a second project.
+const LIVE_ROOTS = enterLiveRoot(process.cwd());
+
+// PRODUCT.md / DESIGN.md context, resolved lazily and per request so a server
+// that outlives an `impeccable document` run (or a context file created after
+// boot) reports current truth instead of a boot-time snapshot. The roots
+// manifest wins when the ambient resolution misses (nested app inheriting
+// repo-level context files).
+function resolveProjectContext() {
+  const ctx = loadContext(process.cwd());
+  const designPath = ctx.designPath
+    ? path.resolve(process.cwd(), ctx.designPath)
+    : (LIVE_ROOTS?.designPath && fs.existsSync(LIVE_ROOTS.designPath) ? LIVE_ROOTS.designPath : null);
+  const hasProduct = ctx.hasProduct
+    || !!(LIVE_ROOTS?.productPath && fs.existsSync(LIVE_ROOTS.productPath));
+  return {
+    ...ctx,
+    hasProduct,
+    hasDesign: !!designPath,
+    resolvedDesignPath: designPath,
+    contextDir: ctx.contextDir || LIVE_ROOTS?.contextRoot || process.cwd(),
+    designContextDir: ctx.designContextDir
+      || (designPath ? path.dirname(designPath) : null),
+  };
+}
 const DEFAULT_POLL_TIMEOUT = 600_000;   // 10 min — agent re-polls on timeout anyway
 const SSE_HEARTBEAT_INTERVAL = 30_000;  // keepalive ping every 30s
+
+// The browser events allowed to mint a NEW session journal. `generate` starts
+// a variant session at Go; `steer` mints its own request id. Every other
+// id-carrying event must land on an existing session (see the unknown_session
+// gate in the /events handler).
+const SESSION_CREATING_EVENT_TYPES = new Set(['generate', 'steer']);
+// The browser checkpoints for several unrelated reasons (see checkpointPayload
+// in live-browser.js). Only these two report that variant availability changed,
+// and only they may drive variant_progress / the *_reviewable phases.
+const VARIANT_PROGRESS_CHECKPOINT_REASONS = new Set(VARIANT_PROGRESS_CHECKPOINT_REASON_LIST);
 
 // ---------------------------------------------------------------------------
 // Port detection
@@ -100,23 +147,29 @@ const state = {
 };
 
 const CHAT_POLL_FRESHNESS_MS = 60_000;
-const APPLY_EVENT_HARD_TIMEOUT_MS = Number(process.env.IMPECCABLE_LIVE_APPLY_EVENT_HARD_TIMEOUT_MS || 150_000);
-const APPLY_EVENT_SOFT_DEADLINE_MS = Number(process.env.IMPECCABLE_LIVE_APPLY_EVENT_SOFT_DEADLINE_MS || 120_000);
-const DEFAULT_MANUAL_EDIT_APPLY_CHUNK_SIZE = 3;
-const MIN_MANUAL_EDIT_APPLY_CHUNK_SIZE = 1;
-const MAX_MANUAL_EDIT_APPLY_CHUNK_SIZE = 20;
-const MANUAL_APPLY_COMPACT_TEXT_LIMIT = 240;
-const MANUAL_APPLY_COMPACT_NEARBY_LIMIT = 4;
 const POLL_LEASE_EXPIRY_TIMER_GRACE_MS = 2;
 const DEBUG_MANUAL_EDIT_EVENTS = /^(1|true|yes)$/i.test(process.env.IMPECCABLE_LIVE_DEBUG_EVENTS || '');
 
-function tombstoneTimedOutApplyId(eventId, details = {}) {
-  if (!eventId) return;
-  state.timedOutApplyIds.set(eventId, details);
-  if (state.timedOutApplyIds.size <= 200) return;
-  const oldest = state.timedOutApplyIds.keys().next().value;
-  state.timedOutApplyIds.delete(oldest);
-}
+const manualApply = createManualApplyController({
+  pendingEvents: state.pendingEvents,
+  pendingApplyDeferreds: state.pendingApplyDeferreds,
+  timedOutApplyIds: state.timedOutApplyIds,
+  enqueueEvent,
+  acknowledgePendingEvent,
+  flushPendingPolls,
+  recordManualEditActivity,
+  cwd: () => process.cwd(),
+});
+
+const manualEditRoutes = createManualEditRoutes({
+  getToken: () => state.token,
+  manualApply,
+  recordManualEditActivity,
+  getManualEditStatus,
+  chatAgentLikelyActive,
+  cwd: () => process.cwd(),
+  env: () => process.env,
+});
 
 function chatAgentLikelyActive() {
   if (state.pendingPolls.length > 0) return true;
@@ -124,758 +177,21 @@ function chatAgentLikelyActive() {
   return Date.now() - state.lastPollAt < CHAT_POLL_FRESHNESS_MS;
 }
 
-function manualEditApplyChunkSize(env = process.env) {
-  const raw = Number(env.IMPECCABLE_LIVE_MANUAL_EDIT_CHUNK_SIZE);
-  if (!Number.isFinite(raw)) return DEFAULT_MANUAL_EDIT_APPLY_CHUNK_SIZE;
-  const size = Math.trunc(raw);
-  return Math.max(MIN_MANUAL_EDIT_APPLY_CHUNK_SIZE, Math.min(MAX_MANUAL_EDIT_APPLY_CHUNK_SIZE, size));
-}
-
-function countManualApplyOps(entriesOrBatch) {
-  const entries = Array.isArray(entriesOrBatch)
-    ? entriesOrBatch
-    : Array.isArray(entriesOrBatch?.entries) ? entriesOrBatch.entries : [];
-  let count = 0;
-  for (const entry of entries) count += Array.isArray(entry.ops) ? entry.ops.length : 0;
-  return count;
-}
-
-function pushApplyEventAndWait(batch, pageUrl, chunk = null, repair = null) {
-  const eventId = randomUUID().replace(/-/g, '').slice(0, 8);
-  const evidencePath = writeManualApplyEvidence(eventId, batch);
-  const event = {
-    type: 'manual_edit_apply',
-    id: eventId,
-    pageUrl,
-    batch: compactManualApplyBatch(batch),
-    evidencePath,
-    agentAction: buildManualApplyAgentAction(eventId),
-    schemaVersion: 1,
-    deadlineMs: APPLY_EVENT_SOFT_DEADLINE_MS,
-  };
-  if (chunk) event.chunk = chunk;
-  if (repair) event.repair = repair;
-  const rollbackSnapshot = snapshotApplyEventFiles(batch);
-  recordManualEditActivity('manual_edit_apply_dispatched', {
-    id: eventId,
-    pageUrl,
-    chunk,
-    repair,
-    entryCount: Array.isArray(batch.entries) ? batch.entries.length : 0,
-    opCount: countManualApplyOps(batch),
-    fileCount: collectManualApplyFiles(batch).length,
-  });
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => {
-      state.pendingApplyDeferreds.delete(eventId);
-      tombstoneTimedOutApplyId(eventId, { batch, rollbackSnapshot });
-      acknowledgePendingEvent(eventId);
-      removeManualApplyEvidence(evidencePath);
-      recordManualEditActivity('manual_edit_apply_timeout', {
-        id: eventId,
-        pageUrl,
-        chunk,
-        entryCount: Array.isArray(batch.entries) ? batch.entries.length : 0,
-        opCount: countManualApplyOps(batch),
-      });
-      reject(new Error('chat_agent_timeout'));
-    }, APPLY_EVENT_HARD_TIMEOUT_MS);
-    state.pendingApplyDeferreds.set(eventId, { resolve, reject, timer, event, batch, pageUrl, rollbackSnapshot });
-    enqueueEvent(event);
-  });
-}
-
-function writeManualApplyEvidence(eventId, batch) {
-  const dir = manualApplyEvidenceDir(process.cwd());
-  fs.mkdirSync(dir, { recursive: true });
-  const evidencePath = path.join(dir, `${eventId}.json`);
-  fs.writeFileSync(evidencePath, JSON.stringify(batch, null, 2) + '\n', 'utf-8');
-  return evidencePath;
-}
-
-function manualApplyEvidenceDir(cwd = process.cwd()) {
-  return path.join(getLiveDir(cwd), 'manual-edit-evidence');
-}
-
-function normalizeManualApplyEvidencePath(evidencePath, cwd = process.cwd()) {
-  if (!evidencePath || typeof evidencePath !== 'string') return null;
-  const fullPath = path.isAbsolute(evidencePath) ? evidencePath : path.resolve(cwd, evidencePath);
-  const evidenceDir = manualApplyEvidenceDir(cwd);
-  const relative = path.relative(evidenceDir, fullPath);
-  if (!relative || relative.startsWith('..') || path.isAbsolute(relative)) return null;
-  if (path.extname(relative) !== '.json') return null;
-  return fullPath;
-}
-
-function removeManualApplyEvidence(evidencePath, cwd = process.cwd()) {
-  const fullPath = normalizeManualApplyEvidencePath(evidencePath, cwd);
-  if (!fullPath) return false;
-  try {
-    fs.unlinkSync(fullPath);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function referencedManualApplyEvidencePaths(cwd = process.cwd()) {
-  const referenced = new Set();
-  const add = (event) => {
-    const fullPath = normalizeManualApplyEvidencePath(event?.evidencePath, cwd);
-    if (fullPath) referenced.add(fullPath);
-  };
-  for (const entry of state.pendingEvents) add(entry.event);
-  for (const deferred of state.pendingApplyDeferreds.values()) add(deferred.event);
-  return referenced;
-}
-
-function pruneStaleManualApplyEvidence(cwd = process.cwd()) {
-  const dir = manualApplyEvidenceDir(cwd);
-  if (!fs.existsSync(dir)) return [];
-  const referenced = referencedManualApplyEvidencePaths(cwd);
-  const removed = [];
-  for (const name of fs.readdirSync(dir)) {
-    if (!name.endsWith('.json')) continue;
-    const fullPath = path.join(dir, name);
-    if (referenced.has(fullPath)) continue;
-    try {
-      fs.unlinkSync(fullPath);
-      removed.push(fullPath);
-    } catch {
-      // Stale evidence cleanup is best-effort; Apply verification never relies
-      // on deleting these files.
-    }
-  }
-  return removed;
-}
-
-function compactManualApplyBatch(batch = {}) {
-  const entries = (batch.entries || []).map(compactManualApplyEntry);
-  const candidates = compactManualApplyCandidates(batch.candidates || []);
-  return {
-    version: batch.version,
-    pageUrl: batch.pageUrl || null,
-    count: batch.count,
-    entries,
-    ops: entries.flatMap((entry) => entry.ops.map((op) => ({ ...op, entryId: entry.id }))),
-    candidates: candidates.length > 0 ? candidates : undefined,
-    context: batch.context ? {
-      bufferPath: batch.context.bufferPath,
-      totalEntries: batch.context.totalEntries,
-      totalOps: batch.context.totalOps,
-      chunkIndex: batch.context.chunkIndex,
-      chunkTotal: batch.context.chunkTotal,
-      totalApplyOps: batch.context.totalApplyOps,
-    } : undefined,
-  };
-}
-
-function compactManualApplyCandidates(candidates) {
-  return (Array.isArray(candidates) ? candidates : [])
-    .slice(0, 24)
-    .map((candidate) => ({
-      entryId: candidate.entryId,
-      ref: candidate.ref,
-      sourceHint: compactManualApplySourceMatch(candidate.sourceHint),
-      textMatches: compactManualApplySourceMatches(candidate.textMatches, 8),
-      objectKeyMatches: compactManualApplySourceMatches(candidate.objectKeyMatches, 8),
-      contextTextMatches: compactManualApplySourceMatches(candidate.contextTextMatches, 8),
-      locatorMatches: compactManualApplySourceMatches(candidate.locatorMatches, 6),
-    }));
-}
-
-function compactManualApplySourceMatches(matches, limit) {
-  return (Array.isArray(matches) ? matches : [])
-    .slice(0, limit)
-    .map(compactManualApplySourceMatch)
-    .filter(Boolean);
-}
-
-function compactManualApplySourceMatch(match) {
-  if (!match || typeof match !== 'object') return null;
-  const file = match.relativeFile || match.file;
-  if (!file && !match.line) return null;
-  return {
-    file: summarizeManualLogFile(file),
-    line: match.line || null,
-    column: match.column || null,
-    reason: match.reason || match.kind || undefined,
-    status: match.status || undefined,
-  };
-}
-
-function compactManualApplyEntry(entry = {}) {
-  return {
-    id: entry.id,
-    pageUrl: entry.pageUrl,
-    stagedAt: entry.stagedAt || null,
-    element: compactManualApplyContext(entry.element),
-    ops: (entry.ops || []).map(compactManualApplyOp),
-  };
-}
-
-function compactManualApplyOp(op = {}) {
-  return {
-    entryId: op.entryId,
-    ref: op.ref,
-    contextRef: op.contextRef,
-    tag: op.tag,
-    elementId: op.elementId,
-    classes: Array.isArray(op.classes) ? op.classes : [],
-    originalText: op.originalText,
-    newText: op.newText,
-    deleted: op.deleted === true || undefined,
-    sourceHint: op.sourceHint || null,
-    leaf: compactManualApplyContext(op.leaf),
-    nearbyEditableTexts: compactNearbyManualEditTexts(op.nearbyEditableTexts),
-    container: compactManualApplyContext(op.container),
-    contextHints: Array.isArray(op.contextHints) ? op.contextHints.slice(0, 8) : undefined,
-  };
-}
-
-function compactManualApplyContext(value) {
-  if (!value || typeof value !== 'object') return null;
-  return {
-    ref: value.ref,
-    tagName: value.tagName || value.tag || null,
-    id: value.id || null,
-    classes: Array.isArray(value.classes) ? value.classes : [],
-    textContent: truncateManualApplyText(value.textContent, MANUAL_APPLY_COMPACT_TEXT_LIMIT),
-  };
-}
-
-function compactNearbyManualEditTexts(items) {
-  return (Array.isArray(items) ? items : [])
-    .slice(0, MANUAL_APPLY_COMPACT_NEARBY_LIMIT)
-    .map((item) => typeof item === 'string' ? { text: truncateManualApplyText(item, MANUAL_APPLY_COMPACT_TEXT_LIMIT) } : {
-      ref: item?.ref,
-      tag: item?.tag,
-      classes: Array.isArray(item?.classes) ? item.classes : [],
-      text: truncateManualApplyText(item?.text, MANUAL_APPLY_COMPACT_TEXT_LIMIT),
-    });
-}
-
-function truncateManualApplyText(value, max) {
-  if (typeof value !== 'string') return value || null;
-  return value.length > max ? value.slice(0, max) : value;
-}
-
-async function pushApplyBatchInChunksAndWait(batch, pageUrl, context = {}) {
-  const repair = context?.repair || batch?.repair || null;
-  if (repair) return pushApplyEventAndWait(batch, pageUrl, null, repair);
-  const chunks = splitManualApplyBatch(batch, manualEditApplyChunkSize());
-  if (chunks.length <= 1) return pushApplyEventAndWait(batch, pageUrl);
-
-  const expectedOpsByEntry = new Map();
-  for (const entry of batch?.entries || []) {
-    expectedOpsByEntry.set(entry.id, Array.isArray(entry.ops) ? entry.ops.length : 0);
-  }
-
-  const appliedOpsByEntry = new Map();
-  const failedByEntry = new Map();
-  const files = new Set();
-  const notes = [];
-  let aborted = false;
-
-  for (const chunk of chunks) {
-    if (aborted) {
-      markChunkEntriesFailed(failedByEntry, chunk, 'manual_edit_chunk_aborted');
-      continue;
-    }
-
-    let result;
-    try {
-      result = normalizeApplyChunkResult(await pushApplyEventAndWait(chunk.batch, pageUrl, chunk.meta));
-    } catch (err) {
-      markChunkEntriesFailed(failedByEntry, chunk, err.message || 'chat_agent_error');
-      aborted = true;
-      continue;
-    }
-
-    for (const file of result.files) files.add(file);
-    notes.push(...result.notes);
-
-    const chunkFailedIds = new Set();
-    for (const item of result.failed) {
-      const entryId = item.entryId || item.id;
-      if (!entryId) continue;
-      chunkFailedIds.add(entryId);
-      if (!failedByEntry.has(entryId)) {
-        failedByEntry.set(entryId, {
-          entryId,
-          reason: item.reason || item.message || 'failed',
-          candidates: Array.isArray(item.candidates) ? item.candidates : [],
-        });
-      }
-    }
-
-    if (result.status === 'error') {
-      markChunkEntriesFailed(failedByEntry, chunk, result.message || firstFailureReason(result) || 'chat_agent_error');
-      aborted = true;
-      continue;
-    }
-
-    const reportedAppliedIds = new Set(result.appliedEntryIds);
-    for (const entryId of reportedAppliedIds) {
-      if (!chunk.entryIds.has(entryId) || chunkFailedIds.has(entryId)) continue;
-      appliedOpsByEntry.set(entryId, (appliedOpsByEntry.get(entryId) || 0) + (chunk.opCountsByEntry.get(entryId) || 0));
-    }
-
-    for (const entryId of chunk.entryIds) {
-      if (reportedAppliedIds.has(entryId) || chunkFailedIds.has(entryId)) continue;
-      if (!failedByEntry.has(entryId)) {
-        failedByEntry.set(entryId, { entryId, reason: 'not_reported_applied', candidates: [] });
-      }
-    }
-  }
-
-  const appliedEntryIds = [];
-  for (const [entryId, expectedOps] of expectedOpsByEntry.entries()) {
-    if (failedByEntry.has(entryId)) continue;
-    if ((appliedOpsByEntry.get(entryId) || 0) === expectedOps && expectedOps > 0) {
-      appliedEntryIds.push(entryId);
-    } else if (!failedByEntry.has(entryId)) {
-      failedByEntry.set(entryId, { entryId, reason: 'not_reported_applied', candidates: [] });
-    }
-  }
-
-  const failed = [...failedByEntry.values()];
-  return {
-    status: failed.length === 0 ? 'done' : appliedEntryIds.length > 0 ? 'partial' : 'error',
-    appliedEntryIds,
-    failed,
-    files: [...files],
-    notes,
-  };
-}
-
-function normalizeApplyChunkResult(result) {
-  const status = result?.status === 'partial' ? 'partial' : result?.status === 'error' ? 'error' : 'done';
-  return {
-    status,
-    message: typeof result?.message === 'string' ? result.message : null,
-    appliedEntryIds: Array.isArray(result?.appliedEntryIds) ? result.appliedEntryIds.filter((id) => typeof id === 'string') : [],
-    failed: Array.isArray(result?.failed) ? result.failed.filter(Boolean) : [],
-    files: Array.isArray(result?.files) ? result.files.filter((file) => typeof file === 'string') : [],
-    notes: Array.isArray(result?.notes) ? result.notes.filter((note) => typeof note === 'string') : [],
-  };
-}
-
-function manualApplyResultShapeHint(eventId = 'EVENT_ID') {
-  return `Use live-poll.mjs --reply ${eventId} done --data '{"status":"done","appliedEntryIds":["ENTRY_ID"],"failed":[],"files":["src/page.html"],"notes":[]}'`;
-}
-
-function invalidManualApplyResult(reason, eventId, extra = {}) {
-  return {
-    ok: false,
-    body: {
-      error: 'invalid_manual_apply_result',
-      reason,
-      hint: manualApplyResultShapeHint(eventId),
-      ...extra,
-    },
-  };
-}
-
-function validateManualApplyResultMessage(msg, deferred) {
-  let data = msg?.data;
-  const eventId = msg?.id || deferred?.event?.id || 'EVENT_ID';
-  if (!data || typeof data !== 'object' || Array.isArray(data)) {
-    return invalidManualApplyResult('missing_result_data', eventId);
-  }
-  if ('entries' in data || 'ops' in data) {
-    return invalidManualApplyResult('summary_result_not_allowed', eventId);
-  }
-  if (!['done', 'partial', 'error'].includes(data.status)) {
-    return invalidManualApplyResult('invalid_status', eventId, { status: data.status ?? null });
-  }
-
-  for (const key of ['appliedEntryIds', 'failed', 'files', 'notes']) {
-    if (!Array.isArray(data[key])) {
-      return invalidManualApplyResult(`${key}_must_be_array`, eventId);
-    }
-  }
-
-  for (const [index, value] of data.appliedEntryIds.entries()) {
-    if (typeof value !== 'string' || !value) {
-      return invalidManualApplyResult('appliedEntryIds_must_contain_strings', eventId, { index });
-    }
-  }
-  for (const [index, value] of data.files.entries()) {
-    if (typeof value !== 'string' || !value) {
-      return invalidManualApplyResult('files_must_contain_strings', eventId, { index });
-    }
-  }
-  for (const [index, value] of data.notes.entries()) {
-    if (typeof value !== 'string') {
-      return invalidManualApplyResult('notes_must_contain_strings', eventId, { index });
-    }
-  }
-  for (const [index, item] of data.failed.entries()) {
-    if (!item || typeof item !== 'object' || Array.isArray(item)) {
-      return invalidManualApplyResult('failed_must_contain_objects', eventId, { index });
-    }
-    if (typeof item.entryId !== 'string' || !item.entryId) {
-      return invalidManualApplyResult('failed_entryId_required', eventId, { index });
-    }
-    if (typeof item.reason !== 'string' || !item.reason) {
-      return invalidManualApplyResult('failed_reason_required', eventId, { index });
-    }
-  }
-
-  const eventEntryIds = new Set((deferred?.batch?.entries || []).map((entry) => entry.id).filter(Boolean));
-  for (const entryId of data.appliedEntryIds) {
-    if (eventEntryIds.size > 0 && !eventEntryIds.has(entryId)) {
-      return invalidManualApplyResult('applied_entry_id_not_in_event', eventId, { entryId });
-    }
-  }
-  for (const item of data.failed) {
-    if (eventEntryIds.size > 0 && !eventEntryIds.has(item.entryId)) {
-      return invalidManualApplyResult('failed_entry_id_not_in_event', eventId, { entryId: item.entryId });
-    }
-  }
-
-  if (data.status === 'done') {
-    if (data.failed.length > 0) {
-      return invalidManualApplyResult('done_result_has_failed_entries', eventId);
-    }
-    if (countManualApplyOps(deferred?.batch) > 0 && data.appliedEntryIds.length === 0) {
-      return invalidManualApplyResult('done_result_missing_applied_entry_ids', eventId);
-    }
-  }
-  if (data.status === 'partial' && data.appliedEntryIds.length === 0 && data.failed.length === 0) {
-    return invalidManualApplyResult('partial_result_has_no_entries', eventId);
-  }
-  if (data.status === 'error' && data.appliedEntryIds.length > 0) {
-    return invalidManualApplyResult('error_result_has_applied_entries', eventId);
-  }
-
-  return {
-    ok: true,
-    result: {
-      status: data.status,
-      message: typeof data.message === 'string' ? data.message : undefined,
-      appliedEntryIds: data.appliedEntryIds,
-      failed: data.failed,
-      files: data.files,
-      notes: data.notes,
-    },
-  };
-}
-
-function firstFailureReason(result) {
-  const first = Array.isArray(result?.failed) ? result.failed.find(Boolean) : null;
-  return first?.reason || first?.message || null;
-}
-
-function markChunkEntriesFailed(failedByEntry, chunk, reason) {
-  for (const entryId of chunk.entryIds) {
-    if (failedByEntry.has(entryId)) continue;
-    failedByEntry.set(entryId, { entryId, reason, candidates: [] });
-  }
-}
-
-function splitManualApplyBatch(batch, maxOps) {
-  const totalOpCount = countManualApplyOps(batch);
-  if (totalOpCount <= maxOps) {
-    return [{
-      batch,
-      meta: null,
-      entryIds: new Set((batch?.entries || []).map((entry) => entry.id).filter(Boolean)),
-      opCountsByEntry: new Map((batch?.entries || []).map((entry) => [entry.id, Array.isArray(entry.ops) ? entry.ops.length : 0])),
-    }];
-  }
-
-  const rawChunks = [];
-  let current = createManualApplyChunkBuilder();
-  for (const entry of batch?.entries || []) {
-    const ops = entry.ops || [];
-    if (ops.length <= maxOps) {
-      if (current.opCount > 0 && current.opCount + ops.length > maxOps) {
-        rawChunks.push(current);
-        current = createManualApplyChunkBuilder();
-      }
-      for (const op of ops) addOpToManualApplyChunk(current, entry, op);
-      continue;
-    }
-    if (current.opCount > 0) {
-      rawChunks.push(current);
-      current = createManualApplyChunkBuilder();
-    }
-    for (const op of ops) {
-      if (current.opCount >= maxOps) {
-        rawChunks.push(current);
-        current = createManualApplyChunkBuilder();
-      }
-      addOpToManualApplyChunk(current, entry, op);
-    }
-  }
-  if (current.opCount > 0) rawChunks.push(current);
-
-  return rawChunks.map((chunk, index) => ({
-    batch: {
-      ...batch,
-      count: chunk.opCount,
-      entries: chunk.entries,
-      ops: chunk.ops,
-      candidates: filterManualApplyChunkCandidates(batch, chunk.refsByEntry),
-      context: {
-        ...(batch?.context || {}),
-        totalEntries: chunk.entries.length,
-        totalOps: chunk.opCount,
-        chunkIndex: index + 1,
-        chunkTotal: rawChunks.length,
-        totalApplyOps: totalOpCount,
-      },
-    },
-    meta: {
-      index: index + 1,
-      total: rawChunks.length,
-      opCount: chunk.opCount,
-      totalOpCount,
-    },
-    entryIds: new Set(chunk.entries.map((entry) => entry.id).filter(Boolean)),
-    opCountsByEntry: chunk.opCountsByEntry,
-  }));
-}
-
-function createManualApplyChunkBuilder() {
-  return {
-    entries: [],
-    entryById: new Map(),
-    entryIds: new Set(),
-    ops: [],
-    refsByEntry: new Map(),
-    opCountsByEntry: new Map(),
-    opCount: 0,
-  };
-}
-
-function addOpToManualApplyChunk(chunk, entry, op) {
-  let chunkEntry = chunk.entryById.get(entry.id);
-  if (!chunkEntry) {
-    chunkEntry = { ...entry, ops: [] };
-    chunk.entryById.set(entry.id, chunkEntry);
-    chunk.entryIds.add(entry.id);
-    chunk.entries.push(chunkEntry);
-  }
-  chunkEntry.ops.push(op);
-  chunk.ops.push({ ...op, entryId: op.entryId || entry.id });
-  if (!chunk.refsByEntry.has(entry.id)) chunk.refsByEntry.set(entry.id, new Set());
-  if (op.ref) chunk.refsByEntry.get(entry.id).add(op.ref);
-  chunk.opCountsByEntry.set(entry.id, (chunk.opCountsByEntry.get(entry.id) || 0) + 1);
-  chunk.opCount += 1;
-}
-
-function filterManualApplyChunkCandidates(batch, refsByEntry) {
-  return (batch?.candidates || []).filter((candidate) => {
-    const refs = refsByEntry.get(candidate.entryId);
-    if (!refs) return false;
-    if (!candidate.ref) return true;
-    return refs.has(candidate.ref);
-  });
-}
-
-function resolveApplyDeferred(eventId, body) {
-  const deferred = state.pendingApplyDeferreds.get(eventId);
-  if (!deferred) return false;
-  state.pendingApplyDeferreds.delete(eventId);
-  clearTimeout(deferred.timer);
-  removeManualApplyEvidence(deferred.event?.evidencePath);
-  deferred.resolve(body);
-  return true;
-}
-
-function rejectApplyDeferred(eventId, reason) {
-  const deferred = state.pendingApplyDeferreds.get(eventId);
-  if (!deferred) return false;
-  state.pendingApplyDeferreds.delete(eventId);
-  clearTimeout(deferred.timer);
-  removeManualApplyEvidence(deferred.event?.evidencePath);
-  deferred.reject(new Error(reason || 'chat_agent_error'));
-  return true;
-}
-
-function snapshotApplyEventFiles(batch) {
-  const snapshot = new Map();
-  for (const relativeFile of collectManualApplyFiles(batch)) {
-    const absolute = path.resolve(process.cwd(), relativeFile);
-    try {
-      snapshot.set(relativeFile, {
-        exists: fs.existsSync(absolute),
-        content: fs.existsSync(absolute) ? fs.readFileSync(absolute, 'utf-8') : '',
-      });
-    } catch {
-      // If a file cannot be read before dispatch, do not attempt late rollback.
-    }
-  }
-  return snapshot;
-}
-
-function manualApplyTransactionPath(cwd = process.cwd()) {
-  return path.join(getLiveDir(cwd), 'manual-edit-apply-transaction.json');
-}
-
-function readManualApplyTransaction(cwd = process.cwd()) {
-  const file = manualApplyTransactionPath(cwd);
-  if (!fs.existsSync(file)) return null;
-  try {
-    return JSON.parse(fs.readFileSync(file, 'utf-8'));
-  } catch {
-    return null;
-  }
-}
-
-function writeManualApplyTransaction({ cwd = process.cwd(), pageUrl = null, batch }) {
-  const file = manualApplyTransactionPath(cwd);
-  const files = collectManualApplyFiles(batch);
-  const transaction = {
-    version: 1,
-    id: randomUUID().replace(/-/g, '').slice(0, 8),
-    createdAt: new Date().toISOString(),
-    pageUrl,
-    entryIds: (batch?.entries || []).map((entry) => entry.id).filter(Boolean),
-    files: files.map((relativeFile) => {
-      const absolute = path.resolve(cwd, relativeFile);
-      const exists = fs.existsSync(absolute);
-      return {
-        file: relativeFile,
-        exists,
-        content: exists ? fs.readFileSync(absolute, 'utf-8') : '',
-      };
-    }),
-  };
-  fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(`${file}.tmp`, JSON.stringify(transaction, null, 2) + '\n', 'utf-8');
-  fs.renameSync(`${file}.tmp`, file);
-  return transaction;
-}
-
-function clearManualApplyTransaction(cwd = process.cwd(), transactionId = null) {
-  const file = manualApplyTransactionPath(cwd);
-  if (!fs.existsSync(file)) return false;
-  if (transactionId) {
-    const existing = readManualApplyTransaction(cwd);
-    if (existing?.id && existing.id !== transactionId) return false;
-  }
-  try {
-    fs.unlinkSync(file);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function rollbackManualApplyTransaction({ cwd = process.cwd(), pageUrl = null, reason = 'manual_edit_transaction_rollback' } = {}) {
-  const transaction = readManualApplyTransaction(cwd);
-  if (!transaction) return null;
-  if (pageUrl && transaction.pageUrl && transaction.pageUrl !== pageUrl) return null;
-
-  let pendingIds = new Set();
-  try {
-    const buffer = readManualEditsBuffer(cwd);
-    pendingIds = new Set((buffer.entries || []).map((entry) => entry.id).filter(Boolean));
-  } catch {
-    pendingIds = new Set(transaction.entryIds || []);
-  }
-  const shouldRollback = (transaction.entryIds || []).some((id) => pendingIds.has(id));
-  if (!shouldRollback) {
-    clearManualApplyTransaction(cwd, transaction.id);
-    return { id: transaction.id, reason, rolledBackFiles: [], rollbackFailures: [], skipped: 'entries_not_pending' };
-  }
-
-  const rolledBackFiles = [];
-  const rollbackFailures = [];
-  for (const item of transaction.files || []) {
-    const relativeFile = normalizeProjectFile(item.file);
-    if (!relativeFile) continue;
-    const absolute = path.resolve(cwd, relativeFile);
-    try {
-      if (item.exists) {
-        fs.mkdirSync(path.dirname(absolute), { recursive: true });
-        fs.writeFileSync(absolute, item.content || '', 'utf-8');
-      } else if (fs.existsSync(absolute)) {
-        fs.rmSync(absolute);
-      }
-      rolledBackFiles.push(relativeFile);
-    } catch (err) {
-      rollbackFailures.push({ file: relativeFile, reason: 'restore_failed', message: err.message || String(err) });
-    }
-  }
-  clearManualApplyTransaction(cwd, transaction.id);
-  recordManualEditActivity('manual_edit_transaction_rolled_back', {
-    id: transaction.id,
-    pageUrl: transaction.pageUrl || null,
-    reason,
-    entryIds: transaction.entryIds || [],
-    rolledBackFiles: rolledBackFiles.map(summarizeManualLogFile).filter(Boolean),
-    rollbackFailures: summarizeManualDiagnostics(rollbackFailures),
-  });
-  return { id: transaction.id, reason, rolledBackFiles, rollbackFailures };
-}
-
-function collectManualApplyFiles(batch, extraFiles = []) {
-  const files = [];
-  for (const entry of batch?.entries || []) {
-    for (const op of entry.ops || []) files.push(op.sourceHint?.file);
-  }
-  for (const candidate of batch?.candidates || []) {
-    files.push(candidate.sourceHint?.relativeFile, candidate.sourceHint?.file);
-    for (const item of candidate.textMatches || []) files.push(item.file);
-    for (const item of candidate.objectKeyMatches || []) files.push(item.file);
-    for (const item of candidate.locatorMatches || []) files.push(item.file);
-    for (const item of candidate.contextTextMatches || []) files.push(item.file);
-  }
-  files.push(...(extraFiles || []));
-  return [...new Set(files)]
-    .map((file) => normalizeProjectFile(file))
-    .filter(Boolean);
-}
-
-function normalizeProjectFile(file) {
-  if (!file || typeof file !== 'string') return null;
-  const absolute = path.isAbsolute(file) ? file : path.resolve(process.cwd(), file);
-  const relative = path.relative(process.cwd(), absolute);
-  if (!relative || relative.startsWith('..') || path.isAbsolute(relative)) return null;
-  return relative;
-}
-
-function rollbackApplySnapshot(batch, rollbackSnapshot, extraFiles = [], reason = 'manual_edit_apply_snapshot_rollback') {
-  const scope = collectManualApplyFiles(batch, extraFiles);
-  const rolledBackFiles = [];
-  const rollbackFailures = [];
-  for (const relativeFile of scope) {
-    const before = rollbackSnapshot?.get(relativeFile);
-    if (!before) continue;
-    const absolute = path.resolve(process.cwd(), relativeFile);
-    try {
-      if (before.exists) {
-        fs.mkdirSync(path.dirname(absolute), { recursive: true });
-        fs.writeFileSync(absolute, before.content, 'utf-8');
-      } else if (fs.existsSync(absolute)) {
-        fs.rmSync(absolute);
-      }
-      rolledBackFiles.push(relativeFile);
-    } catch (err) {
-      rollbackFailures.push({ file: relativeFile, reason: 'restore_failed', message: err.message || String(err) });
-    }
-  }
-  return { rolledBackFiles, rollbackFailures };
-}
-
-function rollbackTimedOutApplyReply(msg) {
-  const details = state.timedOutApplyIds.get(msg.id);
-  if (!details) return { rolledBackFiles: [], rollbackFailures: [] };
-  state.timedOutApplyIds.delete(msg.id);
-  return rollbackApplySnapshot(details.batch, details.rollbackSnapshot, msg.data?.files || [], 'stale_manual_edit_apply_reply');
-}
-
 // Cap per-annotation upload size. A full 1920×1080 PNG is typically <1 MB;
 // cap at 10 MB to guard against runaway writes from a misbehaving client.
 const MAX_ANNOTATION_BYTES = 10 * 1024 * 1024;
 
 function enqueueEvent(event) {
-  if (!event || (event.id && state.pendingEvents.some((entry) => entry.event?.id === event.id && entry.event?.type === event.type))) return;
+  if (!event) return;
+  // Dedupe by (session, type), except mount failures, which are per-variant:
+  // variant 2 failing must not be swallowed because variant 1's failure is
+  // still queued.
+  const duplicate = event.id && state.pendingEvents.some((entry) => (
+    entry.event?.id === event.id
+    && entry.event?.type === event.type
+    && (event.type !== 'variant_mount_failed' || entry.event?.variant === event.variant)
+  ));
+  if (duplicate) return;
   state.pendingEvents.push({ event, leaseUntil: 0, seq: state.nextEventSeq++ });
   flushPendingPolls();
 }
@@ -887,29 +203,207 @@ function restorePendingEventsFromStore() {
   }
 }
 
-function findAvailablePendingEvent(now = Date.now()) {
-  for (const entry of state.pendingEvents) {
-    if (entry.leaseUntil && entry.leaseUntil > now) continue;
-    return entry;
-  }
-  return null;
+function findAvailablePendingEvent(now = Date.now(), types = null) {
+  return selectAvailablePendingEvent(state.pendingEvents, { now, types });
 }
 
-function leaseEvent(entry, leaseMs) {
+async function leaseEvent(entry, leaseMs) {
+  // Claim the entry before awaiting anything. prepareGenerateEventForLease
+  // yields to the event loop, and selectAvailablePendingEvent only skips
+  // entries whose lease is in the future — an unclaimed entry would be handed
+  // to a second poll in that window and generated twice.
+  entry.leaseUntil = Date.now() + leaseMs;
+  await prepareGenerateEventForLease(entry);
   if (!entry.event?.id) {
     const idx = state.pendingEvents.indexOf(entry);
     if (idx !== -1) state.pendingEvents.splice(idx, 1);
     return entry.event;
   }
+  // Re-stamp so the lease window starts when the agent actually receives the
+  // work, not when scaffolding began.
   entry.leaseUntil = Date.now() + leaseMs;
+  recordGenerateDelivery(entry);
   scheduleLeaseFlush();
   broadcastAgentPollingIfChanged();
   return entry.event;
 }
 
-function acknowledgePendingEvent(id) {
+function recordGenerateDelivery(entry) {
+  const event = entry?.event;
+  if (!event || event.type !== 'generate' || event.generationReadyAt) return;
+  const at = Date.now();
+  entry.event = { ...event, generationReadyAt: at };
+  state.sessionStore?.appendEvent(entry.event);
+  recordAgentPhase(event.id, 'generation_ready', { at });
+}
+
+async function prepareGenerateEventForLease(entry) {
+  const event = entry?.event;
+  if (!event || event.type !== 'generate' || event.scaffoldAttempted) return;
+
+  recordAgentPhase(event.id, 'picked_up');
+  recordAgentPhase(event.id, 'scaffolding');
+  const result = await runGenerationPreflight(event, {
+    cwd: process.cwd(),
+    scriptsDir: __dirname,
+  });
+  entry.event = {
+    ...event,
+    scaffoldAttempted: true,
+    scaffoldDurationMs: result.durationMs ?? null,
+    ...(result.ok ? { scaffold: result.scaffold } : { scaffoldError: result.error || result.reason }),
+  };
+  state.sessionStore?.appendEvent(entry.event);
+  recordAgentPhase(event.id, result.ok ? 'source_ready' : 'scaffold_fallback', {
+    durationMs: result.durationMs ?? null,
+    previewMode: result.scaffold?.previewMode || 'source',
+  });
+}
+
+function recordAgentPhase(id, phase, details = {}) {
+  if (!id) return;
+  const event = {
+    type: 'agent_phase',
+    id,
+    phase,
+    at: Date.now(),
+    ...details,
+  };
+  state.sessionStore?.appendEvent(event);
+  broadcast(event);
+}
+
+/**
+ * Detect a browser that missed the generation `done` broadcast.
+ *
+ * The preflight no longer writes the scaffold into source for source-preview
+ * targets (the agent writes wrapper + variants in one atomic edit), so the old
+ * scaffold-write full-reload that opened the "stranded at 0/N" race is gone.
+ * This recovery stays as defense in depth: any framework reload that drops the
+ * agent's variant write + `done` while the browser is mid-reload leaves the new
+ * page in GENERATING at 0/N. That resumed page always checkpoints
+ * (`browser_resumed`), so a checkpoint claiming "still generating, variants
+ * missing" for a session whose generation already completed is direct
+ * evidence of the miss. Rebuild the `done` payload from the snapshot so the
+ * caller can re-broadcast it; the browser's done handler is idempotent and
+ * falls back to injecting variants from source.
+ *
+ * Keys on the store's monotone `generationCompletedAt`, not `phase` — the
+ * behind checkpoint itself regresses `phase` to `generating`, and a browser
+ * that misses the redelivered `done` too (another reload) must still trigger
+ * redelivery from its next checkpoint.
+ */
+function detectMissedGenerationCompletion(event) {
+  if (!event?.id || event.type !== 'checkpoint') return null;
+  if (event.phase !== 'generating') return null;
+  if (!variantCountLooksBehind(event.arrivedVariants, event.expectedVariants)) return null;
+  if (!state.sessionStore) return null;
+  let snapshot = null;
+  try {
+    snapshot = state.sessionStore.getSnapshot(event.id);
+  } catch {
+    return null;
+  }
+  return missedCompletionFromSnapshot(snapshot);
+}
+
+function variantCountLooksBehind(arrivedValue, expectedValue) {
+  const arrived = Number(arrivedValue) || 0;
+  const expected = Number(expectedValue) || 0;
+  return arrived <= 0 || (expected > 0 && arrived < expected);
+}
+
+function missedCompletionFromSnapshot(snapshot) {
+  if (!snapshot?.id || !snapshot.generationCompletedAt) return null;
+  if (snapshot.generationCanceled) return null;
+  // Accept/discard already underway: the browser is no longer waiting on
+  // generation, and a late `done` there would collide with teardown.
+  if (GENERATION_FENCED_PHASES.has(snapshot.phase)) return null;
+  const file = snapshot.sourceFile || snapshot.previewFile;
+  if (!file) return null;
+  return {
+    type: 'done',
+    id: snapshot.id,
+    file,
+    sourceFile: snapshot.sourceFile || undefined,
+    previewFile: snapshot.previewFile || undefined,
+    previewMode: snapshot.previewMode || undefined,
+    redelivered: true,
+  };
+}
+
+function recordGenerationCheckpoint(event) {
+  if (!event?.id || event.type !== 'checkpoint') return;
+  if (generationIsFenced(event.id)) return;
+  // Only checkpoints that report a change in variant availability are
+  // generation progress. The browser also checkpoints for durability on Tune
+  // slider drags, resumes, and anchor recovery; treating those as progress
+  // echoed `variant_progress` straight back to the browser that sent it, which
+  // remounts the component preview mid-drag (reverting the user's live param
+  // edit and detaching the popover's element), and permanently latched the
+  // *_reviewable phases from the wrong trigger, corrupting generation timings.
+  if (!VARIANT_PROGRESS_CHECKPOINT_REASONS.has(event.reason)) return;
+  const arrived = Number(event.arrivedVariants) || 0;
+  const expected = Number(event.expectedVariants) || 0;
+  if (arrived <= 0 || expected <= 0) return;
+  const previewMode = event.previewMode || 'source';
+  const previewFile = event.previewFile || event.file;
+  if (previewFile) {
+    broadcast({
+      type: 'variant_progress',
+      id: event.id,
+      file: previewFile,
+      sourceFile: event.sourceFile || (previewMode === 'source' ? previewFile : undefined),
+      previewFile,
+      previewMode,
+      arrivedVariants: arrived,
+      expectedVariants: expected,
+      publicationKind: event.publicationKind || 'variants',
+    });
+  }
+  const details = {
+    arrivedVariants: arrived,
+    expectedVariants: expected,
+    checkpointReason: event.reason || null,
+  };
+  const at = Date.now();
+  if (!generationPhaseAlreadyRecorded(event.id, 'first_reviewable')) {
+    recordAgentPhase(event.id, 'first_reviewable', { ...details, at });
+  }
+  if (arrived >= 2 && expected >= 3 && !generationPhaseAlreadyRecorded(event.id, 'second_reviewable')) {
+    recordAgentPhase(event.id, 'second_reviewable', { ...details, at });
+  }
+  if (arrived >= expected && !generationPhaseAlreadyRecorded(event.id, 'all_variants_ready')) {
+    recordAgentPhase(event.id, 'all_variants_ready', { ...details, at });
+  }
+}
+
+function generationIsFenced(id) {
+  if (!state.sessionStore || !id) return false;
+  try {
+    const snapshot = state.sessionStore.getSnapshot(id, { includeCompleted: true });
+    return snapshot?.generationCanceled === true;
+  } catch {
+    return false;
+  }
+}
+
+function generationPhaseAlreadyRecorded(id, phase) {
+  if (!state.sessionStore) return false;
+  try {
+    const snapshot = state.sessionStore.getSnapshot(id, { includeCompleted: true });
+    return !!snapshot?.generationTimings?.[phase];
+  } catch {
+    return false;
+  }
+}
+
+function acknowledgePendingEvent(id, sourceEventType) {
   if (!id) return false;
-  const idx = state.pendingEvents.findIndex((entry) => entry.event?.id === id);
+  const idx = state.pendingEvents.findIndex((entry) => (
+    entry.event?.id === id
+    && (!sourceEventType || entry.event?.type === sourceEventType)
+  ));
   if (idx === -1) return false;
   const acknowledged = state.pendingEvents[idx].event;
   state.pendingEvents.splice(idx, 1);
@@ -918,36 +412,40 @@ function acknowledgePendingEvent(id) {
   return acknowledged;
 }
 
-function findPendingEventById(id) {
+function releasePendingEvent(id, sourceEventType) {
+  const entry = state.pendingEvents.find((item) => (
+    item.event?.id === id
+    && (!sourceEventType || item.event?.type === sourceEventType)
+  ));
+  if (!entry) return null;
+  entry.leaseUntil = 0;
+  scheduleLeaseFlush();
+  return entry.event;
+}
+
+function retirePendingGeneration(id) {
+  if (!id) return 0;
+  let retired = 0;
+  for (let index = state.pendingEvents.length - 1; index >= 0; index -= 1) {
+    const event = state.pendingEvents[index]?.event;
+    if (event?.id !== id || event.type !== 'generate') continue;
+    state.pendingEvents.splice(index, 1);
+    retired += 1;
+  }
+  if (retired > 0) {
+    scheduleLeaseFlush();
+    broadcastAgentPollingIfChanged();
+  }
+  return retired;
+}
+
+function findPendingEventById(id, sourceEventType) {
   if (!id) return null;
-  const entry = state.pendingEvents.find((item) => item.event?.id === id);
+  const entry = state.pendingEvents.find((item) => (
+    item.event?.id === id
+    && (!sourceEventType || item.event?.type === sourceEventType)
+  ));
   return entry?.event || null;
-}
-
-function manualApplyReplyCommand(eventOrId = 'EVENT_ID') {
-  const id = typeof eventOrId === 'string' ? eventOrId : eventOrId?.id || 'EVENT_ID';
-  return `live-poll.mjs --reply ${id} done --data '<json>'`;
-}
-
-function buildManualApplyAgentAction(eventOrId = 'EVENT_ID') {
-  return {
-    kind: 'manual_edit_apply',
-    required: 'apply_source_edits_then_reply',
-    replyCommand: manualApplyReplyCommand(eventOrId),
-    warning: 'Polling only leases this work item; it does not commit source edits.',
-  };
-}
-
-function summarizeManualApplyEvent(event = {}, batch = event.batch) {
-  const entries = Array.isArray(batch?.entries) ? batch.entries : [];
-  const opCount = entries.reduce((sum, entry) => sum + (Array.isArray(entry.ops) ? entry.ops.length : 0), 0);
-  return {
-    pageUrl: event.pageUrl || null,
-    chunk: event.chunk || null,
-    entryCount: entries.length,
-    opCount,
-    files: collectManualApplyFiles(batch),
-  };
 }
 
 function summarizePendingEventForStatus(entry) {
@@ -955,7 +453,7 @@ function summarizePendingEventForStatus(entry) {
   const summary = {
     id: event.id,
     type: event.type,
-    leased: !!(entry.leaseUntil && entry.leaseUntil > Date.now()),
+    leased: isLeased(entry),
     leaseUntil: entry.leaseUntil || null,
   };
   if (event.type === 'manual_edit_apply') {
@@ -963,8 +461,8 @@ function summarizePendingEventForStatus(entry) {
     summary.chunk = event.chunk || null;
     summary.repair = event.repair || null;
     summary.evidencePath = event.evidencePath || null;
-    summary.agentAction = event.agentAction || buildManualApplyAgentAction(event);
-    summary.manualApplySummary = summarizeManualApplyEvent(event, state.pendingApplyDeferreds.get(event.id)?.batch || event.batch);
+    summary.agentAction = event.agentAction || manualApply.buildAgentAction(event);
+    summary.manualApplySummary = manualApply.summarizeEvent(event, manualApply.getDeferred(event.id)?.batch || event.batch);
   }
   return summary;
 }
@@ -981,7 +479,18 @@ function summarizeActiveSessionForClient(snapshot = {}) {
     arrivedVariants: snapshot.arrivedVariants ?? 0,
     visibleVariant: snapshot.visibleVariant ?? null,
     checkpointRevision: snapshot.checkpointRevision ?? 0,
+    browserCheckpointRevision: snapshot.browserCheckpointRevision ?? snapshot.checkpointRevision ?? 0,
+    publicationCheckpointRevision: snapshot.publicationCheckpointRevision ?? 0,
     paramValues: snapshot.paramValues || {},
+    generationPhase: snapshot.generationPhase ?? null,
+    generationCompletedAt: snapshot.generationCompletedAt ?? null,
+    generationCanceled: snapshot.generationCanceled === true,
+    cancelReason: snapshot.cancelReason ?? null,
+    // Render truth, so a browser with no localStorage can rehydrate to the
+    // same comparison the server already knows about.
+    mountedVariants: Array.isArray(snapshot.mountedVariants) ? snapshot.mountedVariants : [],
+    mountFailures: Array.isArray(snapshot.mountFailures) ? snapshot.mountFailures : [],
+    renderState: snapshot.renderState ?? null,
   };
 }
 
@@ -1005,47 +514,6 @@ function cancelQueuedAnonymousExitEvents() {
   return removed;
 }
 
-function cancelPendingManualApplyEvents(pageUrl, reason = 'manual_edit_discarded') {
-  const canceledById = new Map();
-  const shouldCancel = (event) => event?.type === 'manual_edit_apply' && (!pageUrl || event.pageUrl === pageUrl);
-
-  for (let i = state.pendingEvents.length - 1; i >= 0; i -= 1) {
-    const event = state.pendingEvents[i]?.event;
-    if (!shouldCancel(event)) continue;
-    state.pendingEvents.splice(i, 1);
-    removeManualApplyEvidence(event.evidencePath);
-    canceledById.set(event.id, {
-      id: event.id,
-      pageUrl: event.pageUrl,
-      entryCount: event.batch?.entries?.length || 0,
-    });
-  }
-
-  for (const [eventId, deferred] of [...state.pendingApplyDeferreds.entries()]) {
-    if (!shouldCancel(deferred.event)) continue;
-    state.pendingApplyDeferreds.delete(eventId);
-    clearTimeout(deferred.timer);
-    const rollback = rollbackApplySnapshot(deferred.batch, deferred.rollbackSnapshot, [], reason);
-    tombstoneTimedOutApplyId(eventId, {
-      batch: deferred.batch,
-      rollbackSnapshot: deferred.rollbackSnapshot,
-      reason,
-    });
-    removeManualApplyEvidence(deferred.event?.evidencePath);
-    canceledById.set(eventId, {
-      id: eventId,
-      pageUrl: deferred.pageUrl,
-      entryCount: deferred.batch?.entries?.length || 0,
-      rolledBackFiles: rollback.rolledBackFiles,
-      rollbackFailures: rollback.rollbackFailures,
-    });
-    deferred.reject(new Error(reason));
-  }
-
-  if (canceledById.size > 0) flushPendingPolls();
-  return [...canceledById.values()];
-}
-
 function scheduleLeaseFlush() {
   if (state.leaseTimer) {
     clearTimeout(state.leaseTimer);
@@ -1067,24 +535,46 @@ function scheduleLeaseFlush() {
 function flushPendingPolls() {
   let changed = false;
   while (state.pendingPolls.length > 0) {
-    const entry = findAvailablePendingEvent();
+    let pollIndex = -1;
+    let entry = null;
+    for (let index = 0; index < state.pendingPolls.length; index += 1) {
+      const candidate = findAvailablePendingEvent(Date.now(), state.pendingPolls[index].types);
+      if (!candidate) continue;
+      pollIndex = index;
+      entry = candidate;
+      break;
+    }
     if (!entry) {
       scheduleLeaseFlush();
       broadcastAgentPollingIfChanged();
       return;
     }
-    const poll = state.pendingPolls.shift();
-    poll.resolve(leaseEvent(entry, poll.leaseMs));
+    const [poll] = state.pendingPolls.splice(pollIndex, 1);
+    // leaseEvent is async (it may scaffold source), but it claims the entry
+    // synchronously, so the next loop iteration will not re-select it. Resolve
+    // the poll when the lease settles rather than awaiting here, so one slow
+    // scaffold never delays the other parked polls. On the exceptional failure
+    // path, answer `timeout` so the agent re-polls; the claim stays until the
+    // lease expires, which keeps a deterministic failure from hot-looping.
+    leaseEvent(entry, poll.leaseMs).then(poll.resolve, (error) => {
+      console.error('[live] lease failed for ' + (entry.event?.id || 'unknown') + ': ' + (error?.message || error));
+      poll.resolve({ type: 'timeout' });
+    });
     changed = true;
   }
   scheduleLeaseFlush();
   if (changed) broadcastAgentPollingIfChanged();
 }
 
+function isLeased(entry) {
+  return !!(entry?.leaseUntil && entry.leaseUntil > Date.now());
+}
+
 function agentPollingConnected() {
-  const now = Date.now();
-  return state.pendingPolls.length > 0
-    || state.pendingEvents.some((entry) => entry.leaseUntil && entry.leaseUntil > now);
+  // A leased event only proves that a poll returned once. The foreground task
+  // may have ended immediately afterward, so only an actively waiting poll is
+  // evidence that steering can wake the task right now.
+  return state.pendingPolls.length > 0;
 }
 
 function broadcastAgentPollingIfChanged() {
@@ -1137,61 +627,6 @@ function getManualEditStatus() {
   }
 }
 
-function summarizePendingManualEditBatch(pageUrl = null) {
-  try {
-    const buffer = readManualEditsBuffer(process.cwd());
-    const entries = (buffer.entries || [])
-      .filter((entry) => !pageUrl || entry.pageUrl === pageUrl);
-    return {
-      pendingEntryCount: entries.length,
-      pendingOpCount: entries.reduce((sum, entry) => sum + (entry.ops?.length || 0), 0),
-    };
-  } catch (err) {
-    return { pendingSummaryError: err.message || String(err) };
-  }
-}
-
-function summarizeManualApplyFailures(failed) {
-  if (!Array.isArray(failed)) return [];
-  return failed.slice(0, 20).map((item) => ({
-    id: item.id || item.entryId || null,
-    reason: item.reason || item.message || 'failed',
-    message: compactManualLogText(item.message, 300),
-    files: Array.isArray(item.files) ? item.files.slice(0, 12).map(summarizeManualLogFile).filter(Boolean) : undefined,
-    checks: summarizeManualDiagnostics(item.checks),
-    failures: summarizeManualDiagnostics(item.failures),
-    candidates: summarizeManualDiagnostics(item.candidates),
-  }));
-}
-
-function summarizeManualDiagnostics(items) {
-  if (!Array.isArray(items) || items.length === 0) return undefined;
-  return items.slice(0, 12).map((item) => ({
-    reason: item.reason || item.kind || undefined,
-    detail: compactManualLogText(item.detail, 220),
-    message: compactManualLogText(item.message, 300),
-    file: summarizeManualLogFile(item.file || item.relativeFile),
-    line: item.line || undefined,
-    ref: compactManualLogText(item.ref, 180),
-    marker: compactManualLogText(item.marker, 120),
-    files: Array.isArray(item.files) ? item.files.slice(0, 8).map(summarizeManualLogFile).filter(Boolean) : undefined,
-  }));
-}
-
-function summarizeManualLogFile(file) {
-  if (!file || typeof file !== 'string') return undefined;
-  if (!path.isAbsolute(file)) return file;
-  const relative = path.relative(process.cwd(), file);
-  return relative && !relative.startsWith('..') && !path.isAbsolute(relative) ? relative : file;
-}
-
-function compactManualLogText(value, max = 200) {
-  if (typeof value !== 'string') return undefined;
-  const normalized = value.replace(/\s+/g, ' ').trim();
-  if (normalized.length <= max) return normalized;
-  return normalized.slice(0, max) + `... [truncated ${normalized.length - max} chars]`;
-}
-
 // ---------------------------------------------------------------------------
 // Load scripts
 // ---------------------------------------------------------------------------
@@ -1211,42 +646,70 @@ function loadBrowserScripts() {
     try { detectScript = fs.readFileSync(p, 'utf-8'); break; } catch { /* try next */ }
   }
 
-  // live-browser.js: DO NOT cache. Return the path so the /live.js handler
-  // can re-read on every request. Editing the browser script during iteration
-  // should land on the next tab reload, not require a server restart.
-  const sessionPath = path.join(__dirname, 'live-browser-session.js');
-  const livePath = path.join(__dirname, 'live-browser.js');
-  for (const p of [sessionPath, livePath]) {
-    if (!fs.existsSync(p)) {
-      process.stderr.write('Error: live browser script not found at ' + p + '\n');
-      process.exit(1);
-    }
+  // Browser script parts: DO NOT cache. Return paths so the /live.js handler
+  // can re-read every part on each request. Editing browser code during
+  // iteration should land on the next tab reload, not require a server restart.
+  const liveScriptParts = resolveLiveBrowserScriptParts(__dirname);
+  try {
+    assertLiveBrowserScriptParts(liveScriptParts);
+  } catch (err) {
+    process.stderr.write('Error: ' + err.message + '\n');
+    process.exit(1);
   }
 
-  return { detectScript, sessionPath, livePath };
+  return { detectScript, liveScriptParts };
 }
 
 function hasProjectContext() {
   // PRODUCT.md carries brand voice / anti-references — that's what determines
   // whether variants are brand-aware. DESIGN.md (visual tokens) is a separate
   // concern, surfaced by the design panel's own empty state.
-  try {
-    fs.accessSync(path.join(CONTEXT_DIR, 'PRODUCT.md'), fs.constants.R_OK);
-    return true;
-  } catch { return false; }
+  return !!resolveProjectContext().hasProduct;
 }
 
 function statOrNull(filePath) {
   try { return fs.statSync(filePath); } catch { return null; }
 }
 
+// Strict loopback-origin test for CORS. Parses the Origin as a URL (never a
+// substring match, so `http://localhost.evil.com` and `http://127.0.0.1.evil.com`
+// fail) and accepts only http/https on localhost, 127.0.0.1, or the IPv6 loopback.
+function isLoopbackOrigin(origin) {
+  if (typeof origin !== 'string' || origin.length === 0) return false;
+  let parsed;
+  try { parsed = new URL(origin); } catch { return false; }
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return false;
+  const host = parsed.hostname.toLowerCase();
+  return host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === '[::1]';
+}
+
 // HTTP request handler
 // ---------------------------------------------------------------------------
 
-function createRequestHandler({ detectScript, sessionPath, livePath }) {
+function createRequestHandler({ detectScript, liveScriptParts }) {
   return (req, res) => {
     const url = new URL(req.url, `http://localhost:${state.port}`);
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    // Token-or-loopback CORS. Reflect the caller's Origin when it is a
+    // loopback origin OR the request carries the valid session token, always
+    // paired with `Vary: Origin` so an intermediary cache never serves a
+    // response authorized for one origin to another. A remote page (e.g.
+    // https://evil.example probing the port from a tab open on the same
+    // machine) has no token and gets no Access-Control-Allow-Origin, so its
+    // JS-initiated fetch cannot read any response. The token branch exists for
+    // dev servers on non-localhost loopback aliases (ddev's *.ddev.site,
+    // Valet's *.test, hosts-file entries): the injected classic <script src>
+    // delivers the token to the page regardless of origin, every overlay
+    // request carries it in the query string (preflights included, since
+    // OPTIONS hits the same URL), and a token bearer is already fully
+    // authorized on every route — the token is the security boundary, not the
+    // origin. Requests with no Origin header (script tags, curl, the agent's
+    // own fetches) are not subject to CORS and keep working; no ACAO header
+    // is needed for them.
+    const origin = req.headers.origin;
+    if (origin && (isLoopbackOrigin(origin) || url.searchParams.get('token') === state.token)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Vary', 'Origin');
+    }
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
@@ -1255,25 +718,35 @@ function createRequestHandler({ detectScript, sessionPath, livePath }) {
 
     // --- Scripts ---
     if (p === '/live.js') {
+      // Token-gated: the script body embeds state.token, which unlocks every
+      // token-guarded route. Serving it unauthenticated let any local page read
+      // the token and drive the session. The injected <script src> carries
+      // `?token=...` (see live-inject.mjs). A missing/wrong token → 401.
+      if (url.searchParams.get('token') !== state.token) {
+        res.writeHead(401, { 'Content-Type': 'text/plain' });
+        res.end('Unauthorized');
+        return;
+      }
       // Re-read from disk each request so edits to live-browser.js land on
       // the next tab reload. No-store headers prevent browser caching across
       // sessions — during iteration, a cached old script silently breaks
       // every subsequent session.
-      let sessionScript;
-      let liveScript;
+      let parts;
       try {
-        sessionScript = fs.readFileSync(sessionPath, 'utf-8');
-        liveScript = fs.readFileSync(livePath, 'utf-8');
+        parts = readLiveBrowserScriptParts(liveScriptParts);
       } catch (err) {
         res.writeHead(500, { 'Content-Type': 'text/plain' });
         res.end('Error reading live browser scripts: ' + err.message);
         return;
       }
-      const body =
-        `window.__IMPECCABLE_TOKEN__ = '${state.token}';\n` +
-        `window.__IMPECCABLE_PORT__ = ${state.port};\n` +
-        sessionScript + '\n' +
-        liveScript;
+      const body = assembleLiveBrowserScript({
+        token: state.token,
+        port: state.port,
+        vocabulary: LIVE_COMMANDS,
+        commandPrefix: IMPECCABLE_COMMAND_PREFIX,
+        appRoot: process.cwd(),
+        parts,
+      });
       res.writeHead(200, {
         'Content-Type': 'application/javascript',
         'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
@@ -1400,7 +873,7 @@ function createRequestHandler({ detectScript, sessionPath, livePath }) {
     //                            { present, parsed, sidecar, hasMd, hasSidecar,
     //                              mdNewerThanJson, parseError?, sidecarError? }
     //                          - parsed: output of parseDesignMd (frontmatter
-    //                            + six canonical sections) when DESIGN.md exists.
+    //                            + the canonical sections) when DESIGN.md exists.
     //                          - sidecar: .impeccable/design.json contents when present.
     //                            Expected shape: schemaVersion 2, carrying
     //                            extensions + components + narrative.
@@ -1409,8 +882,9 @@ function createRequestHandler({ detectScript, sessionPath, livePath }) {
       const token = url.searchParams.get('token');
       if (token !== state.token) { res.writeHead(401); res.end('Unauthorized'); return; }
 
-      const mdPath = path.join(CONTEXT_DIR, 'DESIGN.md');
-      const jsonPath = resolveDesignSidecarPath(process.cwd(), CONTEXT_DIR) || getDesignSidecarPath(process.cwd());
+      const projectContext = resolveProjectContext();
+      const mdPath = projectContext.resolvedDesignPath;
+      const jsonPath = resolveDesignSidecarPath(process.cwd(), projectContext.designContextDir || projectContext.contextDir) || getDesignSidecarPath(process.cwd());
       const mdStat = statOrNull(mdPath);
       const jsonStat = statOrNull(jsonPath);
 
@@ -1462,7 +936,13 @@ function createRequestHandler({ detectScript, sessionPath, livePath }) {
       const filePath = url.searchParams.get('path');
       if (!filePath || filePath.includes('..')) { res.writeHead(400); res.end('Bad path'); return; }
       const absPath = path.resolve(process.cwd(), filePath);
-      if (!absPath.startsWith(process.cwd())) { res.writeHead(403); res.end('Forbidden'); return; }
+      // Confine to the project root. A bare `startsWith(cwd)` string check lets a
+      // sibling dir whose name extends the root name (projeto -> projeto-backup)
+      // slip through; compare on the relative path instead (same pattern as
+      // sessionFileMetadataFromPollReply below). An empty rel means the request
+      // resolved to the root directory itself, which this file route never serves.
+      const rel = path.relative(process.cwd(), absPath);
+      if (!rel || rel.startsWith('..') || path.isAbsolute(rel)) { res.writeHead(403); res.end('Forbidden'); return; }
       let content;
       try { content = fs.readFileSync(absPath, 'utf-8'); }
       catch { res.writeHead(404); res.end('File not found'); return; }
@@ -1510,334 +990,7 @@ function createRequestHandler({ detectScript, sessionPath, livePath }) {
       return;
     }
 
-    // --- Manual copy edits: Save stages entries, Apply commits the staged
-    // page batch through the local AI copy-edit runner.
-    if (p === '/manual-edit-stash' && req.method === 'POST') {
-      let body = '';
-      req.on('data', (c) => { body += c; });
-      req.on('end', () => {
-        let msg;
-        try { msg = JSON.parse(body); } catch {
-          res.writeHead(400, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'Invalid JSON' }));
-          return;
-        }
-        if (msg.token !== state.token) {
-          res.writeHead(401, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'Unauthorized' }));
-          return;
-        }
-        const error = validateEvent({ ...msg, type: 'manual_edits' });
-        if (error) {
-          res.writeHead(400, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error }));
-          return;
-        }
-        try {
-          stageManualEditEntry(process.cwd(), {
-            id: msg.id,
-            pageUrl: msg.pageUrl,
-            element: msg.element,
-            ops: msg.ops,
-          });
-        } catch (err) {
-          res.writeHead(500, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'stash_write_failed', message: err.message }));
-          return;
-        }
-        const { totalCount, perPage } = countPendingByPage(process.cwd());
-        const pendingCount = perPage[msg.pageUrl] || 0;
-        recordManualEditActivity('manual_edit_stashed', {
-          id: msg.id,
-          pageUrl: msg.pageUrl,
-          opCount: msg.ops.length,
-          pendingCount,
-          totalCount,
-          hintedFileCount: new Set((msg.ops || []).map((op) => summarizeManualLogFile(op.sourceHint?.file)).filter(Boolean)).size,
-        });
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ ok: true, pendingCount, totalCount, perPage }));
-      });
-      return;
-    }
-
-    // GET /manual-edit-stash?pageUrl=<url>  →  { count, totalCount, perPage, entries }
-    if (p === '/manual-edit-stash' && req.method === 'GET') {
-      const token = url.searchParams.get('token');
-      if (token !== state.token) { res.writeHead(401); res.end('Unauthorized'); return; }
-      const pageUrl = url.searchParams.get('pageUrl') || '';
-      const { totalCount, perPage } = countPendingByPage(process.cwd());
-      const buffer = readManualEditsBuffer(process.cwd());
-      const entriesForPage = pageUrl ? buffer.entries.filter((e) => e.pageUrl === pageUrl) : buffer.entries;
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({
-        count: pageUrl ? (perPage[pageUrl] || 0) : totalCount,
-        totalCount,
-        perPage,
-        entries: entriesForPage,
-      }));
-      return;
-    }
-
-    // POST /manual-edit-commit?pageUrl=<url>  →  ask the AI to apply the staged page batch.
-    if (p === '/manual-edit-commit' && req.method === 'POST') {
-      const token = url.searchParams.get('token');
-      if (token !== state.token) { res.writeHead(401); res.end('Unauthorized'); return; }
-      const pageUrl = url.searchParams.get('pageUrl');
-      const asyncMode = /^(1|true|yes)$/i.test(url.searchParams.get('async') || '');
-      const repairOnly = /^(1|true|yes)$/i.test(url.searchParams.get('repair') || '');
-      const existingTransaction = readManualApplyTransaction(process.cwd());
-      if (repairOnly && !existingTransaction) {
-        res.writeHead(409, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'manual_edit_repair_transaction_missing' }));
-        return;
-      }
-      const recoveredTransaction = repairOnly ? null : rollbackManualApplyTransaction({
-        cwd: process.cwd(),
-        pageUrl,
-        reason: 'manual_edit_commit_recovered_abandoned_transaction',
-      });
-      const before = getManualEditStatus();
-      const pendingCount = pageUrl ? (before.perPage[pageUrl] || 0) : before.totalCount;
-      recordManualEditActivity('manual_edit_commit_started', {
-        pageUrl,
-        repairOnly,
-        pendingCount,
-        totalCount: before.totalCount,
-        recoveredTransaction: recoveredTransaction ? {
-          id: recoveredTransaction.id,
-          reason: recoveredTransaction.reason,
-          skipped: recoveredTransaction.skipped,
-          rolledBackFiles: recoveredTransaction.rolledBackFiles,
-          rollbackFailures: summarizeManualDiagnostics(recoveredTransaction.rollbackFailures),
-        } : null,
-        ...summarizePendingManualEditBatch(pageUrl),
-      });
-      if (asyncMode) {
-        res.writeHead(202, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-          status: 'started',
-          pendingCount,
-          totalCount: before.totalCount,
-          perPage: before.perPage,
-        }));
-      }
-      (async () => {
-        let result;
-        let routedProvider = 'subprocess';
-        let transaction = null;
-        let commitBatch = null;
-        try {
-          if (pendingCount > 0) {
-            const transactionBatch = buildManualEditEvidence({ cwd: process.cwd(), pageUrl });
-            commitBatch = transactionBatch;
-            if (!repairOnly && countManualApplyOps(transactionBatch) > 0) {
-              transaction = writeManualApplyTransaction({
-                cwd: process.cwd(),
-                pageUrl,
-                batch: transactionBatch,
-              });
-            } else if (repairOnly && existingTransaction) {
-              transaction = existingTransaction;
-            }
-          }
-          const requestedMode = (process.env.IMPECCABLE_LIVE_COPY_AGENT || 'auto').trim().toLowerCase();
-          const useChatRoute = requestedMode === 'chat'
-            || (requestedMode === 'auto' && chatAgentLikelyActive());
-          if (useChatRoute) {
-            routedProvider = 'chat';
-            const timeoutMs = Number(process.env.IMPECCABLE_LIVE_COPY_AGENT_TIMEOUT_MS || 120000);
-            result = await commitManualEdits({
-              cwd: process.cwd(),
-              pageUrl,
-              provider: 'chat',
-              env: process.env,
-              timeoutMs,
-              chatAvailable: chatAgentLikelyActive,
-              applyBatchToSource: (batch, context) => pushApplyBatchInChunksAndWait(batch, pageUrl, context),
-              repairOnly,
-              transactionId: transaction?.id || existingTransaction?.id || null,
-              batch: commitBatch,
-            });
-          } else {
-            const timeoutMs = Number(process.env.IMPECCABLE_LIVE_COPY_AGENT_TIMEOUT_MS || 120000);
-            const provider = ['codex', 'claude', 'mock'].includes(requestedMode) ? requestedMode : undefined;
-            result = await commitManualEdits({
-              cwd: process.cwd(),
-              pageUrl,
-              provider,
-              env: process.env,
-              timeoutMs,
-              chatAvailable: chatAgentLikelyActive,
-              repairOnly,
-              transactionId: transaction?.id || existingTransaction?.id || null,
-              batch: commitBatch,
-            });
-          }
-        } catch (err) {
-          if (transaction) {
-            rollbackManualApplyTransaction({
-              cwd: process.cwd(),
-              pageUrl,
-              reason: 'manual_edit_commit_exception',
-            });
-          }
-          const message = err.stderr?.toString?.() || err.message;
-          recordManualEditActivity('manual_edit_commit_failed', {
-            pageUrl,
-            provider: routedProvider,
-            error: 'manual_edit_commit_failed',
-            message,
-            transactionId: transaction?.id || null,
-          });
-          if (!asyncMode) {
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({
-              error: 'manual_edit_commit_failed',
-              message,
-            }));
-          }
-          return;
-        } finally {
-          if (transaction) {
-            const shouldKeepTransaction = result?.needsManualDecision === true;
-            if (!shouldKeepTransaction) clearManualApplyTransaction(process.cwd(), transaction.id);
-          }
-        }
-        const { totalCount, perPage } = countPendingByPage(process.cwd());
-        if (result?.needsManualDecision) {
-          recordManualEditActivity('manual_edit_repair_needs_decision', {
-            pageUrl,
-            provider: routedProvider,
-            transactionId: transaction?.id || existingTransaction?.id || null,
-            repair: result.repair || null,
-            failed: summarizeManualApplyFailures(result.failed),
-            files: Array.isArray(result.files) ? result.files.slice(0, 20).map(summarizeManualLogFile).filter(Boolean) : [],
-            remainingCount: pageUrl ? (perPage[pageUrl] || 0) : totalCount,
-            totalCount,
-          });
-        } else {
-          recordManualEditActivity('manual_edit_commit_done', {
-            pageUrl,
-            provider: routedProvider,
-            reason: result.reason || null,
-            repair: result.repair || null,
-            appliedCount: Array.isArray(result.applied) ? result.applied.length : 0,
-            failedCount: Array.isArray(result.failed) ? result.failed.length : 0,
-            failed: summarizeManualApplyFailures(result.failed),
-            files: Array.isArray(result.files) ? result.files.slice(0, 20).map(summarizeManualLogFile).filter(Boolean) : [],
-            warnings: summarizeManualDiagnostics(result.warnings),
-            rolledBackFiles: Array.isArray(result.rolledBackFiles) ? result.rolledBackFiles.slice(0, 20).map(summarizeManualLogFile).filter(Boolean) : [],
-            rollbackFailures: summarizeManualDiagnostics(result.rollbackFailures),
-            unreportedFiles: Array.isArray(result.unreportedFiles) ? result.unreportedFiles.slice(0, 20).map(summarizeManualLogFile).filter(Boolean) : undefined,
-            noteCount: Array.isArray(result.notes) ? result.notes.length : 0,
-            cleared: result.cleared || 0,
-            remainingCount: pageUrl ? (perPage[pageUrl] || 0) : totalCount,
-            totalCount,
-          });
-        }
-        if (!asyncMode) {
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ ...result, totalCount, perPage }));
-        }
-      })();
-      return;
-    }
-
-    // POST /manual-edit-repair-decision  →  user resolves an exhausted repair loop.
-    if (p === '/manual-edit-repair-decision' && req.method === 'POST') {
-      let body = '';
-      req.on('data', (chunk) => { body += chunk; });
-      req.on('end', () => {
-        let payload = {};
-        try { payload = body ? JSON.parse(body) : {}; } catch {
-          res.writeHead(400, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'Invalid JSON' }));
-          return;
-        }
-        const token = payload.token || url.searchParams.get('token');
-        if (token !== state.token) { res.writeHead(401); res.end('Unauthorized'); return; }
-        const pageUrl = payload.pageUrl || url.searchParams.get('pageUrl') || null;
-        const action = String(payload.action || url.searchParams.get('action') || '').trim().toLowerCase();
-        if (action !== 'rollback') {
-          res.writeHead(400, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'unsupported_manual_edit_repair_decision', action }));
-          return;
-        }
-        const rollback = rollbackManualApplyTransaction({
-          cwd: process.cwd(),
-          pageUrl,
-          reason: 'manual_edit_user_requested_rollback',
-        });
-        const { totalCount, perPage } = countPendingByPage(process.cwd());
-        const response = {
-          action,
-          pageUrl,
-          rollback,
-          remainingCount: pageUrl ? (perPage[pageUrl] || 0) : totalCount,
-          totalCount,
-          perPage,
-        };
-        recordManualEditActivity('manual_edit_repair_rollback_done', response);
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(response));
-      });
-      return;
-    }
-
-    // POST /manual-edit-discard?pageUrl=<url>  →  drops entries (all if no pageUrl)
-    if (p === '/manual-edit-discard' && req.method === 'POST') {
-      const token = url.searchParams.get('token');
-      if (token !== state.token) { res.writeHead(401); res.end('Unauthorized'); return; }
-      const pageUrl = url.searchParams.get('pageUrl');
-      let discarded;
-      let discardedEntries = [];
-      let canceledApplyEvents = [];
-      let transactionRollback = null;
-      try {
-        const buffer = readManualEditsBuffer(process.cwd());
-        transactionRollback = rollbackManualApplyTransaction({
-          cwd: process.cwd(),
-          pageUrl,
-          reason: 'manual_edit_discarded',
-        });
-        if (pageUrl) {
-          discardedEntries = buffer.entries.filter((entry) => entry.pageUrl === pageUrl);
-          discarded = removeManualEditEntries(process.cwd(), (entry) => entry.pageUrl === pageUrl);
-        } else {
-          discardedEntries = buffer.entries;
-          discarded = truncateManualEditsBuffer(process.cwd());
-        }
-        canceledApplyEvents = cancelPendingManualApplyEvents(pageUrl);
-      } catch (err) {
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'discard_failed', message: err.message }));
-        return;
-      }
-      const { totalCount, perPage } = countPendingByPage(process.cwd());
-      recordManualEditActivity('manual_edit_discarded', {
-        pageUrl,
-        discarded,
-        canceledApplyIds: canceledApplyEvents.map((event) => event.id),
-        transactionRollback: transactionRollback ? {
-          id: transactionRollback.id,
-          rolledBackFiles: transactionRollback.rolledBackFiles?.map(summarizeManualLogFile).filter(Boolean) || [],
-          rollbackFailures: summarizeManualDiagnostics(transactionRollback.rollbackFailures),
-          skipped: transactionRollback.skipped,
-        } : undefined,
-        totalCount,
-      });
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ discarded, entries: discardedEntries, canceledApplyEvents, totalCount, perPage }));
-      return;
-    }
-
-    // Defense in depth: redirect any stragglers from the old /manual-edit endpoint.
-    if (p === '/manual-edit' && req.method === 'POST') {
-      res.writeHead(410, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: '/manual-edit is removed; use /manual-edit-stash and /manual-edit-commit for staged copy edits.' }));
-      return;
-    }
+    if (manualEditRoutes(req, res, url)) return;
 
     // --- Browser→server events (replaces WebSocket messages) ---
     if (p === '/events' && req.method === 'POST') {
@@ -1873,6 +1026,30 @@ function createRequestHandler({ detectScript, sessionPath, livePath }) {
           res.end(JSON.stringify({ error }));
           return;
         }
+        if (msg.type === 'agent_phase') {
+          recordAgentPhase(msg.id, msg.phase, {
+            ...(Number.isFinite(msg.durationMs) ? { durationMs: msg.durationMs } : {}),
+            owner: typeof msg.owner === 'string' ? msg.owner : undefined,
+          });
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ ok: true }));
+          return;
+        }
+        // Only the events that START a session may create its journal.
+        // Everything else (checkpoints, mount acks, accept/discard) must
+        // reference a session THIS store already knows: appendEvent creates a
+        // journal for any id it is handed, so without this gate a browser
+        // resuming another project's session from per-origin storage (two
+        // apps sharing a localhost port) materializes a ghost session here
+        // that keeps reattaching after every discard.
+        if (msg.id && state.sessionStore
+            && !SESSION_CREATING_EVENT_TYPES.has(msg.type)
+            && !state.sessionStore.has(msg.id)) {
+          res.writeHead(404, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'unknown_session', id: msg.id }));
+          return;
+        }
+        const missedCompletion = detectMissedGenerationCompletion(msg);
         if (state.sessionStore && msg.id) {
           try {
             state.sessionStore.appendEvent(msg);
@@ -1882,10 +1059,33 @@ function createRequestHandler({ detectScript, sessionPath, livePath }) {
             return;
           }
         }
+        if (msg.type === 'accept' || msg.type === 'discard') {
+          retirePendingGeneration(msg.id);
+        }
+        recordGenerationCheckpoint(msg);
+        if (missedCompletion) broadcast(missedCompletion);
         if (msg.type === 'exit') {
           cleanupSvelteComponentSessionsBeforeExit();
         }
-        if (msg.type !== 'checkpoint') {
+        // An ORPHANED discard is the browser reporting that the session's
+        // wrapper no longer exists in source (edited or regenerated away).
+        // There is no cleanup for an agent to perform, and asking one to run
+        // the normal discard flow would just fail against the missing
+        // scaffolding, so the server terminalizes the session itself and the
+        // event stays out of the poll queue.
+        const orphanedDiscard = msg.type === 'discard' && msg.orphaned === true;
+        if (orphanedDiscard && state.sessionStore && msg.id) {
+          try {
+            state.sessionStore.appendEvent({ type: 'discarded', id: msg.id, orphaned: true });
+          } catch { /* the discard_requested phase already left the resumable set */ }
+        }
+        // `variant_mounted` is the happy path: it is journaled above so the
+        // snapshot carries render truth, but there is nothing for the agent to
+        // do about it, so it stays out of the poll queue and off the SSE bus.
+        // `variant_mount_failed` is the opposite: the agent published something
+        // the browser could not render, and only the agent can fix it, so it
+        // goes to the queue as a first-class event.
+        if (msg.type !== 'checkpoint' && msg.type !== 'variant_mounted' && !orphanedDiscard) {
           enqueueEvent(msg);
         }
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -1922,6 +1122,12 @@ function createRequestHandler({ detectScript, sessionPath, livePath }) {
 // Agent poll endpoints (unchanged from WS version)
 // ---------------------------------------------------------------------------
 
+function parsePollTypes(value) {
+  if (!value) return null;
+  const types = String(value).split(',').map((type) => type.trim()).filter(Boolean);
+  return types.length > 0 ? new Set(types) : null;
+}
+
 function handlePollGet(req, res, url) {
   const token = url.searchParams.get('token');
   if (token !== state.token) {
@@ -1932,13 +1138,25 @@ function handlePollGet(req, res, url) {
   state.lastPollAt = Date.now();
   const timeout = parseInt(url.searchParams.get('timeout') || DEFAULT_POLL_TIMEOUT, 10);
   const leaseMs = parseInt(url.searchParams.get('leaseMs') || '30000', 10);
-  const available = findAvailablePendingEvent();
+  const types = parsePollTypes(url.searchParams.get('types'));
+  const available = findAvailablePendingEvent(Date.now(), types);
   if (available) {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(leaseEvent(available, leaseMs)));
+    // Do not await inline: leaseEvent may scaffold source, and this handler runs
+    // on the server's only thread. The client can disconnect during that window,
+    // so check the socket before replying.
+    leaseEvent(available, leaseMs).then((event) => {
+      if (res.writableEnded || res.destroyed) return;
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(event));
+    }, (error) => {
+      console.error('[live] lease failed for ' + (available.event?.id || 'unknown') + ': ' + (error?.message || error));
+      if (res.writableEnded || res.destroyed) return;
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ type: 'timeout' }));
+    });
     return;
   }
-  const poll = { resolve, leaseMs };
+  const poll = { resolve, leaseMs, types };
   const timer = setTimeout(() => {
     const idx = state.pendingPolls.indexOf(poll);
     if (idx !== -1) state.pendingPolls.splice(idx, 1);
@@ -1967,12 +1185,16 @@ function sessionFileMetadataFromPollReply(file) {
   if (!file || typeof file !== 'string') return { file };
   const normalized = file.split(path.sep).join('/');
   const base = { file: normalized };
-  if (!normalized.endsWith('/manifest.json') && normalized !== 'manifest.json') return base;
-  if (!normalized.includes('node_modules/.impeccable-live/') && !normalized.includes('src/lib/impeccable/')) return base;
+  const metadataFile = normalized;
+  if (!metadataFile.endsWith('/manifest.json') && metadataFile !== 'manifest.json') return base;
+  if (!metadataFile.includes('.impeccable/live/previews/')
+      && !metadataFile.includes('node_modules/.impeccable-live/')
+      && !metadataFile.includes('src/lib/impeccable/')
+      && !metadataFile.includes('/.impeccable-live/')) return base;
 
   let full;
   try {
-    full = path.resolve(process.cwd(), normalized);
+    full = path.resolve(process.cwd(), metadataFile);
     const rel = path.relative(process.cwd(), full);
     if (!rel || rel.startsWith('..') || path.isAbsolute(rel)) return base;
   } catch {
@@ -1981,16 +1203,52 @@ function sessionFileMetadataFromPollReply(file) {
 
   try {
     const manifest = JSON.parse(fs.readFileSync(full, 'utf-8'));
-    if (manifest?.previewMode !== 'svelte-component' || !manifest.sourceFile) return base;
+    if (manifest?.previewMode !== 'svelte-component'
+        || !manifest.sourceFile) return base;
     return {
       file: String(manifest.sourceFile).split(path.sep).join('/'),
       sourceFile: String(manifest.sourceFile).split(path.sep).join('/'),
       previewFile: normalized,
-      previewMode: 'svelte-component',
+      previewMode: manifest.previewMode,
     };
   } catch {
     return base;
   }
+}
+
+function inferSourceEventType(msg = {}, pendingEvents = state.pendingEvents) {
+  const entriesForId = pendingEvents.filter((entry) => entry.event?.id === msg.id);
+  const pendingTypes = new Set(entriesForId.map((entry) => entry.event?.type));
+  if (msg.type === 'discarded' || msg.type === 'discard') return 'discard';
+  if (msg.type === 'complete') {
+    if (pendingTypes.has('carbonize_cleanup')) return 'carbonize_cleanup';
+    return pendingTypes.has('accept') ? 'accept' : (pendingTypes.has('generate') ? 'generate' : undefined);
+  }
+  if (msg.type === 'steer_done') return 'steer';
+  // `agent_done` can be the automatic acknowledgement for a carbonize Accept.
+  // New pollers send sourceEventType explicitly; default to generate only for
+  // older callers so a late worker cannot acknowledge a queued Accept.
+  if (msg.type === 'agent_done' || msg.type === 'done') {
+    // A `done` reply to a mount failure is the republish that unblocks the
+    // browser. Without this the ack would look for a `generate` that was
+    // already retired, the mount-failure event would stay queued, and the next
+    // poll would hand the same failure back to the agent forever.
+    if (!pendingTypes.has('generate') && pendingTypes.has('variant_mount_failed')) return 'variant_mount_failed';
+    return 'generate';
+  }
+  // `error` is reference/live.md's documented failure reply, and parseReplyArgs
+  // never sets sourceEventType on it (the poller is a fresh process that cannot
+  // know what it leased). Returning undefined here makes acknowledgePendingEvent
+  // match *any* event for this id: a stale generate worker's failure silently
+  // consumed the user's queued Accept, which was then never delivered to any
+  // agent and left the browser in SAVING forever. Attribute the failure to the
+  // event this agent actually holds a lease on, and otherwise to `generate` —
+  // never to a wildcard. If that generate was already retired by an Accept, the
+  // ack simply finds no match, which is the correct outcome for a stale reply.
+  if (msg.type === 'error') {
+    return entriesForId.find(isLeased)?.event?.type || 'generate';
+  }
+  return undefined;
 }
 
 function handlePollPost(req, res) {
@@ -2008,9 +1266,9 @@ function handlePollPost(req, res) {
       res.end(JSON.stringify({ error: 'Unauthorized' }));
       return;
     }
-    const pendingApplyDeferred = state.pendingApplyDeferreds.get(msg.id);
+    const pendingApplyDeferred = manualApply.getDeferred(msg.id);
     if (pendingApplyDeferred) {
-      const validation = validateManualApplyResultMessage(msg, pendingApplyDeferred);
+      const validation = manualApply.validateResultMessage(msg, pendingApplyDeferred);
       if (!validation.ok) {
         recordManualEditActivity('manual_edit_apply_reply_invalid', {
           id: msg.id,
@@ -2035,15 +1293,15 @@ function handlePollPost(req, res) {
         fileCount: validation.result.files.length,
         noteCount: validation.result.notes.length,
       });
-      resolveApplyDeferred(msg.id, validation.result);
+      manualApply.resolveDeferred(msg.id, validation.result);
       acknowledgePendingEvent(msg.id);
       flushPendingPolls();
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ ok: true }));
       return;
     }
-    if (state.timedOutApplyIds.has(msg.id)) {
-      const rollback = rollbackTimedOutApplyReply(msg);
+    if (manualApply.hasTimedOutId(msg.id)) {
+      const rollback = manualApply.rollbackTimedOutReply(msg);
       recordManualEditActivity('manual_edit_apply_stale_reply_rejected', {
         id: msg.id,
         rolledBackFileCount: rollback.rolledBackFiles?.length || 0,
@@ -2053,7 +1311,23 @@ function handlePollPost(req, res) {
       res.end(JSON.stringify({ error: 'stale_manual_edit_apply_reply', ...rollback }));
       return;
     }
-    const pendingEventBeforeAck = findPendingEventById(msg.id);
+    const sourceEventType = msg.sourceEventType || inferSourceEventType(msg);
+    if (msg.type === 'retry') {
+      const releasedEvent = releasePendingEvent(msg.id, sourceEventType);
+      if (!releasedEvent) {
+        res.writeHead(msg.id ? 404 : 400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          error: msg.id ? 'unknown_poll_retry_id' : 'missing_poll_retry_id',
+          id: msg.id,
+        }));
+        return;
+      }
+      flushPendingPolls();
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ ok: true, released: true }));
+      return;
+    }
+    const pendingEventBeforeAck = findPendingEventById(msg.id, sourceEventType);
     if (pendingEventBeforeAck?.type === 'steer' && msg.type === 'steer_done'
         && !msg.file && !(typeof msg.message === 'string' && msg.message.trim())) {
       res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -2063,7 +1337,7 @@ function handlePollPost(req, res) {
       }));
       return;
     }
-    const acknowledgedEvent = acknowledgePendingEvent(msg.id);
+    const acknowledgedEvent = acknowledgePendingEvent(msg.id, sourceEventType);
     let skipJournalReply = false;
     let existingSession = null;
     if (!acknowledgedEvent && state.sessionStore && msg.id) {
@@ -2086,6 +1360,30 @@ function handlePollPost(req, res) {
       return;
     }
     const replyFileMeta = sessionFileMetadataFromPollReply(msg.file);
+    // A publish (done reply carrying a component manifest) snapshots the
+    // variant files into a fresh revision dir before the browser is told:
+    // the import path changes every publish, so no transform cache can pin a
+    // stale compile of a republished module (node_modules is unwatched).
+    // Broken variants are bounced HERE, before the browser imports anything:
+    // a compile error that reaches the page is a red overlay in the user's
+    // face; bounced at publish it is a private fix with file and line.
+    if (replyFileMeta.previewMode === 'svelte-component'
+        && msg.id
+        && (msg.type === 'done' || !msg.type)) {
+      let compileCheck = { ok: true, failures: [] };
+      try { compileCheck = compileCheckVariants(msg.id, process.cwd()); } catch { /* best-effort */ }
+      if (!compileCheck.ok) {
+        res.writeHead(422, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          error: 'variant_compile_failed',
+          id: msg.id,
+          failures: compileCheck.failures,
+          _instructions: 'The publish was NOT delivered: the listed variant file(s) do not compile, so the browser never saw them. Fix each failure at the given file and line (the most common cause is a second top-level <style> element; Svelte allows exactly one, so merge all rules into the existing block), then send the same --reply done again.',
+        }));
+        return;
+      }
+      try { bumpSvelteComponentPreviewRevision(msg.id, process.cwd()); } catch { /* best-effort */ }
+    }
     if (state.sessionStore && msg.id && !skipJournalReply) {
       try {
         const eventType = msg.type === 'steer_done'
@@ -2154,6 +1452,51 @@ function cleanupSvelteComponentSessionsBeforeExit() {
     removeAllSvelteComponentSessions(process.cwd());
   } catch (err) {
     console.warn('[impeccable] Svelte component session cleanup failed:', err.message);
+  }
+}
+
+/**
+ * A previous run that died without its shutdown hook leaves preview component
+ * dirs behind. Drop the ones whose session the store no longer considers
+ * active; anything still active is mid-generation and must survive a restart.
+ */
+function sweepOrphanSvelteComponentSessionsOnStartup() {
+  try {
+    const activeIds = (state.sessionStore?.listActiveSessions() || [])
+      .map((snapshot) => snapshot?.id)
+      .filter(Boolean);
+    const result = sweepInactiveSvelteComponentSessions(activeIds, process.cwd());
+    if (result.removed.length > 0 || result.removedRoot) {
+      console.log('[impeccable] swept orphaned Svelte component sessions:', JSON.stringify(result));
+    }
+  } catch (err) {
+    console.warn('[impeccable] Svelte component session sweep failed:', err.message);
+  }
+}
+
+// Accept receipts are a short-lived idempotency record for a single accept.
+// Nothing reads one after the session that wrote it is gone, so they only need
+// to outlive a crash-and-retry window.
+const ACCEPT_RECEIPT_MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000;
+
+function sweepStaleAcceptReceiptsOnStartup() {
+  try {
+    const dir = path.join(getLiveDir(process.cwd()), 'accept-receipts');
+    if (!fs.existsSync(dir)) return;
+    const cutoff = Date.now() - ACCEPT_RECEIPT_MAX_AGE_MS;
+    let removed = 0;
+    for (const name of fs.readdirSync(dir)) {
+      if (!name.endsWith('.json') && !name.endsWith('.tmp')) continue;
+      const file = path.join(dir, name);
+      try {
+        if (fs.statSync(file).mtimeMs >= cutoff) continue;
+        fs.rmSync(file, { force: true });
+        removed++;
+      } catch { /* non-fatal */ }
+    }
+    if (removed > 0) console.log(`[impeccable] removed ${removed} accept receipt(s) older than 14 days`);
+  } catch (err) {
+    console.warn('[impeccable] accept receipt retention sweep failed:', err.message);
   }
 }
 
@@ -2267,7 +1610,10 @@ if (args.includes('--background')) {
         process.exit(0);
       }
     } catch { /* not ready yet */ }
-    await new Promise(r => setTimeout(r, 200));
+    // The detached child is typically listening in 35-45ms. A 200ms polling
+    // floor dominated configured cold Live startup; poll cheaply and return
+    // as soon as the child has written its ready record.
+    await new Promise(r => setTimeout(r, 5));
   }
   console.error('Timed out waiting for live server to start.');
   process.exit(1);
@@ -2289,13 +1635,14 @@ if (existingRecord?.info) {
 
 state.token = randomUUID();
 state.sessionStore = createLiveSessionStore({ cwd: process.cwd() });
-rollbackManualApplyTransaction({
-  cwd: process.cwd(),
+manualApply.rollbackTransaction({
   reason: 'manual_edit_server_start_recovered_abandoned_transaction',
 });
 applyLegacyDeferredAcceptsOnStartup();
+sweepOrphanSvelteComponentSessionsOnStartup();
+sweepStaleAcceptReceiptsOnStartup();
 restorePendingEventsFromStore();
-pruneStaleManualApplyEvidence(process.cwd());
+manualApply.pruneStaleEvidence();
 const portArg = args.find(a => a.startsWith('--port='));
 state.port = portArg ? parseInt(portArg.split('=')[1], 10) : await findOpenPort();
 // Annotation screenshots live in the project root so the agent's Read tool
@@ -2305,8 +1652,8 @@ const annotRoot = getLiveAnnotationsDir(process.cwd());
 fs.mkdirSync(annotRoot, { recursive: true });
 state.sessionDir = fs.mkdtempSync(path.join(annotRoot, 'session-'));
 
-const { detectScript, sessionPath, livePath } = loadBrowserScripts();
-httpServer = http.createServer(createRequestHandler({ detectScript, sessionPath, livePath }));
+const { detectScript, liveScriptParts } = loadBrowserScripts();
+httpServer = http.createServer(createRequestHandler({ detectScript, liveScriptParts }));
 
 httpServer.listen(state.port, '127.0.0.1', () => {
   writeLiveServerInfo(process.cwd(), { pid: process.pid, port: state.port, token: state.token });

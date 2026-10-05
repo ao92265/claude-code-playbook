@@ -9,9 +9,11 @@ STRICT ALLOWLIST — the payload contains exactly:
 Nothing else. No evidence strings, no levers, no project areas, no by-hour/by-day data,
 no tokens, no paths. Uses the clamped "export" formula variant (all scores in [0,100]).
 
-Also maintains local snapshots under <skill>/data/snapshots/ so personal-best deltas
-are computable offline: first run writes a baseline; later runs print the delta vs the
-previous snapshot, then append a new one (one per day, same-day overwrites).
+Also maintains local snapshots under ~/.claude/myinsights-data/snapshots/ (override via
+MYINSIGHTS_DATA_DIR) so personal-best deltas are computable offline: first run writes a
+baseline; later runs print the delta vs the previous snapshot, then append a new one
+(one per day, same-day overwrites). Kept outside the skill's own repo-tracked directory
+so user data never leaks into a git-tracked install.
 
 No network. Read-only over quant.json; writes only out.json + the snapshot dir.
 """
@@ -22,7 +24,9 @@ sys.path.insert(0, HERE)
 from scorecard import compute_scores, grade_of, SCHEMA_VERSION, FORMULA_VERSION_EXPORT
 
 SKILL_VERSION = "2026.07.02"
-SNAP_DIR = os.path.join(HERE, "data", "snapshots")
+DATA_HOME = os.environ.get("MYINSIGHTS_DATA_DIR", os.path.expanduser("~/.claude/myinsights-data"))
+SNAP_DIR = os.path.join(DATA_HOME, "snapshots")
+os.makedirs(SNAP_DIR, exist_ok=True)
 
 def load_quant(path):
     if path and os.path.exists(path):

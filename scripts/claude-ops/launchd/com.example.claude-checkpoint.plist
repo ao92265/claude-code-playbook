@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.example.claude-checkpoint</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/bash</string>
+		<string>~/.claude/scripts/checkpoint-sessions.sh</string>
+	</array>
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>PATH</key>
+		<string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+		<key>HOME</key>
+		<string>~</string>
+	</dict>
+	<!-- Every 15 min: keep every live session's handoff fresh so a reboot/crash/
+	     battery-death loses at most ~15 min. More robust than a shutdown hook
+	     (macOS no longer runs those reliably for user agents). -->
+	<key>StartInterval</key>
+	<integer>900</integer>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>StandardOutPath</key>
+	<string>~/Library/Logs/claude-checkpoint.log</string>
+	<key>StandardErrorPath</key>
+	<string>~/Library/Logs/claude-checkpoint.log</string>
+</dict>
+</plist>

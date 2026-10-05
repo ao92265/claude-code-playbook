@@ -4,8 +4,8 @@ Detail split out of SKILL.md per progressive disclosure. Read this only when set
 
 ## Install (per-machine, one-time)
 
-1. Copy this entire folder to `${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/loom-analyze/` on the target machine.
-2. Run setup: `bash ${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/loom-analyze/setup.sh` — installs Homebrew packages `yt-dlp` + `ffmpeg` and pip package `openai-whisper`. Idempotent.
+1. Copy this entire folder to `~/.claude/skills/loom-analyze/` on the target machine.
+2. Run setup: `bash ~/.claude/skills/loom-analyze/setup.sh` — installs Homebrew packages `yt-dlp` + `ffmpeg` and pip package `openai-whisper`. Idempotent.
 3. Restart Claude Code. The skill is auto-discovered from the `SKILL.md` frontmatter.
 
 ## Requirements

@@ -70,6 +70,8 @@ Good vs bad:
 2. **Functional** — produces correct outputs; scripts succeed; edge cases covered.
 3. **Performance** — compare with vs without the skill (tokens consumed, tool/API calls, back-and-forth turns).
 
+**Controlled comparison (the terum-skills method).** When a new skill replaces an old one, or you want to know if a skill earns its place: run the same task three ways (no skill, old skill, new skill), at least 3 fresh `claude -p` runs each, because one run is noise. Let deterministic checks decide first (tests pass, file exists, output matches). Use an LLM judge only to break a tie, comparing outputs in pairs with the labels hidden. Verdict: PASS if the new skill beats the old one on the checks, NEUTRAL if it ties, FAIL if it loses. Record the cost and time next to the verdict.
+
 Pro tip: iterate on one hard task until it works, *then* extract the skill. Faster signal than broad testing.
 
 ## Trigger tuning

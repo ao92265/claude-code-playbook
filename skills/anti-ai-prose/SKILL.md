@@ -13,6 +13,15 @@ A clean, balanced, well-structured paragraph is itself a tell. Real people write
 
 Rules to delete AI tells aren't enough. You also have to write like a person who's tired and slightly pissed off.
 
+## Belt, then braces (two layers)
+
+This skill is two layers, not one:
+
+- **Belt — before writing.** When the task is to DRAFT new content (not fix an existing draft), load the banned patterns + register-neutral tells below as constraints BEFORE the first sentence. Draft directly in the target voice; never write a "normal" draft first and de-slop it after. Applies automatically whenever this skill fires on a drafting request.
+- **Braces — after writing.** The detection + rewrite pass over an existing draft (the rest of this file). On belt-drafted text, run it as a verification sweep — it should come back nearly clean.
+
+One layer catches what the other misses. Belt-only drafts still leak tells under momentum; braces-only rewrites fight the draft's structure. Both is cheap.
+
 ## Banned patterns (AI fingerprints)
 
 ### Structural
@@ -21,6 +30,7 @@ Rules to delete AI tells aren't enough. You also have to write like a person who
 - **Numbered/comma-separated lists inside a sentence** when prose would do.
 - **Signposting.** "First...", "Second...", "Finally...", "In summary..." Humans don't number paragraphs.
 - **"It's not just X, it's Y"** / **"Whether you're A or B, this is C"** constructions.
+- **The empty negation.** "Not a tool, a teammate." "This isn't a feature, it's a philosophy." Test it: if Y is the same idea as X in warmer words, the sentence says nothing and both halves go. Only keep it when X and Y are genuinely different things and the reader would have guessed X.
 - **Bold every 3rd noun.**
 - **Section headers for a single paragraph.**
 
@@ -30,7 +40,9 @@ Rules to delete AI tells aren't enough. You also have to write like a person who
 ### Vocabulary
 - **Hype:** amazing, powerful, transformative, game-changing, revolutionize, unlock, supercharge, seamless, robust, leverage, utilize, dive deep, comprehensive, holistic, paradigm, journey.
 - **Hedge:** you should, try to, generally, usually, typically, where appropriate, if possible, it's worth noting.
+- **Adverb hedge that means nothing:** quietly ("quietly shipped", "quietly became the standard"), subtly, effectively, arguably. "Quietly" is the loudest one. Either the thing was announced or it wasn't. Cut the adverb and the sentence loses nothing, which is the test.
 - **Filler:** at the end of the day, in today's fast-paced world, in the rapidly evolving landscape.
+- **Fake reveal:** "here's the kicker", "here's the thing", "and that's when it clicked", "plot twist". A human who has a good bit just tells you the bit.
 - **OSS-template:** "Issues and PRs welcome", "Contributions appreciated", "Star if you find it useful", "Star history".
 
 ### Closers
@@ -130,6 +142,7 @@ Verify with the user. Mis-stating any of this destroys credibility.
 
 ## Rewrite workflow
 
+0. **Known recipient?** If the draft targets a named person with a mindmirror persona card (`/persona` skill), the card's tone/framing guidance wins over the per-channel defaults below on any conflict. No card → skip, don't look one up.
 1. **Read the draft aloud.** If you wouldn't say a line to a colleague over coffee, rewrite it.
 2. **Cut 30%.** First-pass AI prose is bloated. Lose connective tissue.
 3. **Find the parallel structures.** Kill all but one element.
@@ -167,14 +180,14 @@ Verify with the user. Mis-stating any of this destroys credibility.
 >
 > On my own 30 days: $443/mo of opus-on-trivial work I'd missed.
 >
-> https://github.com/ao92265/claude-observatory
+> https://github.com/<your-gh-user>/claude-observatory
 
 **Viva/internal version:**
 > Looked at the Claude bill last week and couldn't tell which sessions cost what. Wrote a small Python tool to find out. Surfaces things like Opus runs that should have been Sonnet, MCP servers nobody uses, CLAUDE.md rules the model ignores.
 >
 > Tried it on my own usage: $443/month I didn't realise I was burning. Posting in case it's useful to anyone here.
 >
-> Apache 2.0. Demo on Teams whenever. — Alex
+> Apache 2.0. Demo on Teams whenever. — the user
 
 ## When NOT to use
 

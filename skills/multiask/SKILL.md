@@ -1,6 +1,6 @@
 ---
 name: multiask
-description: "Cross-check answer across 5 AI CLIs (claude/codex/gemini/copilot/kiro) in parallel + adversarial review. Auto-trigger only for high-stakes: security-critical code, prod incidents, scale architecture (over 1k RPS), irreversible decisions (DB migrations, breaking API changes). Or explicit /multiask. Cost ~1M tokens + 30-65s per call. Skip for normal coding, bug fixes, lookups, refactors."
+description: Cross-check an answer across 4 AI CLIs in parallel with an adversarial review pass. Expensive (about 1M tokens, 30 to 65s per call). Explicit invoke only: /multiask.
 ---
 
 # /multiask — Parallel multi-CLI fan-out with adversarial review
@@ -8,15 +8,15 @@ description: "Cross-check answer across 5 AI CLIs (claude/codex/gemini/copilot/k
 Runs `act fanout` to dispatch the user's prompt across every installed AI coding CLI
 in parallel, then runs a Claude-driven review gate on the outputs.
 
-Backend: `agent-control-tower` at `/path/to/agent-control-tower/`.
+Backend: `agent-control-tower` at `~/Repos/agent-control-tower/`.
 CLI entrypoint: `act fanout <prompt> [flags]`.
-Playbook: `/path/to/your-project/docs/guides/MULTIASK_PLAYBOOK.md`.
+Playbook: `~/Repos/project-a/docs/guides/MULTIASK_PLAYBOOK.md`.
 
 ## When you fire this skill
 
 1. First, decide whether auto-triggering is actually warranted using the strict rules
    in the description. If the question is not clearly in categories (a)-(d), DO NOT
-   fire — just answer directly or invoke `/ask` for a single provider.
+   fire. Answer directly, or run `act fanout` against a single runtime.
 
 2. If firing, announce it briefly BEFORE running so the user can interrupt:
    > "This looks security-critical — firing /multiask --adversarial to cross-check.
@@ -31,16 +31,35 @@ Playbook: `/path/to/your-project/docs/guides/MULTIASK_PLAYBOOK.md`.
 Use the Bash tool to run:
 
 ```
-act fanout "<user's prompt>" --review adversarial
+act fanout "<user's prompt>" --review adversarial --runtimes claude,codex,gemini,copilot
 ```
 
+`kiro-cli` is intentionally excluded from the default set — it is not installed
+(`which kiro-cli` fails), so including it burns one guaranteed-REJECT slot.
+
 Optional flags:
-- `--runtimes claude,codex,gemini,copilot,kiro-cli` — explicit subset
+- `--runtimes codex,gemini` — explicit subset (omit any runtime you don't want)
 - `--timeout 5` — per-runtime timeout (default 10m)
 - `-C <path>` — working directory (default cwd)
 
 The command prints the verdict.md path on exit. Read it with the Read tool and
 present it inline to the user. If the command exits non-zero, show stderr and stop.
+
+## Reading the verdicts: the minority is the point
+
+Anthropic's multiagent work (Frontier Red Team, 13 Aug 2026) found two failures that this
+skill exists to avoid, and one it can still fall into.
+
+- **Clones agree with each other, not with reality.** Agents given the same context make
+  the same wrong call at the same moment. Four genuinely different models is the defence,
+  which is why this skill exists at all. If you ever fan out to several lanes of the SAME
+  model, give each lane a different job (find the flaw, find the missed requirement, find
+  the cheaper option, check it actually reproduces). Never send one prompt N times.
+- **Consensus swallows the decisive fact.** In their hidden-profile test, groups voted for
+  the wrong answer while one member held the fact that settled it. So when one engine
+  dissents, report the dissent and what it saw. Do not average it away, do not describe
+  the outcome as "three of four agreed" and leave it there. Say what the fourth saw and
+  whether it is checkable.
 
 ## Known limitations
 
@@ -53,7 +72,9 @@ present it inline to the user. If the command exits non-zero, show stderr and st
 ## When NOT to fire
 
 If you are at all unsure, do one of:
-- Invoke `/ask <provider>` for a single-provider answer (one-tenth the cost)
+- Run `act fanout "<prompt>" --runtimes codex` (or one other runtime) for a single-provider
+  answer at roughly one-tenth the cost. The old `/ask` skill was removed with OMC on
+  17 Aug 2026; this is its replacement.
 - Answer directly from your own reasoning
 - Ask the user "do you want me to cross-check with /multiask?"
 

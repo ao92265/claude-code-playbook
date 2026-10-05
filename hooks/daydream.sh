@@ -18,15 +18,15 @@
 #     when it fires on the child's own Stop. No fork-bomb.
 #   - NOT --bare: --bare skips auth resolution, so the headless token is ignored
 #     and the run dies "Not logged in" (verified). We load full settings — needed
-#     so the /prdforge skill and its OMC plugin agents resolve — and tame the
-#     child's hooks via env instead: DISABLE_OMC=1 quiets OMC hooks;
+#     so the /prdforge skill and its plugin agents resolve — and tame the
+#     child's hooks via env instead: CLAUDE_DISABLE_HOOKS=1 quiets them;
 #     CLAUDE_CODE_SUBAGENT_MODEL=sonnet satisfies require-agent-model.sh AND keeps
 #     prdforge's subagents cheap; daydream-surface.sh self-guards on DAYDREAM_CHILD;
 #     verify-gate no-ops (daydreams dir is not a JS/TS repo).
 #   - Detached (nohup, subshell-backgrounded, stdin redirect) → this hook returns
 #     in <1s and can never block the session. Child writes only under daydreams/.
 #
-# Kill switches:  OMC_SKIP_HOOKS=daydream   (per-hook)   |   DISABLE_OMC (global)
+# Kill switches:  CLAUDE_SKIP_HOOKS=daydream   (per-hook)   |   CLAUDE_DISABLE_HOOKS (global)
 # Disable entirely: remove this hook from ~/.claude/settings.json Stop array.
 set -uo pipefail
 
@@ -34,8 +34,9 @@ set -uo pipefail
 cat >/dev/null 2>&1 || true
 
 # --- kill switches & guards -------------------------------------------------
-case ",${OMC_SKIP_HOOKS:-}," in *,daydream,*) exit 0 ;; esac
-[ -n "${DISABLE_OMC:-}" ] && exit 0
+SKIP_HOOKS="${CLAUDE_SKIP_HOOKS:-}${CLAUDE_SKIP_HOOKS:+,}${OMC_SKIP_HOOKS:-}"
+case ",${SKIP_HOOKS}," in *,daydream,*) exit 0 ;; esac
+[ -n "${CLAUDE_DISABLE_HOOKS:-}${DISABLE_OMC:-}" ] && exit 0
 [ -n "${DAYDREAM_CHILD:-}" ] && exit 0          # never daydream from inside a daydream
 command -v claude >/dev/null 2>&1 || exit 0
 
@@ -43,12 +44,10 @@ CFG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
 DD="$CFG/daydreams"
 STATE="$CFG/state"
 ENGINE="$DD/engine-prompt.md"
-# Auto-memory for the HOME-directory project. Claude derives the project slug
-# from the cwd by stripping the leading "/" and replacing "/" with "-", so the
-# home project lives under projects/-<home-slug>/ (e.g. /Users/jane → -Users-jane).
-HOME_SLUG="-$(printf '%s' "$HOME" | sed 's#^/##; s#/#-#g')"
-MEMDIR="$CFG/projects/$HOME_SLUG/memory"
+MEMDIR="$CFG/projects/-Users-you/memory"
 SENTINEL="$STATE/daydream-last.ts"
+BETS_ENGINE="$DD/engine-bets-prompt.md"
+BETS_SENTINEL="$STATE/daydream-bets-last.ts"   # weekly big-bets lane, own clock
 
 # Nothing to do if the engine prompt or the memory corpus is missing.
 [ -f "$ENGINE" ] || exit 0
@@ -56,13 +55,17 @@ SENTINEL="$STATE/daydream-last.ts"
 
 mkdir -p "$DD/logs" "$DD/prds" "$STATE" 2>/dev/null || true
 
-# --- rate limit: at most one pass / 24h ------------------------------------
+# --- rate limit: daily lane once / 24h, bets lane once / 7 days -------------
 now=$(date +%s)
-if [ -f "$SENTINEL" ]; then
-  last=$(cat "$SENTINEL" 2>/dev/null || echo 0)
+due() {  # due <sentinel> <interval-seconds>
+  local last=0
+  [ -f "$1" ] && last=$(cat "$1" 2>/dev/null || echo 0)
   case "$last" in ''|*[!0-9]*) last=0 ;; esac
-  if [ $((now - last)) -lt 86400 ]; then exit 0; fi
-fi
+  [ $((now - last)) -ge "$2" ]
+}
+DAILY_DUE=0; due "$SENTINEL" 86400 && DAILY_DUE=1
+BETS_DUE=0; [ -f "$BETS_ENGINE" ] && due "$BETS_SENTINEL" 604800 && BETS_DUE=1
+[ "$DAILY_DUE$BETS_DUE" = "00" ] && exit 0
 
 # --- headless auth: long-lived OAuth token from the macOS keychain ----------
 # A fresh `claude` can't reuse the running app's hashed keychain creds, so it
@@ -89,29 +92,37 @@ if [ -z "$tok" ]; then
 fi
 rm -f "$NEEDFLAG" 2>/dev/null || true   # token present → clear any stale hint
 
-# Claim the slot BEFORE spawning so a rapid second Stop (or a spawn failure)
+# Claim each slot BEFORE spawning so a rapid second Stop (or a spawn failure)
 # can't double-fire. Fail-safe biases toward LESS spend.
-printf '%s\n' "$now" > "$SENTINEL" 2>/dev/null || exit 0
-
-# --- spawn the detached daydream -------------------------------------------
 # Full settings load (so /prdforge + its plugin agents resolve), hooks tamed by
-# env: DAYDREAM_CHILD (no recursion), DISABLE_OMC (quiet OMC hooks),
+# env: DAYDREAM_CHILD (no recursion), CLAUDE_DISABLE_HOOKS (quiet the child's hooks),
 # CLAUDE_CODE_SUBAGENT_MODEL=sonnet (passes require-agent-model + cheap agents).
-# Prompt via stdin redirect (NOT -p "$(cat …)") so backticks/quotes in the
+# Prompt via stdin redirect (NOT -p "$(cat ...)") so backticks/quotes in the
 # prompt's code blocks are never shell-evaluated. Token via ENV (never argv).
-log="$DD/logs/run-$(date +%Y%m%d-%H%M%S).log"
-(
-  cd "$DD" 2>/dev/null || exit 0
-  DAYDREAM_CHILD=1 \
-  DISABLE_OMC=1 \
-  CLAUDE_CODE_SUBAGENT_MODEL=sonnet \
-  CLAUDE_CODE_OAUTH_TOKEN="$tok" \
-  nohup claude \
-    --print \
-    --model sonnet \
-    --permission-mode bypassPermissions \
-    --add-dir "$CFG" \
-    < "$ENGINE" >> "$log" 2>&1 &
-) >/dev/null 2>&1
+spawn_lane() {  # spawn_lane <prompt-file> <model> <log-tag>
+  local log="$DD/logs/run-$(date +%Y%m%d-%H%M%S)$3.log"
+  (
+    cd "$DD" 2>/dev/null || exit 0
+    DAYDREAM_CHILD=1 \
+    CLAUDE_DISABLE_HOOKS=1 DISABLE_OMC=1 \
+    CLAUDE_CODE_SUBAGENT_MODEL=sonnet \
+    CLAUDE_CODE_OAUTH_TOKEN="$tok" \
+    nohup claude \
+      --print \
+      --model "$2" \
+      --permission-mode bypassPermissions \
+      --disallowedTools "AskUserQuestion" \
+      --add-dir "$CFG" \
+      < "$1" >> "$log" 2>&1 &
+  ) >/dev/null 2>&1
+}
+
+if [ "$DAILY_DUE" = 1 ]; then
+  printf '%s\n' "$now" > "$SENTINEL" 2>/dev/null && spawn_lane "$ENGINE" sonnet ""
+fi
+# Bets lane: weekly, top-tier model, because judgement is the whole job there.
+if [ "$BETS_DUE" = 1 ]; then
+  printf '%s\n' "$now" > "$BETS_SENTINEL" 2>/dev/null && spawn_lane "$BETS_ENGINE" opus "-bets"
+fi
 
 exit 0

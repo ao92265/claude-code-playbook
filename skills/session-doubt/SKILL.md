@@ -1,13 +1,14 @@
 ---
 name: session-doubt
 description: End-of-session doubt enumeration before claiming substantive work done. Surfaces (1) what the agent is least confident about — then root-causes each item — and (2) the biggest thing the user may not realize about the situation. A two-question reflective close-out, distinct from test-running verification. Triggers "/session-doubt", "doubt check", "what are you least confident about", "what am I missing", "close out the session", "least confident". Do NOT use for trivial edits, single-command tasks, lookups, or conversational turns — only substantive multi-step work where a missed assumption would be costly.
+effort: high
 ---
 
 # session-doubt
 
 Reflective close-out for substantive work. Two questions, asked in order. Source: end-of-session technique (Sam Altman's Q1 + a Claude-suggested Q2) — "1 in 4 times it surfaces a huge deal."
 
-Run AFTER the work is otherwise complete (and ideally after `/done` / verification-before-completion has run). This is reflection, not test execution — the two are complementary, not substitutes.
+Run AFTER the work is otherwise complete (and ideally after `/done` / verifier has run). This is reflection, not test execution — the two are complementary, not substitutes.
 
 ## Q1 — Least confident
 
