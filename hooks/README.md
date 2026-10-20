@@ -103,6 +103,8 @@ Block or warn before something irreversible, leaky or out of scope happens.
 | `research-only-guard.sh` | PreToolUse (Edit|Write|NotebookEdit and Bash) | While a `research-only.flag` sentinel exists, blocks edits and state-mutating shell commands. |
 | `run-referee-guard.sh` | PreToolUse (all tools) | Enforcement half of a run watchdog: blocks tool calls in a session the watchdog has paused or killed. |
 | `branch-guard.sh` | PreToolUse (Edit|Write|MultiEdit|NotebookEdit|Bash) | Prints the live branch, dirty state and any other session in the same checkout before editing. |
+| `worktree-gate.sh` | PreToolUse (Edit\|Write\|MultiEdit\|NotebookEdit) | Allows one tracked file per session to be edited in a repo's main checkout, then blocks a second and tells the session to enter a worktree. Never gates linked worktrees, gitignored files or headless runs. |
+| `explainer-gate.py` | PreToolUse (Edit\|Write\|MultiEdit) | Blocks the first edit to an existing source file in a folder, once per session, until the reply contains an `Explainer:` line describing that slice. Gives up after two blocks so it cannot trap a session. |
 | `require-agent-model.sh` | PreToolUse (Agent|Task) | Blocks subagent spawns that carry no explicit `model`. |
 | `no-new-dep.sh` | PreToolUse (Edit|Write) | Warns when a new dependency name is about to be added to a `package.json`. |
 | `test-no-new-dep.sh` | manual | Assertion checklist for `no-new-dep.sh`; run it before and after changing that hook. |
@@ -126,6 +128,8 @@ Typecheck, lint, format, test and plan checks around edits, commits and stops.
 | `pre-commit-verify.sh` | PreToolUse (Bash) | Blocks `git commit` when the repo's verification bundle fails. |
 | `precommit-format.sh` | PreToolUse (Bash) | On `git commit`, normalises CRLF to LF on staged text files and runs the formatter. Opt-out. |
 | `verify-gate.sh` | PreToolUse (Edit|Write) with `--auto-arm`, Stop | Arms a typecheck baseline on first edit, then blocks the stop if typecheck or tests regressed. |
+| `test-gate.py` | Stop | Blocks the stop, once per session, when source changed and nothing ran that code afterwards (test runner, build, typecheck, a test script, a request to the local app). Reading a file does not count. |
+| `push-gate.py` | Stop | One nudge when a session committed but did not push: push, or say in one line why not. Skips headless runs, repos with no remote and an allow list. |
 | `auto-simplify.sh` | PreToolUse (Bash) | On `git commit`, sends the staged diff to a Codex review and blocks on P1 findings. |
 | `codex-prepush-review.sh` | PreToolUse (Bash) | On `git push`, sends HEAD vs the main branch to a Codex review and blocks on P1 findings. |
 | `matcha-review.sh` | Stop | Sends the working diff to an alternate gateway for a background, read-only second review. |
@@ -153,6 +157,8 @@ Preserve and restore state across compaction, stops and fresh sessions.
 |--------|-----------------|--------------|
 | `session-start-check.sh` | SessionStart | Validates the environment and checks common dev ports when a session begins. |
 | `sessionstart-handoff.sh` | SessionStart | Re-injects the last handoff so a fresh session resumes cleanly. |
+| `goal-pin.py` | UserPromptSubmit, PostToolUse (Bash, ArtifactData), SessionStart, Stop | Keeps each session's big goal and current side-track in view: a statusbar line, plus a three-line recap after a long idle gap. Reads `goal:`, `detour:` and `leg-done:` markers Claude echoes. |
+| `restate-gate.sh` | UserPromptSubmit (`--arm`), PostToolUse Bash (`--record`), PreToolUse Edit\|Write\|MultiEdit (`--gate`) | Makes a fresh session say back what it was asked, in one line, before its first source edit. Blocks once, then stands down. Continuation sessions are skipped. |
 | `session-load-guard.sh` | SessionStart (startup) | Warns when too many sessions are live or one has run past its time cap. Reports only, never kills. |
 | `tmux-map.sh` | SessionStart | Records where a session physically lives (tmux pane). |
 | `tmux-name-sync.sh` | UserPromptSubmit | Keeps the tmux session name matching the Claude session name. |
@@ -212,8 +218,13 @@ Optional extras.
 | `notification.conf` | config | Settings for the TTS notifier (not a hook). |
 | `play-tts.sh` | called by notifiers | Small TTS wrapper with a mute switch. |
 | `coin-rain.sh` | Stop | Earns coins from tokens spent in the turn and shows them in a separate terminal window. |
+| `voice-queue.sh` | UserPromptSubmit, Stop, Notification | Records which sessions are waiting on you (finished, permission prompt, plan menu) as small JSON files for a voice front end to read out. |
 | `coin-window.sh` | launched by `coin-rain.sh` | Long-running watcher that redraws the coin-rain display. |
 | `coin-bank.py` | used by the coin scripts | Atomic read, modify, write helper for the coin state file. |
+
+### Shared helpers (`hooks/lib/`)
+
+Sourced or imported by the hooks above, not registered on their own: `edit_scan.py` (finds which files a shell command or tool call edited, shared by the review and test gates), `git_commands.py` (parses `git commit` and `git push` out of compound commands), `handoff-key.sh`, `session-ident.sh`, `pr-gate-common.sh`, `config-dir.sh` and the `.mjs` helpers.
 
 ## Creating Custom Hooks
 

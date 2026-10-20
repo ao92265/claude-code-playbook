@@ -64,7 +64,7 @@ Skip for: one-line fixes, lookups, trivial edits, or "just write the code".
    `Workflow` tool's `scriptPath` and the workflow's inner `Read(templatePath)` do NOT
    expand `~`: a literal `~` fails to resolve, and `templatePath` then silently degrades
    to the generated-from-contract fallback (un-themed PRD). Pass e.g.
-   `/Users/<you>/.claude/skills/prdforge/assets/...`.
+   `/home/<you>/.claude/skills/prdforge/assets/...`.
 
    ```
    Workflow({
@@ -131,9 +131,10 @@ Skip for: one-line fixes, lookups, trivial edits, or "just write the code".
 
 ## Decision rules
 
-- **Mode: always full (`deep`).** the user's rule (24 Sep 2026): every run is 6 personas, 2 rounds,
-  critic and revise, about 18 agents. `--quick` / `--balanced` are ignored and logged. Measured
-  24 Sep 2026: 1.17M subagent tokens and 17 min on a one-flag feature, so say the cost before a run.
+- **Mode: always full (`deep`).** the user's rule (24 Sep 2026): every run is 7 personas, 2 rounds,
+  critic and revise, about 20 agents. Three personas hold fixed stances (6 Oct 2026, from the
+  rotating-teams thread): product speaks for the end user, skeptic cuts scope, brief questions the brief. `--quick` / `--balanced` are ignored and logged. Measured
+  24 Sep 2026 with 6 personas (expect a little more with 7): 1.17M subagent tokens and 17 min on a one-flag feature, so say the cost before a run.
 - **Critic pass** → after synthesis, `critic` adversarially
   reviews the draft PRD (fabrication, scope creep, unverifiable criteria, missing risks); a
   reviser applies any med/high findings before render. Separate writer/reviewer lanes.
@@ -149,7 +150,7 @@ Skip for: one-line fixes, lookups, trivial edits, or "just write the code".
 ## Output
 
 Four files in `outDir` (five with `--handoff`), all built by `assets/render_prd.py` from the JSON:
-- `<slug>-prd.html`: self-contained PRD in the **project-f visual system** (same tokens and furniture
+- `<slug>-prd.html`: self-contained PRD in the **Project-F visual system** (same tokens and furniture
   as `assets/plan-style/`): sidebar nav with scrollspy, a hero with title, one-line summary and
   stat cards (readiness meter in the first), a "five-minute version" panel, 3 or 4 required
   captioned diagrams (system, main flow, delivery; the render fails without them), chapters grouped into acts, requirement cards with Given/When/Then,

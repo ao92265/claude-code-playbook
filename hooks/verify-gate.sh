@@ -123,7 +123,7 @@ SKIP = ("/.claude/plans/", "/.claude/state/", "/.claude/projects/", "/scratchpad
 # The machine's temp roots earn their place: writing a probe script there is what
 # a reviewer does, and counting it made the review look like fresh unreviewed
 # work. Matched as a PREFIX, not a substring, or a repo with its own tmp/ folder
-# would go dark: /Users/x/Repos/app/src/tmp/helper.ts is real work.
+# would go dark: /home/x/Repos/app/src/tmp/helper.ts is real work.
 SKIP_ROOTS = ("/tmp/", "/private/tmp/", "/var/folders/")
 LOG = Path.home() / ".claude" / "review-gate.log"
 MARKS = Path.home() / ".claude" / "state" / "review-gate"
@@ -359,7 +359,7 @@ RGPY
   case "$RG_VERDICT" in
     BLOCK*)
       RG_N=${RG_VERDICT#BLOCK }
-      echo "REVIEW GATE: $RG_N source files changed this session and nothing has reviewed them. Writing and reviewing are separate passes, so run /code-review or spawn the code-reviewer agent, then stop again. Fires once per session; the next stop passes regardless." >&2
+      echo "REVIEW GATE: $RG_N source files changed this session and nothing has reviewed them. First re-read every hunk you wrote this session (git diff), and fix what that turns up. Writing and reviewing are separate passes, so run /code-review or spawn the code-reviewer agent, then stop again. Fires once per session; the next stop passes regardless." >&2
       exit 2
       ;;
   esac

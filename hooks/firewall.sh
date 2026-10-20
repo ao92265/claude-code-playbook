@@ -18,7 +18,78 @@ CMD=$(echo "$INPUT" | jq -r '.tool_input.command // ""')
 [ -z "$CMD" ] && exit 0
 
 # Strip quoted strings and heredocs so we don't match text inside commit messages etc.
-STRIPPED=$(echo "$CMD" | sed -E "s/'[^']*'//g; s/\"[^\"]*\"//g" | sed '/<<.*EOF/,/EOF/d')
+# A heredoc body is skipped only when it is written somewhere inert: the << is
+# outside quotes, comments and arithmetic, the delimiter ends cleanly, and no shell
+# (bash, sh, ssh, eval, source, ., $SHELL ...) appears anywhere outside the bodies,
+# since a body can be fed to one before or after it. An unclosed body is printed at
+# the end, because bash would run those lines. If awk fails, the raw command is checked.
+HD_AWK='
+function scan(s, upto,   i, c, p) {
+  for (i = 1; i < upto; i++) {
+    c = substr(s, i, 1)
+    if (sq) { if (c == "\\" && ansi) i++; else if (c == q) sq = 0; continue }
+    if (c == "\\") { i++; continue }
+    if (c == "$" && substr(s, i + 1, 1) == q && !dq) { sq = 1; ansi = 1; i++; continue }
+    if (c == q && !dq) { sq = 1; ansi = 0; continue }
+    if (c == "#" && !dq && (i == 1 || substr(s, i - 1, 1) ~ /[ \t;&|(]/)) { cm = 1; return }
+    if (c == "$" && substr(s, i + 1, 1) == "(") { if (substr(s, i + 2, 1) == "(") { ar++; i += 2 } else { stk[++dep] = dq; dq = 0; i++ }; continue }
+    if (c == "(" && substr(s, i + 1, 1) == "(" && !dq) { p = substr(s, 1, i - 1); sub(/[ \t]+$/, "", p); if (p == "" || p ~ /[;&|(]$/) { ar++; i++; continue } }
+    if (ar && c == ")" && substr(s, i + 1, 1) == ")") { ar--; i++; continue }
+    if (c == ")" && dep && !dq) { dq = stk[dep--]; continue }
+    if (c == "\"") dq = !dq
+  }
+}
+BEGIN { re = "<<-?[ \t]*([\"" q "][A-Za-z_][A-Za-z0-9_]*[\"" q "]|[A-Za-z_][A-Za-z0-9_]*)" }
+skip { buf = buf $0 "\n"; t = $0; if (tabs) sub(/^\t+/, "", t); if (t == delim) { skip = 0; buf = "" }; next }
+{ print
+  cm = 0; s0q = sq; s0d = dq; s0a = ar; s0dep = dep; s0n = ansi
+  if (!feed && match($0, re) && (substr($0, RSTART + RLENGTH, 1) == "" || substr($0, RSTART + RLENGTH, 1) ~ /[ \t;|&)>]/) \
+      && !(RSTART > 1 && substr($0, RSTART - 1, 1) == "<") && substr($0, RSTART + 2, 1) != "<") {
+    st = RSTART; ln = RLENGTH
+    scan($0, st)
+    if (!sq && !dq && !ar && !cm) {
+      m = substr($0, st, ln); tabs = (m ~ /^<<-/)
+      delim = m; sub(/^<<-?[ \t]*/, "", delim); gsub(/["\047]/, "", delim)
+      skip = 1
+    }
+    sq = s0q; dq = s0d; ar = s0a; dep = s0dep; ansi = s0n
+  }
+  cm = 0; scan($0, length($0) + 1)
+}
+END { if (skip) printf "%s", buf }'
+# Pass 1 drops every inert-looking body. A shell name left in what remains means a
+# body may be executed, so pass 2 then keeps all bodies. A shebang inside a script
+# being written does not count, because it sits in a body.
+# Fast path: this hook runs on every Bash call, so skip the passes a command cannot need.
+STRIPPED="$CMD"
+case "$CMD" in *"<<"*)
+STRIPPED=$(printf '%s\n' "$CMD" | awk -v q="'" -v feed=0 "$HD_AWK") || STRIPPED="$CMD"
+if printf '%s' "$STRIPPED" | tr -d "\"'\\\\" | grep -qE '(^|[^A-Za-z0-9_.-])(bash|sh|zsh|dash|ksh|csh|tcsh|mksh|fish|ssh|eval|source|exec|xargs)([^A-Za-z0-9_.-]|$)|\$\{?SHELL|(^|[;&|( 	])\.[ 	]'; then
+  STRIPPED=$(printf '%s\n' "$CMD" | awk -v q="'" -v feed=1 "$HD_AWK") || STRIPPED="$CMD"
+fi
+;; esac
+# Remove quoted text with a quote-aware pass, so an apostrophe inside "..." cannot
+# pair with a later quote and swallow the real command between them. Code inside
+# "$( ... )" runs, so it is kept.
+case "$STRIPPED" in *[\"\']*)
+STRIPPED=$(printf '%s\n' "$STRIPPED" | awk -v q="'" '
+{ out = ""
+  for (i = 1; i <= length($0); i++) {
+    c = substr($0, i, 1)
+    if (sq) { if (c == "\\" && ansi) i++; else if (c == q) sq = 0; continue }
+    if (dq) { if (c == "\\") i++; else if (c == "\"") dq = 0
+              else if (c == "$" && substr($0, i + 1, 1) == "(") { stk[++dep] = 1; dq = 0; out = out " "; i++ }
+              continue }
+    if (c == ")" && dep) { dq = stk[dep--]; out = out " "; continue }
+    if (c == "$" && substr($0, i + 1, 1) == "(") { stk[++dep] = 0; out = out "$("; i++; continue }
+    if (c == "\\") { out = out c substr($0, i + 1, 1); i++; continue }
+    if (c == "$" && substr($0, i + 1, 1) == q) { sq = 1; ansi = 1; i++; continue }
+    if (c == q) { sq = 1; ansi = 0; continue }
+    if (c == "\"") { dq = 1; continue }
+    out = out c
+  }
+  print out }') || STRIPPED="$CMD"
+;; esac
 
 # git reset --hard: allow safe recoverable forms (remote-tracking refs, SHAs, HEAD~N),
 # block bare/working-tree-clobbering forms that drop uncommitted work without reflog recovery.
@@ -52,6 +123,21 @@ fi
 # 'git branch -D' force-deletes (allow the safe 'git branch -d').
 if echo "$STRIPPED" | grep -qE 'git[[:space:]]+(checkout|restore)[[:space:]]+(--[[:space:]]+)?\.([[:space:]]|$)|git[[:space:]]+branch[[:space:]]+-D([[:space:]]|$)'; then
   echo "BLOCKED: '$CMD' — discards uncommitted work or force-deletes a branch. Use a scoped path, or 'git branch -d' for a merged branch." >&2
+  exit 2
+fi
+
+# Killing the shared tmux server takes every live Claude session with it (14 Oct 2026:
+# a reap test set TMUX_TMPDIR but not 'unset TMUX', so kill-server hit the real server).
+# Allowed only on a private server: -L/-S on the call, or 'unset TMUX' plus TMUX_TMPDIR=.
+if echo "$STRIPPED" | grep -qE '(^|[;&|(`[:space:]])(pkill|killall)[[:space:]]+(-[^[:space:]]+[[:space:]]+)*tmux([[:space:]]|$)'; then
+  echo "BLOCKED: '$CMD'. Killing tmux closes every live Claude session. Kill a named session with 'tmux kill-session -t <name>' instead." >&2
+  exit 2
+fi
+if echo "$STRIPPED" | grep -qE 'tmux[^;&|]*kill-server' \
+   && ! echo "$STRIPPED" | grep -qE 'tmux[[:space:]]+(-[^[:space:]]+[[:space:]]+)*-[LS][[:space:]]*[^[:space:]]+[^;&|]*kill-server' \
+   && ! { echo "$STRIPPED" | grep -qE 'unset[[:space:]]+([A-Za-z_]+[[:space:]]+)*TMUX([[:space:]]|;|$)' \
+          && echo "$STRIPPED" | grep -qE 'TMUX_TMPDIR='; }; then
+  echo "BLOCKED: '$CMD'. Running 'tmux kill-server' here would kill the REAL tmux server and every live Claude session. For a test server, use 'tmux -L <name> kill-server', or 'unset TMUX' and set TMUX_TMPDIR first." >&2
   exit 2
 fi
 

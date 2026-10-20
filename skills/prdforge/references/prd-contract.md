@@ -6,7 +6,7 @@ The section definitions the Synthesize agent fills (`PRD_SCHEMA` in
 
 ## Section definitions (v3)
 
-v3 answers the Project project-e review (24 Sep 2026): an earlier prdforge output was "not a specification.
+v3 answers an internal design review (24 Sep 2026): an earlier prdforge output was "not a specification.
 No requirement IDs, no acceptance criteria, no non-functional targets." Every section below exists so
 that a chapter can be handed to an agent and come back as a testable ticket.
 

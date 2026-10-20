@@ -192,17 +192,18 @@ const RENDER_SCHEMA = obj({
 
 // ---- personas ----
 const P = {
-  product: { key: 'product', lens: 'Product / user', focus: 'Who is this for, what problem does it solve, what evidence of demand exists (who asked, deals lost, tickets) and what rule should decide priority, what does success look like as metric + baseline + target, what is explicitly out of scope and when it returns, what is the smallest version that delivers value.' },
+  product: { key: 'product', lens: 'Product / user', focus: 'Fixed stance: you SPEAK FOR THE END USER, not the person who asked. Who is this for, what problem does it solve, what evidence of demand exists (who asked, deals lost, tickets) and what rule should decide priority, what does success look like as metric + baseline + target, what is explicitly out of scope and when it returns, what is the smallest version that delivers value.' },
   technical: { key: 'technical', lens: 'Technical / architecture', focus: 'How should this be built, what is the data and authorisation model, which existing behaviour rules must survive (name them, with file:line), integration points, sequencing into releases and a rough size for each (S/M/L, person-weeks), what existing patterns to reuse, the primary failure modes.' },
-  edge: { key: 'edge', lens: 'Edge cases & failure', focus: 'Unhappy paths, input validation, concurrency, security (authz/authn/secrets/injection), performance and scale limits, what breaks at 10x load, rollback story.' },
-  skeptic: { key: 'skeptic', lens: 'Contrarian / scope', focus: 'Challenge the scope. What is over-built? Which release is too big for its time box? What is the riskiest assumption? Which targets are asserted rather than measured? Which judgements should be argued rather than inherited? What is the simplest defensible version?' },
+  edge: { key: 'edge', lens: 'Edge cases & failure', focus: 'Unhappy paths, input validation, concurrency, security (authz/authn/secrets/injection), performance and scale limits, what breaks at 10x load, rollback story. What outside check, not the AI and not the requester, would prove the result right (a test, a real user, a metric, a second system)?' },
+  skeptic: { key: 'skeptic', lens: 'Contrarian / scope', focus: 'Fixed stance: you CUT SCOPE, every answer removes something. Challenge the scope. What is over-built? Which release is too big for its time box? What is the riskiest assumption? Which targets are asserted rather than measured? Which judgements should be argued rather than inherited? What is the simplest defensible version?' },
   integration: { key: 'integration', lens: 'Integration / data', focus: 'Upstream/downstream systems, migrations, backward compatibility, contracts/schemas, data lifecycle, idempotency.' },
+  brief: { key: 'brief', lens: 'Brief challenger', focus: 'Fixed stance: you QUESTION THE BRIEF itself. Is this the right problem? What would happen if nothing were built? Which stated requirement is really a solution in disguise? What did the requester not say that changes the answer? What raw source would a top professional start from (logs, real data, the original spec, user recordings) instead of the summary the requester gave?' },
   operations: { key: 'operations', lens: 'Operations / lifecycle', focus: 'Observability, metrics/logs/alerts, deployment, feature-flagging, on-call burden, cost, maintenance, docs.' },
 }
 let personas
 if (mode === 'quick') personas = [P.product, P.skeptic]
 else if (mode === 'balanced') personas = [P.product, P.technical, P.edge, P.skeptic]
-else personas = [P.product, P.technical, P.edge, P.skeptic, P.integration, P.operations]
+else personas = [P.product, P.technical, P.edge, P.skeptic, P.brief, P.integration, P.operations]
 
 // ---- helpers ----
 // Strip secret-shaped values so brownfield Scout output can never leak keys/tokens

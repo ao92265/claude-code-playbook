@@ -17,12 +17,12 @@ home paths are replaced with placeholders (`ParentCo`, `AcmeCo`, `a colleague`, 
 | Rules | `CLAUDE.md` plus five @-imported files, kept under 150 lines total | [`rules/`](../rules/) |
 | Process | [Superpowers](superpowers.md) plugin as the default process layer | install from the marketplace |
 | Token filter | [RTK](rtk.md), a Bash hook that trims command output | install from upstream |
-| Guards | 70+ hook scripts, mostly recorder plus gate pairs | [`hooks/`](../hooks/), [Guard Hooks](guard-hooks.md) |
-| Skills | about 60 user skills | [`skills/`](../skills/) |
+| Guards | 80+ hook scripts, mostly recorder plus gate pairs | [`hooks/`](../hooks/), [Guard Hooks](guard-hooks.md) |
+| Skills | about 70 user skills | [`skills/`](../skills/) |
 | Agents | 9 role agents (architect, code-reviewer, critic, debugger, executor, planner, qa-tester, security-reviewer, verifier) | [`agents/`](../agents/) |
 | Commands | `/q`, `/r`, `/paste-guard`, `/tribune` | [`commands/`](../commands/) |
 | Second model | Codex plugin for reviews and rescue passes | [Multi-Model Orchestration](multi-model-orchestration.md) |
-| Background | 13 launchd jobs | [`scripts/claude-ops/`](../scripts/claude-ops/), [Background Jobs](background-jobs.md) |
+| Background | 14 launchd jobs | [`scripts/claude-ops/`](../scripts/claude-ops/), [Background Jobs](background-jobs.md) |
 
 ## Plugins enabled
 
@@ -52,6 +52,7 @@ These are in daily use but belong to their authors. Install from upstream.
 | hand-drawn-diagrams | [muthuishere/hand-drawn-diagrams](https://github.com/muthuishere/hand-drawn-diagrams) |
 | notebooklm | [teng-lin/notebooklm-py](https://github.com/teng-lin/notebooklm-py) |
 | ai-slop-cleaner | [Yeachan-Heo/oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) |
+| anatomy | [wheresryan22/anatomy](https://github.com/wheresryan22/anatomy) (MIT) |
 | impeccable | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) (a copy is vendored in `skills/impeccable`) |
 
 ## Left out on purpose
@@ -62,8 +63,12 @@ These are in daily use but belong to their authors. Install from upstream.
 | Bot settings with chat IDs, `.mcp.json`, `settings.local.json`, launchd plists with a username | Identifiers; sanitised example plists are in `scripts/claude-ops/launchd/` instead |
 | Two persona profiles of real people in `skills/bro/personas/` | They describe real people. `default.md` stays |
 | Five work-bound skills: a team-chat blocker bot, a chat persona bot, an accelerator audit report, an internal newsletter builder, an expenses filer | Each is built around named colleagues, internal chats or an employer system; placeholders would leave nothing useful |
-| Coin-rain sound files | Audio of unknown licence |
-| `*.bak` and `*.pre-*` script backups | Superseded versions |
+| Coin-rain sound files and `coin-state.json` | Audio of unknown licence; the state file is runtime data |
+| One more work-bound skill, a review lane that delegates to an internal model gateway, plus its wrapper script | Built around an employer's internal gateway and named colleagues; placeholders would leave nothing useful |
+| Skill `__pycache__`, `node_modules`, `.omc/` and `.claude/` evidence folders, `myinsights` data snapshots and its dated tool-error notes | Runtime state, not setup |
+| `*.bak`, `*.bak-<date>` and `*.pre-*` script backups | Superseded versions |
+| `pr-review-sweep.sh` update | The published copy already carries the lockdown (narrow tools, credential scan, shared repos parked by default); the live version only differs by personal defaults |
+| The internal-gateway review lane in `pr-review` | Dropped from the published copy; it needs the wrapper script above |
 
 ## Repo-only items
 

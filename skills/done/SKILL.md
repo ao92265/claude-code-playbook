@@ -44,6 +44,11 @@ skill makes the gate mechanical.
    [done] lint:      exit=0
    [done] test:      exit=1   <- failure
    ```
+   Read the code from the command itself, never through a pipe. `npm test | tail -30; echo $?`
+   prints the exit of `tail` (0) when the test failed (measured 6 Oct 2026: exit 3 reported as 0).
+   Write output to a file and trim it afterwards:
+   `npm test > /tmp/done-test.log 2>&1; rc=$?; tail -30 /tmp/done-test.log; echo "exit=$rc"`.
+   RTK's rewrite keeps the real code, so it is not the risk; the pipe is.
 
 3. **Refuse green summary on any failure.** If any stage exits non-zero:
    - Print the failing stage's last 30 lines of output.

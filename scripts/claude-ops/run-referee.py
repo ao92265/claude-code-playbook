@@ -102,6 +102,10 @@ ROTATE_BACKOFF = 15 * 60         # do not re-fire at a session already rotating
 ROTATOR = os.path.join(HOME, ".claude", "scripts", "session-rotate.sh")
 TMUX_MAP = os.path.join(HOME, ".claude", "state", "tmux-map")
 OPTOUT_DIR = os.path.join(HOME, ".claude", "state", "rotate-optout")  # /keep pins, one file per pane
+# Auto clear is opt-in (15 Oct 2026): the user lost his last steps across the clear.
+# This file present means on; /autoclear on|off writes or removes it. Read per
+# call so a toggle lands on the next cycle without restarting the referee.
+ROTATE_FLAG = os.path.join(HOME, ".claude", "state", "rotate-enabled")
 ROTATE_ENABLED = os.environ.get("REFEREE_ROTATE", "1") not in ("0", "false", "no")
 ERROR_MARKERS = ("overloaded", "rate limit", "hit your session limit", "api error",
                  "529", "500 internal", "503 service")
@@ -293,6 +297,8 @@ def rotate(uuid, reason, path):
     """
     if not ROTATE_ENABLED or not os.path.exists(ROTATOR):
         return False
+    if not os.path.exists(ROTATE_FLAG):
+        return False
     # No tmux map means the session is a bare terminal. Nothing can type into
     # one from here, so this is a normal outcome, not an error.
     map_file = os.path.join(TMUX_MAP, uuid + ".json")
@@ -322,6 +328,9 @@ def referee_session(path, state, dry=False):
         # the referee was watching.
         state[uuid] = {"offset": st.st_size, "total_out_tokens": 0, "total_tool_uses": 0,
                        "first_seen": now_iso(), "first_seen_epoch": time.time(),
+                       # The wall clock starts here too, not after MIN_RUN_AGE, so the
+                       # 3.5h rotate lands before the 4h nudge that asks the user by hand.
+                       "wallclock_since": time.time(),
                        "err_cycles": 0, "noprogress_cycles": 0, "path": path}
         return None
     s = state[uuid]

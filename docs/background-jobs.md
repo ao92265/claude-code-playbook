@@ -5,7 +5,7 @@ parent: Advanced
 ---
 # Background Jobs
 
-Thirteen launchd jobs keep the setup healthy without anyone remembering to run anything. The
+Fourteen launchd jobs keep the setup healthy without anyone remembering to run anything. The
 scripts are in [`scripts/claude-ops/`](../scripts/claude-ops/) and example plists (label prefix
 `com.example.`) in [`scripts/claude-ops/launchd/`](../scripts/claude-ops/launchd/). Headless jobs
 that call `claude -p` read a long-lived OAuth token from the macOS keychain at spawn time and pass
@@ -23,6 +23,7 @@ it in the environment, never on the command line.
 | post-merge-digest | daily 07:45 | Summarises review comments on PRs merged since yesterday |
 | backup | daily 09:30 | Commits the `~/.claude` config to a private repo |
 | maintenance | Mon 09:00 | Rule budget check, hook smoke test, stale file cleanup |
+| incident-replay | daily 06:40 | Replays past bad changes against the code-reviewer agent, scores whether it still catches them, alerts when the score drops |
 | graveyard | Mon 08:05 | Finds jobs that stopped firing and finished work nobody collected |
 | rule-drift-prune | Mon 08:30 | Trims the rule-drift log that measures whether hooks are obeyed |
 | memory-consolidate | Tue 08:30 | Merges duplicate memory files and flags stale ones |

@@ -50,6 +50,15 @@
           {
             "type": "command",
             "command": "~/.claude/hooks/pr-gate-ack-promote.sh"
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/restate-gate.sh --record"
+          },
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/goal-pin.py --record",
+            "timeout": 5
           }
         ]
       },
@@ -77,6 +86,16 @@
           {
             "type": "command",
             "command": "~/.claude/hooks/leg-scope.sh --record"
+          }
+        ]
+      },
+      {
+        "matcher": "ArtifactData",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/goal-pin.py --posted",
+            "timeout": 5
           }
         ]
       }
@@ -227,6 +246,12 @@
             "command": "~/.claude/hooks/secret-scanner.py",
             "timeout": 5,
             "statusMessage": "Scanning for secrets..."
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/worktree-gate.sh",
+            "timeout": 10,
+            "statusMessage": "worktree-gate: checking isolation..."
           }
         ]
       },
@@ -300,6 +325,15 @@
           {
             "type": "command",
             "command": "~/.claude/hooks/ui-state-gate.sh"
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/restate-gate.sh --gate"
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/explainer-gate.py",
+            "timeout": 5
           }
         ]
       },
@@ -367,6 +401,11 @@
           {
             "type": "command",
             "command": "~/.claude/hooks/tmux-map.sh"
+          },
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/goal-pin.py --session",
+            "timeout": 5
           }
         ]
       }
@@ -381,6 +420,20 @@
           {
             "type": "command",
             "command": "~/.claude/hooks/matcha-review.sh"
+          },
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/push-gate.py",
+            "timeout": 20
+          },
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/test-gate.py"
+          },
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/goal-pin.py --stop",
+            "timeout": 5
           }
         ]
       },
@@ -391,6 +444,10 @@
             "type": "command",
             "command": "~/.claude/hooks/status-shape-gate.sh",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/voice-queue.sh stop"
           }
         ]
       },
@@ -473,6 +530,14 @@
             "command": "~/.claude/hooks/paste-guard.py",
             "timeout": 15,
             "statusMessage": "paste-guard: scanning for sensitive content..."
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/restate-gate.sh --arm"
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/voice-queue.sh prompt"
           }
         ]
       },
@@ -525,6 +590,11 @@
           {
             "type": "command",
             "command": "~/.claude/hooks/matcha-surface.sh"
+          },
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/goal-pin.py --prompt",
+            "timeout": 5
           }
         ]
       },
@@ -628,6 +698,16 @@
           {
             "type": "command",
             "command": "~/.claude/hooks/sofa-nudge.sh"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/voice-queue.sh notification"
           }
         ]
       }

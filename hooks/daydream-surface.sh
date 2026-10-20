@@ -20,7 +20,7 @@ case ",${SKIP_HOOKS}," in *,daydream,*) exit 0 ;; esac
 CFG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
 DD="$CFG/daydreams"
 # Daily lane and weekly big-bets lane each leave their own pending digest.
-for PEND in "$DD/digest-pending.md" "$DD/digest-pending-bets.md"; do
+for PEND in "$DD/digest-pending.md" "$DD/digest-pending-bets.md" "$CFG/tune/digest-pending.md"; do
   [ -s "$PEND" ] || continue   # nothing pending in this lane
 
   echo "=== 🌙 Daydreams while you were away (background musings — act only if useful) ==="

@@ -65,14 +65,18 @@ due() {  # due <sentinel> <interval-seconds>
 }
 DAILY_DUE=0; due "$SENTINEL" 86400 && DAILY_DUE=1
 BETS_DUE=0; [ -f "$BETS_ENGINE" ] && due "$BETS_SENTINEL" 604800 && BETS_DUE=1
-[ "$DAILY_DUE$BETS_DUE" = "00" ] && exit 0
+# Tune lane: fixes the setup itself, every 3 days. Off with: touch ~/.claude/tune/OFF
+TUNE="$CFG/tune/tune.py"
+TUNE_SENTINEL="$STATE/tune-last.ts"
+TUNE_DUE=0; [ -f "$TUNE" ] && [ ! -f "$CFG/tune/OFF" ] && due "$TUNE_SENTINEL" 259200 && TUNE_DUE=1
+[ "$DAILY_DUE$BETS_DUE$TUNE_DUE" = "000" ] && exit 0
 
 # --- headless auth: long-lived OAuth token from the macOS keychain ----------
 # A fresh `claude` can't reuse the running app's hashed keychain creds, so it
 # needs its own token (`claude setup-token`). We read it from the keychain at
 # spawn time and NEVER from a file under ~/.claude (that dir is backed up to
 # git/OneDrive — a plaintext token there could leak).
-tok=$(security find-generic-password -a "$USER" -s daydream-oauth -w 2>/dev/null || true)
+tok=$(security find-generic-password -a "$USER" -s example-oauth -w 2>/dev/null || true)
 NEEDFLAG="$STATE/daydream-needs-token.flag"
 if [ -z "$tok" ]; then
   # No token yet → can't auth headless. Do NOT claim the daily slot, so the
@@ -83,7 +87,7 @@ if [ -z "$tok" ]; then
       echo "🌙 Daydream is wired but DORMANT — no headless token in the keychain yet."
       echo "  Activate (one time):"
       echo "    1) claude setup-token        # interactive, on your subscription"
-      echo "    2) security add-generic-password -U -a \"\$USER\" -s daydream-oauth -w"
+      echo "    2) security add-generic-password -U -a \"\$USER\" -s example-oauth -w"
       echo "       (-w with no value prompts hidden, so the token never hits shell history)"
     } >> "$DD/digest-pending.md" 2>/dev/null || true
     : > "$NEEDFLAG" 2>/dev/null || true
@@ -123,6 +127,13 @@ fi
 # Bets lane: weekly, top-tier model, because judgement is the whole job there.
 if [ "$BETS_DUE" = 1 ]; then
   printf '%s\n' "$now" > "$BETS_SENTINEL" 2>/dev/null && spawn_lane "$BETS_ENGINE" opus "-bets"
+fi
+# Tune lane runs its own engine, gate and apply, so it is a script, not a prompt.
+if [ "$TUNE_DUE" = 1 ]; then
+  if printf '%s\n' "$now" > "$TUNE_SENTINEL" 2>/dev/null; then
+    ( DAYDREAM_CHILD=1 nohup python3 "$TUNE" run \
+        >> "$DD/logs/run-$(date +%Y%m%d-%H%M%S)-tune.log" 2>&1 < /dev/null & ) >/dev/null 2>&1
+  fi
 fi
 
 exit 0

@@ -145,7 +145,7 @@ DANGER = re.compile(
 )
 
 # Need BOTH halves. "Should the error message say X or Y" is a judgment call;
-# "should I send this message to a reviewer" is not.
+# "should I send this message to a colleague" is not.
 OUTWARD_VERB = re.compile(
     r"\b(send|sending|email|emailing|dm|post|posting|publish|publishing"
     r"|reply|replying|notify|notifying|share|sharing|invite|inviting)\b",
@@ -154,7 +154,7 @@ OUTWARD_VERB = re.compile(
 OUTWARD_TARGET = re.compile(
     r"\b(slack|teams|customer|customers|client|clients|reviewer|stakeholder"
     r"|github|linkedin|twitter|public|publicly|externally|recipient"
-    r"|to\s+(him|her|them|reviewer|lead|the user|the\s+team))\b",
+    r"|to\s+(him|her|them|colleague|the\s+team))\b",
     re.IGNORECASE,
 )
 
@@ -352,21 +352,53 @@ def mode_gate(payload):
     return 0
 
 
+def _read_tail(path):
+    """The last assistant text in the transcript file, or "" if there is none."""
+    try:
+        with open(path, "r", encoding="utf-8", errors="replace") as handle:
+            lines = handle.read().splitlines()
+    except OSError:
+        return ""
+    return _tail_from(lines)
+
+
 def transcript_tail(payload):
     """The text the model ended its turn with.
 
     Same reader as register-gate.py: content is a bare string on some entries
     and a list of blocks on others, and subagent output is not the session's
     own reply so it does not count.
+
+    WAITS FOR THE REPLY TO LAND, which is the whole reason this is not a
+    one-line read. The Stop hook fires before the closing message is flushed to
+    the transcript, so a plain read returns the last MID-TURN narration line
+    instead. That made the STOPPED escape hatch unusable: on 2026-09-06 a run
+    wrote five separate STOPPED lines, every one of which matches EXPLICIT_STOP
+    when tested against the finished transcript, and the hook pushed back on
+    all five because at the moment it read the file the reply was not in it
+    yet. Measured, not guessed: reading lines[:n+1] matched every time and
+    lines[:n] matched none.
+
+    So it re-reads for up to a second, and takes the first text that differs
+    from what it saw first. Fail-safe by construction: if nothing new arrives,
+    it returns exactly what the old one-line read would have returned, so the
+    worst case is today's behaviour.
     """
     path = payload.get("transcript_path") or ""
     if not path:
         return ""
-    try:
-        with open(path, "r", encoding="utf-8", errors="replace") as handle:
-            lines = handle.read().splitlines()
-    except OSError:
-        return ""
+
+    first = _read_tail(path)
+    deadline = time.time() + 1.0
+    while time.time() < deadline:
+        time.sleep(0.1)
+        later = _read_tail(path)
+        if later and later != first:
+            return later
+    return first
+
+
+def _tail_from(lines):
     for raw in reversed(lines[-400:]):
         try:
             entry = json.loads(raw)

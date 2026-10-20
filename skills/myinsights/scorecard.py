@@ -35,7 +35,7 @@ CALIBRATION = {
     "Approach accuracy":    (0.70, 1.00, "sessions on the right approach",      True),
     "Isolation discipline": (0.02, 0.45, "sessions in an isolated worktree",    True),
     "Clean first pass":     (0.70, 1.00, "sessions without a code defect",      True),
-    "Push-through":         (0.40, 1.00, "commits that were pushed",            True),
+    "Push-through":         (0.40, 1.00, "committing sessions that pushed",     True),
     "Delegation leverage":  (0.02, 0.30, "sessions that used task agents",      True),
 }
 
@@ -73,7 +73,20 @@ def compute_scores(q, variant="report"):
     cadence = commits / days
     worktree = next((v for nm, v in areas if nm == "scratch/worktree"), 0)
     agents = q.get("task_agent_sessions", 0)
+    # per-session rates score on interactive sessions when gather split them out;
+    # headless SDK batches are not a person choosing (or skipping) a worktree or an agent
+    n_rate = n_full
+    inter = q.get("interactive") or {}
+    if inter.get("sessions"):
+        n_rate = inter["sessions"]
+        worktree = inter.get("worktree_sessions", 0)
+        agents = inter.get("task_agent_sessions", 0)
+    basis = "interactive sessions" if n_rate != n_full else "sessions"
     errs = q.get("tool_errors", 0)
+    real = q.get("tool_errors_real")
+    if real is not None: errs = real
+    covered = q.get("tool_errors_real_sessions")
+    partial = real is not None and covered is not None and covered < q.get("sessions", 0)
     top_calls = sum(v for _, v in q.get("top_tools", [])) or 1
 
     F = []
@@ -81,7 +94,7 @@ def compute_scores(q, variant="report"):
         ev=f"{_fmt(commits)} commits over {days} active days ≈ {cadence:.1f}/day",
         lever="Small, frequent commits. A day's work in one commit is a day's work at risk."))
     F.append(dict(name="Tool reliability", score=100 * (1 - errs / top_calls), raw=1 - errs / top_calls, kind="full", w=5,
-        ev=f"{_fmt(errs)} tool errors vs {_fmt(top_calls)} top-12 tool calls (an upper bound: the denominator excludes long-tail tools)",
+        ev=((f"{_fmt(errs)} tool errors (noise filtered in {_fmt(covered)} of {_fmt(q.get('sessions', 0))} sessions, raw counts for the rest; of {_fmt(q.get('tool_errors', 0))} raw)" if partial else f"{_fmt(errs)} real tool errors (of {_fmt(q.get('tool_errors', 0))}; hook blocks, permission prompts and silent no-matches excluded)") if real is not None else f"{_fmt(errs)} tool errors") + f" vs {_fmt(top_calls)} top-12 tool calls (an upper bound: the denominator excludes long-tail tools)",
         lever="Mostly environmental; pre-flight known blockers (ports, auth, dead servers)."))
     F.append(dict(name="Survival rate", score=100 * (1 - unclear / n_facet), raw=1 - unclear / n_facet, kind="samp", w=10,
         ev=f"{unclear} of {n_facet} analyzed sessions ended with no conclusion reached",
@@ -92,17 +105,24 @@ def compute_scores(q, variant="report"):
     F.append(dict(name="Approach accuracy", score=100 * (1 - wrong / n_facet), raw=1 - wrong / n_facet, kind="samp", w=15,
         ev=f"wrong_approach flagged in {wrong} of {n_facet} analyzed sessions",
         lever="5-minute feasibility probe + named fallback before coding against external systems."))
-    F.append(dict(name="Isolation discipline", score=100 * worktree / n_full, raw=worktree / n_full, kind="full", w=10,
-        ev=f"{_fmt(worktree)} of {_fmt(n_full)} sessions ran in isolated scratch/worktree areas",
+    F.append(dict(name="Isolation discipline", score=100 * worktree / n_rate, raw=worktree / n_rate, kind="full", w=10,
+        ev=f"{_fmt(worktree)} of {_fmt(n_rate)} {basis} ran in isolated scratch/worktree areas",
         lever="Default every multi-file build into a worktree off origin/main."))
     F.append(dict(name="Clean first pass", score=100 * (1 - buggy / n_facet), raw=1 - buggy / n_facet, kind="samp", w=15,
         ev=f"buggy_code flagged in {buggy} of {n_facet} analyzed sessions",
         lever="Failing test (or assertion checklist) BEFORE editing 2+ files."))
-    F.append(dict(name="Push-through", score=100 * pushes / max(commits, 1), raw=pushes / max(commits, 1), kind="full", w=10,
-        ev=f"{_fmt(pushes)} pushes vs {_fmt(commits)} commits, work that actually left the machine",
-        lever="Land or discard. Unpushed work is invisible to teammates and lives on one machine."))
-    F.append(dict(name="Delegation leverage", score=min(100.0, 100 * (agents / n_full) / 0.20), raw=agents / n_full, kind="full", w=5,
-        ev=f"{agents} of {_fmt(n_full)} sessions used task agents",
+    cs = q.get("commit_sessions")
+    if cs:  # sessions that committed and then pushed before they ended
+        pushed = cs - q.get("commit_sessions_unpushed", 0)
+        F.append(dict(name="Push-through", score=100 * pushed / cs, raw=pushed / cs, kind="full", w=10,
+            ev=f"{_fmt(pushed)} of {_fmt(cs)} interactive sessions that committed ran git push after their last git commit (commands, not confirmed pushes; headless pipelines and subagent transcripts not counted)",
+            lever="Land or discard. Unpushed work is invisible to teammates and lives on one machine."))
+    else:
+        F.append(dict(name="Push-through", score=100 * pushes / max(commits, 1), raw=pushes / max(commits, 1), kind="full", w=10,
+            ev=f"{_fmt(pushes)} pushes vs {_fmt(commits)} commits, work that actually left the machine",
+            lever="Land or discard. Unpushed work is invisible to teammates and lives on one machine."))
+    F.append(dict(name="Delegation leverage", score=min(100.0, 100 * (agents / n_rate) / 0.20), raw=agents / n_rate, kind="full", w=5,
+        ev=f"{_fmt(agents)} of {_fmt(n_rate)} {basis} used task agents",
         lever="Route search/mechanical work to haiku/sonnet subagents; keep Opus for judgment."))
 
     if variant == "export":

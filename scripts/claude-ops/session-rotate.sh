@@ -186,12 +186,32 @@ pane_text() {
 
 SCREEN=$(pane_text)
 [ -n "$SCREEN" ] || bail "skipped" "pane captured empty, not typing blind"
-if printf '%s' "$SCREEN" | grep -qiE "$DIALOG_RE"; then
+# Scan for dialog phrases from the input box down, not the whole screen. Chat
+# text above the box is Claude's own reply, and a reply that asks "Do you want
+# to ...?" deferred idle sessions for 27 hours straight (9-10 Oct). A real dialog
+# replaces the box, so with no box found the whole screen is still scanned.
+dialog_scope() {
+  printf '%s' "$1" | awk '
+    { line[NR] = $0 }
+    END {
+      top = 1
+      for (i = 2; i < NR; i++)
+        if (line[i] ~ /^❯/ && line[i-1] ~ /^─────/ && line[i+1] ~ /^─────/) top = i - 1
+      for (i = top; i <= NR; i++) print line[i]
+    }'
+}
+if dialog_scope "$SCREEN" | grep -qiE "$DIALOG_RE"; then
   bail "skipped" "a prompt or dialog is on screen, will retry next cycle"
 fi
 has_inputbox "$SCREEN"; BOX=$?
 [ "$BOX" = "1" ] && bail "skipped" "no input box on screen, something is waiting for an answer"
 [ "$BOX" = "2" ] && bail "skipped" "text already in the input box, not typing on top of it"
+# A turn in progress: /reboot would queue behind it, outlive REBOOT_WAIT, and run
+# after we leave, writing a handoff that nobody clears (3 of 16 aborts checked,
+# 7-15 Oct). Come back next cycle instead.
+if printf '%s' "$SCREEN" | grep -qiE "esc to interrupt|tokens · esc"; then
+  bail "skipped" "a turn is running, will retry next cycle"
+fi
 
 # --- Step 1: ask the session to write its reboot handoff --------------------
 # Typed input queues while a turn is running, so there is no need to catch the

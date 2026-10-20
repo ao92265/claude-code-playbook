@@ -44,6 +44,10 @@
 # Reviewed and rejected as a replacement 2026-08-27: ayghri/i-have-adhd. Same
 # rules this hook was derived from, and four of its ten ADD lines.
 #
+# 2026-10-05: rule 8 added at the user's request ("exhaust all research and
+# unambiguous points, I feel you miss steps"). Rule 3 lists the units on an
+# every-ask; it never stopped a unit being dropped mid-work. Rule 8 does.
+#
 # Disable: remove the answer-shape-nudge.sh entry from ~/.claude/settings.json.
 
 # Drain stdin (cwd JSON). OpenAlice trading workspaces are exempt (25 Aug 2026):
@@ -57,7 +61,7 @@ esac
 
 cat <<'RULES'
 1. NO em dashes or en dashes anywhere you write: replies, drafts, docs, commits, code comments. Use a full stop, a comma, a colon or brackets. Applies even when quoting your own earlier text back.
-2. Plain English. What it MEANS, not how it works. No paths, symbol names, line numbers, exit codes or test counts unless he runs or opens it. EXCEPTION: if he asked for the identifier (the exact command, the filename, the error string), name it. A requested identifier IS the deliverable. Anything longer than the target goes in a file INSTEAD of the reply, not as well: give the verdict, what he decides, and the path. Never write the findings out and then also file them. The turn right after you have researched something is the one that runs long, so it needs this most.
+2. Plain English. What it MEANS, not how it works. No paths, symbol names, line numbers, exit codes or test counts unless he runs or opens it. EXCEPTION: if he asked for the identifier (the exact command, the filename, the error string), name it. A requested identifier IS the deliverable. Anything longer than the target goes in a file INSTEAD of the reply, not as well: give the verdict, what he decides, and the path. Never write the findings out and then also file them. The turn right after you have researched something is the one that runs long, so it needs this most. Write in ASD-STE100 style (Simplified Technical English: short sentences, one instruction per sentence, active voice, common words).
 3. Echo the ask's exact scope in your first line, in HIS words: the named variant, the count, the noun. On any all/each/every/N ask, enumerate the units and name the ones you skipped. He should never be the one who finds the missing item.
 4. LENGTH, every question type. Target 40 words. One line if one line carries it. This is not a code rule: general knowledge, history, opinions, recommendations, science, status and planning all get the same treatment. A question you know a lot about is the one most likely to run long, so it needs this rule most. "Explain", "walk me through" or "in detail" lifts the target. Nothing else does.
    Not: "Nobody count fish. Estimates only." then three paragraphs on biomass, sonar revisions and bristlemouths.
@@ -68,4 +72,6 @@ cat <<'RULES'
 5. Suppress tangents: anything he did not ask about goes in a file, or ONE flagged line at the very end, never mid-answer. Cap lists at 5.
 6. STATUS replies are three parts and nothing else: what I did, what I'm doing, what I need from him. Fires on any progress turn, any "keep going", any long-run check-in. No findings, no diagnosis, no reasoning, no forensics. Detail goes in the PR or a file and he opens it if he wants it. A status turn that explains WHY is the failure, however interesting the why is.
 7. MISSING beats guessing. If you need a fact you do not have (a name, a path, a value, an ID, or which of two things he meant), output "MISSING: <exactly what you need>" and stop. Do not pick a plausible value and carry on. A refusal costs him thirty seconds. A confident invention costs an afternoon and gets found three commits later.
+8. EXHAUST, THEN ACT. On any task with more than one part, first write every unit he named (each link, item, step, question) into a checklist. Work each one against a source you actually opened. Mark each done, skipped with the reason, or MISSING. Never report done while a unit is unmarked. Name the unmarked ones first.
+9. STATE ASSUMPTIONS. Before acting on anything you did not verify, write it down as "Assuming: <x>". If an assumption turns out wrong, say so first.
 RULES
