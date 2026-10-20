@@ -1,0 +1,40 @@
+# Patterns and judgment
+
+These are diagnostic prompts, not a mandatory rewrite checklist. Confirm the problem in its callers and domain before changing it. Chapter and page references use the printed pages of the supplied book; see source-notes.md.
+
+## Names and local comprehension
+
+| Pattern and evidence | Useful improvement | When to leave it alone / verification |
+| --- | --- | --- |
+| Vague, misleading, or inconsistent names force readers to decode units, domain roles, or effects. | Name the domain concept, unit, or actual operation; use consistent terminology. | Short loop indices can be clear in tiny scopes. Public names and serialized keys are contracts; inspect all consumers. Ch. 2; Ch. 17 N1–N7. |
+| Literals encode a business rule, unit, or configurable default with no visible meaning. | Give the domain quantity a name or use an existing value/type; put configuration at its owning boundary. | Do not introduce constants for every 0, 1, or self-evident formula. Preserve values, units, rounding, and override precedence. Ch. 17 G25, G35. |
+| A compound or negative condition obscures a domain decision; nesting hides the normal path. | Name the domain predicate, simplify logic, or use guard clauses. | A helper that merely repeats syntax adds little. Preserve evaluation order, short-circuiting, side effects, and cleanup. Ch. 3; Ch. 17 G19, G28–G29. |
+| High-level orchestration is interleaved with parsing, encoding, SQL, or transport details. | Extract a coherent operation with a meaningful name and explicit inputs/results. | A cohesive algorithm can remain together; avoid helper chains that require more navigation. Ch. 3; Ch. 17 G6, G34. |
+| Boolean mode arguments or positional parameter groups repeatedly confuse callers. | Consider named options, a genuine value object, separate operations, or an explicit mode type. | Boolean data is legitimate. Keep ordinary idiomatic APIs and coherent parameters; never replace explicit arguments with globals. Ch. 3; Ch. 17 F1–F3, G15. |
+| Comments contradict code, repeat syntax, preserve obsolete history, or contain abandoned implementations. | Correct/remove stale noise and express intent in names or structure. | Keep rationale, algorithms, constraints, public API docs, legal notices, and warnings that code cannot express. Ch. 4; Ch. 17 C1–C5. |
+| Apparently unused branches, functions, or exports add misleading paths. | Remove only after checking consumers, registration, reflection, platform variants, and external contracts. | No text reference is insufficient proof. Preserve framework lifecycle hooks and public compatibility. Ch. 17 F4, G9. |
+
+## Responsibilities and module boundaries
+
+| Pattern and evidence | Useful improvement | When to leave it alone / verification |
+| --- | --- | --- |
+| The same policy is reimplemented in several places and a policy change requires synchronized edits. | Put the rule under one owner and delegate from relevant callers. | Similar text may represent separate policies. Avoid a generic helper with many flags; test each caller and boundary case. Ch. 3, 12; Ch. 17 G5. |
+| A module owns unrelated change reasons or unrelated groups of state and operations. | Separate cohesive responsibilities behind a narrow useful interface. | Size alone proves nothing. Evaluate how many files a reader or change must touch after splitting. Ch. 10. |
+| One component repeatedly inspects and manipulates another component's internal state. | Move the operation/rule to its owner or expose a domain operation that hides the details. | DTO traversal and fluent APIs are often appropriate. Splitting a chained call into variables alone does not reduce coupling. Ch. 6; Ch. 17 G14, G17, G36. |
+| Exported internals, broad parameter objects, or many forwarding methods expose implementation details. | Narrow an internal interface or pass only the concept the caller needs. | Do not break public consumers or replace a useful module with a swarm of wrappers. Ch. 6, 10; Ch. 17 G8. |
+| Concrete construction, global configuration, clocks, or external clients are embedded in business rules and obstruct tests. | Pass the needed dependency at the existing construction boundary; isolate I/O from policy. | Ordinary local construction is fine. A callable or parameter may suffice; avoid a DI container or interface per class. Ch. 11. |
+| Repeated conditionals on the same type are scattered across several operations and change together. | Centralize dispatch; consider a table, tagged union, strategy, or polymorphism according to the language and expected changes. | A single exhaustive match can be clearer, especially with stable variants. Do not invent a class hierarchy for one branch. Ch. 6; Ch. 17 G23. |
+| Third-party payloads, exception types, or SDK details leak through many domain callers. | Adapt at a boundary that gives the application its own meaningful contract. | A wrapper that only forwards every method adds little; target actual volatility, policy, or test isolation. Ch. 7–8. |
+
+## Feature behaviour, failures, and tests
+
+| Pattern and evidence | Useful improvement | When to leave it alone / verification |
+| --- | --- | --- |
+| A query secretly mutates state, writes data, starts a session, or performs unexpected I/O. | Make effects explicit in names and interfaces; separate pure calculation from orchestration where useful. | Commands legitimately return useful results. Preserve atomicity: splitting check-and-update can create races. Ch. 3; Ch. 17 G20, N7. |
+| Callers must remember an undocumented initialization or call sequence. | Make required state/data flow explicit or encapsulate a lifecycle operation. | Some protocols genuinely require ordering; preserve resource lifetime and validate failure cleanup. Ch. 17 G22, G31. |
+| Broad catches swallow failure; sentinel values conflate missing, invalid, failed, and empty. | Preserve meaningful error context and express outcomes using the language's established exception/result/optional conventions. | Expected absence may correctly be null/None or an empty value; changing the distinction is a contract change. Never turn operational failure into silent success. Ch. 7. |
+| Business rules, authorization, validation, transport mapping, and persistence are tangled across a feature. | Trace the complete flow, place each rule with its owner, and keep orchestration readable. | Do not relocate enforcement so that another entry point bypasses it. Preserve API/UI output, permissions, transactions, and error mapping. Ch. 8, 10–12; feature tracing is this skill's adaptation. |
+| Boundary arithmetic and implicit assumptions obscure empty, missing, extreme, or partial inputs. | Express invariants and boundary calculations directly; add meaningful boundary coverage. | Validate intended behaviour before changing acceptance rules, precision, date/time handling, or rounding. Ch. 17 G3, G26, G33, T5–T6. |
+| Mutable state is shared broadly or concurrent steps depend on individually safe operations being collectively atomic. | Reduce sharing and isolate concurrency; use established primitives for the complete invariant. | Do not shrink locks across required atomic work or assume concurrent containers make compound operations atomic. Check scheduling, cancellation, shutdown, and ordering. Ch. 13; Appendix A. |
+| Tests obscure the contract, depend on execution order, wait on wall-clock time, or assert private implementation details. | Use clear setup/action/outcome, isolate environmental inputs, and assert externally observable behaviour. | Multiple assertions can describe one outcome. Avoid excessive mocks and a private-method test for every extraction. Ch. 9; Ch. 17 T1–T9. |
+| Extraction has produced shallow wrappers, one-use interfaces, generic managers, or an elaborate class tree. | Inline or simplify when doing so removes navigation and conceptual overhead. | A small boundary may still earn its place through invariant enforcement or volatile dependency isolation. Ch. 12 p. 176; Ch. 15 p. 265. |

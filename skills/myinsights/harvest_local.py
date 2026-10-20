@@ -7,6 +7,8 @@ schema (deterministic fields only; no LLM-judged fields). Tagged "source":"local
 Read-only over ~/.claude/projects and ~/.claude/usage-data. Honours CLAUDE_CONFIG_DIR.
 Usage: harvest_local.py [START_DATE [END_DATE]]   (YYYY-MM-DD, default 2026-07-03..today)"""
 import json, glob, os, re, sys, collections, datetime
+sys.path.insert(0, os.path.expanduser("~/.claude/hooks/lib"))
+from git_commands import git_actions  # noqa: E402  shared with hooks/push-gate.py
 
 CFG = os.path.expanduser(os.environ.get("CLAUDE_CONFIG_DIR", "~/.claude"))
 PROJ = os.path.join(CFG, "projects")
@@ -33,6 +35,11 @@ def text_of(content):
                 return b["text"]
     return None
 
+def nlines(s):
+    """Line count of a text blob; a trailing newline does not start a new line."""
+    if not isinstance(s, str) or not s: return 0
+    return s.count("\n") + (0 if s.endswith("\n") else 1)
+
 def err_category(tool, text):
     t = (text or "").lower()
     if "user doesn't want" in t or "user rejected" in t or "request was rejected" in t: return "User Rejected"
@@ -43,17 +50,38 @@ def err_category(tool, text):
     if tool == "Bash": return "Command Failed"
     return "Other"
 
+NOISE_MARKERS = ("hook error:", "following part requires approval", "user doesn't want",
+                 "user rejected", "sibling tool call errored", "cancelled: parallel tool call")
+NOISE_PREFIXES = ("this command requires approval", "request was rejected",
+                  "the request was rejected")
+
+def is_real_error(text):
+    """False for errors that are not a failure of the work: my own hooks blocking on
+    purpose, Claude Code permission prompts, rejections, cancelled siblings, and a bare
+    exit 1 with no output (grep or test found nothing). Other bare exit codes (124, 137,
+    a silent set -e failure) are real."""
+    t = (text or "").lower().strip()
+    if any(m in t for m in NOISE_MARKERS) or t.startswith(NOISE_PREFIXES): return False
+    m = re.match(r"exit code 1\b\s*", t)
+    if m:
+        rest = t[m.end():].strip()
+        if not rest or rest.startswith("shell cwd was reset"): return False
+    return True
+
 def harvest(path):
     """One pass over a transcript. Returns meta dict, or None if outside window/empty."""
     meta_ok = False
     start_dt = end_dt = None
     cwd = None
-    user_n = asst_n = interrupts = in_tok = out_tok = errors = 0
+    user_n = asst_n = interrupts = in_tok = out_tok = errors = real_errors = 0
     tools = collections.Counter(); langs = collections.Counter(); errcats = collections.Counter()
     files_mod = set(); tid2name = {}
     first_prompt = None; interactive = False; first_user_seen = False
     hours = []; user_ts = []
     commits = pushes = 0
+    pending = False  # a commit not yet followed by a push
+    entrypoint = None; added = removed = 0
+    cwds = []  # every distinct cwd in visit order; a session can move into a worktree mid-way
     uses_task = uses_mcp = uses_ws = uses_wf = False
     with open(path, encoding="utf-8", errors="replace") as fh:
         for line in fh:
@@ -68,6 +96,8 @@ def harvest(path):
                     if not (START <= day <= END): return None  # outside window: stop reading
                 end_dt = dt
             if cwd is None and d.get("cwd"): cwd = d["cwd"]
+            if d.get("cwd") and d["cwd"] not in cwds and len(cwds) < 20: cwds.append(d["cwd"])
+            if entrypoint is None and d.get("entrypoint"): entrypoint = d["entrypoint"]
             typ = d.get("type")
             if typ == "user":
                 msg = d.get("message") or {}
@@ -93,6 +123,7 @@ def harvest(path):
                             if isinstance(rt, list):
                                 rt = " ".join(x.get("text", "") for x in rt if isinstance(x, dict))
                             errcats[err_category(name, rt if isinstance(rt, str) else "")] += 1
+                            if is_real_error(rt if isinstance(rt, str) else ""): real_errors += 1
             elif typ == "assistant":
                 asst_n += 1
                 msg = d.get("message") or {}
@@ -114,10 +145,20 @@ def harvest(path):
                         lang = EXT_LANG.get(os.path.splitext(fp)[1].lower())
                         if lang: langs[lang] += 1
                         if name in ("Edit", "Write", "MultiEdit"): files_mod.add(fp)
+                    # lines from the tool inputs: Edit/MultiEdit old vs new text, Write content
+                    if name == "Edit":
+                        added += nlines(inp.get("new_string")); removed += nlines(inp.get("old_string"))
+                    elif name == "MultiEdit":
+                        for e in inp.get("edits") or []:
+                            if isinstance(e, dict):
+                                added += nlines(e.get("new_string")); removed += nlines(e.get("old_string"))
+                    elif name == "Write":
+                        added += nlines(inp.get("content"))
                     if name == "Bash":
                         cmd = inp.get("command") or ""
-                        if re.search(r"\bgit\b[^\n|;&]*\bcommit\b", cmd): commits += 1
-                        if re.search(r"\bgit\b[^\n|;&]*\bpush\b", cmd): pushes += 1
+                        for act, _ in git_actions(cmd):
+                            if act == "commit": commits += 1; pending = True
+                            elif act == "push": pushes += 1; pending = False
             meta_ok = True
     if not meta_ok or start_dt is None: return None
     dur = round((end_dt - start_dt).total_seconds() / 60, 1) if end_dt else 0
@@ -125,6 +166,7 @@ def harvest(path):
     return {
         "session_id": sid,
         "project_path": cwd or "",
+        "cwds": cwds,
         "start_time": start_dt.strftime("%Y-%m-%dT%H:%M:%S.") + "%03dZ" % (start_dt.microsecond // 1000),
         "duration_minutes": dur,
         "user_message_count": user_n,
@@ -133,11 +175,13 @@ def harvest(path):
         "languages": dict(langs),
         "git_commits": commits,
         "git_pushes": pushes,
+        "ended_unpushed": pending if commits else None,
         "input_tokens": in_tok,
         "output_tokens": out_tok,
         "first_prompt": first_prompt,
         "user_interruptions": interrupts,
         "tool_errors": errors,
+        "tool_errors_real": real_errors,
         "tool_error_categories": dict(errcats),
         "uses_task_agent": uses_task,
         "uses_mcp": uses_mcp,
@@ -149,6 +193,11 @@ def harvest(path):
         "transcript_mtime": int(os.path.getmtime(path) * 1000),
         "source": "local-harvest",
         "interactive": interactive,
+        # sdk-cli (claude -p), sdk-py, sdk-ts = scripted/headless; cli = a person at a terminal
+        "entrypoint": entrypoint or "",
+        "headless": (entrypoint or "").startswith("sdk"),
+        "lines_added": added,
+        "lines_removed": removed,
     }
 
 def main():

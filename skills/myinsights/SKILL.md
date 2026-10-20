@@ -23,7 +23,7 @@ The built-in `/insights` samples a subset of sessions and reflects the currently
 
 1. **Extract substrate** (deterministic, read-only) into a scratch dir:
    ```bash
-   OUT=/tmp/myinsights && python3 "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/myinsights/gather_all.py" "$OUT"
+   OUT=/tmp/myinsights && python3 "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/myinsights/harvest_local.py" && python3 "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/myinsights/gather_all.py" "$OUT"
    ```
    Writes `$OUT/quant.json` (rollups: sessions, tokens, commits/pushes, durations, top tools, languages, error categories, by-hour, project areas) and `$OUT/facets_compact.json` (trimmed qualitative facets). Honours `CLAUDE_CONFIG_DIR`.
 

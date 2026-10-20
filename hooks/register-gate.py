@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""register-gate.py — Stop hook. Blocks a turn that ends in a reply breaking REGISTER.
+"""register-gate.py: Stop hook. Blocks a turn that ends in a reply breaking REGISTER.
 
 Why this exists
 ---------------
@@ -109,12 +109,32 @@ DETAIL_DIR = Path.home() / ".claude" / "detail"
 
 # Phrases that mean "go deep, I want the internals". REGISTER rule 5 exempts these
 # from the overload check. It does NOT exempt them from the dash check.
+#
+# "review", "technical" and "verbose" came out 20 Oct 2026. In the user's own prompts they
+# do not ask for depth. "review" is a task verb: "ok review and merge", "tell me when
+# everything is finished and i will review all", "keep it low, yes review and merge".
+# The other two are how he complains: "tldr stop speaking in technical I need laymans"
+# (17 Aug) and "way too long, needs to be short and punchy and not technical" (25 Aug).
+# Every one of those switched this gate off and lifted the ceiling to 700 words, for the
+# reply that most needed to be plain.
 DEPTH_REQUEST = re.compile(
     r"\b(explain|walk me through|how does|how do you|why does|why did|in detail|deep dive|"
-    r"deep-dive|review|debug|root cause|root-cause|technical|verbose|show me the|"
+    r"deep-dive|debug|root cause|root-cause|show me the|"
     r"full detail|more detail|elaborate)\b",
     re.I,
 )
+
+# A plain-English ask beats any depth word in the same prompt, so "explain it in layman
+# terms" means plain, not deep. These are the phrases correction-detect.sh files as
+# "register too technical", plus tldr, so a prompt counted as that complaint can never be
+# the thing that switches this gate off.
+PLAIN_REQUEST = re.compile(r"\b(laym[ae]n|plain english|tldr|don.?t understand)", re.I)
+
+# Pasted text is material he is showing, not what he is asking for. A pasted doc or log
+# nearly always holds a depth word, so "huh what do you mean" plus a paste (16 Oct)
+# switched the gate off for the reply that had to explain it plainly. The closing tag
+# carries the same id as the opening one.
+PASTED = re.compile(r"<pasted_content\b[^>]*>.*?</pasted_content\b[^>]*>", re.S)
 
 # Each pattern counts DISTINCT matches, so one repeated flag cannot inflate the score.
 INTERNALS = [
@@ -131,7 +151,7 @@ INTERNALS = [
 
 FENCE = re.compile(r"```.*?```", re.S)
 INLINE_CODE = re.compile(r"`[^`\n]*`")
-DASH = re.compile(r"[—–]")
+DASH = re.compile("[" + chr(0x2014) + chr(0x2013) + "]")  # em and en dash, by code point so this file holds neither
 
 
 def log(line: str) -> None:
@@ -158,7 +178,7 @@ def passthrough(reason: str, detail: str = "", session: str = "?") -> None:
 # against 2,238 logged evaluations: 165 of the 344 depth exemptions came from these,
 # because a skill body or a teammate message almost always contains "review", "debug"
 # or "in detail", which matched DEPTH_REQUEST and switched the overload check off.
-NOT_ALEX = (
+NOT_USER = (
     "Another Claude session sent a message:",
     "Base directory for this skill:",
     "Stop hook feedback:",
@@ -176,12 +196,12 @@ NOT_ALEX = (
 SKILL_HEADING = re.compile(r"#\s*/[a-z][\w-]*\b")
 
 
-def typed_by_alex(text: str) -> bool:
+def typed_by_user(text: str) -> bool:
     """False for injected user-role text: skill bodies, teammate posts, hook feedback."""
     head = text.lstrip()[:200]
     if SKILL_HEADING.match(head):
         return False
-    return not any(marker in head for marker in NOT_ALEX)
+    return not any(marker in head for marker in NOT_USER)
 
 
 def read_transcript(path: str):
@@ -229,7 +249,7 @@ def read_transcript(path: str):
             # Injected blocks are not things the user typed.
             if "<system-reminder>" in text or text.startswith("<") or "Caveat:" in text:
                 continue
-            if not typed_by_alex(text):
+            if not typed_by_user(text):
                 continue
             user = text
     return assistant, user, entrypoint
@@ -427,7 +447,10 @@ def main() -> None:
         )
 
     # --- check 2: overload (rules 1-3). Needs length AND jargon density together. ---
-    depth = bool(DEPTH_REQUEST.search(prompt or ""))
+    # Depth is judged on what he typed, with any paste taken out, and a plain-English
+    # ask in the same prompt cancels it.
+    asked = PASTED.sub(" ", prompt or "")
+    depth = bool(DEPTH_REQUEST.search(asked)) and not PLAIN_REQUEST.search(asked)
 
     total_words = len(reply.split())
     words = len(prose.split())

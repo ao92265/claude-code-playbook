@@ -224,7 +224,7 @@ FIG_TOKENS = {
     "#a11107": "var(--dg-text, var(--head))",         # error text, never rendered
 }
 # The diagram tokens (--dg-*) and --fig come from the theme family, so the figures
-# take each family's own palette in both themes; project-f falls back to page tokens.
+# take each family's own palette in both themes; Project-F falls back to page tokens.
 
 FIG_CFG = json.dumps({"theme": "base", "themeVariables": {
     "primaryColor": "#f01f01", "mainBkg": "#f01f01",
@@ -537,7 +537,7 @@ for d in need(CFG, "divider_art"):
 # ── theme family: tokens and default come from the PRD shell, one source ──
 # prd-template.html holds every family's tokens between the families markers and
 # names the default in data-family on its <html>. Changing that one value moves
-# the PRD, the bundle and this plan together. project-f stays a switch.
+# the PRD, the bundle and this plan together. Project-F stays a switch.
 _TPL = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "prd-template.html")
 try:
     _tpl = open(_TPL, encoding="utf-8").read()

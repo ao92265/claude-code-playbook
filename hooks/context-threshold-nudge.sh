@@ -151,8 +151,10 @@ age_nudge() {
 
   if [ "$tier" -ge $(( max_h * 2 )) ]; then
     echo "<system-reminder>SESSION AGE ${h}h${m}m since the last /clear — WAY past the core-rules ${max_h}h session cap. AUTO-REBOOT: finish the current tool call, then run the reboot skill NOW without asking — write the distilled reprompt file yourself and hand the user the paste-ready launch line. He only has to press /clear. Do not start new work in this session. If you are genuinely mid-edit on a file, finish that single edit first, then reboot.</system-reminder>"
+  elif [ ! -f "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/state/rotate-enabled" ]; then
+    echo "<system-reminder>SESSION AGE ${h}h${m}m since the last /clear, past the core-rules ${max_h}h session cap. Auto clear is OFF (the user's choice, /autoclear on turns it back on), so nothing will clear this session for you. Do not clear it yourself. At the next stopping point run the reboot skill to write a handoff, then tell the user in one line that it is ready for him to /clear when he chooses.</system-reminder>"
   else
-    echo "<system-reminder>SESSION AGE ${h}h${m}m since the last /clear — past the core-rules ${max_h}h session cap. At a natural stopping point (not mid-edit), tell the user how long this session has been running and that it is /reboot and /clear time, and name the one next step the fresh session should start with. If the task genuinely needs a few more turns, say so and carry on — but say it once, do not repeat it every turn.</system-reminder>"
+    echo "<system-reminder>SESSION AGE ${h}h${m}m since the last /clear — past the core-rules ${max_h}h session cap. Do NOT ask the user to reboot or tell him to /clear. In tmux the run referee rotates this session by itself (reboot, clear, resume) once the input box is idle; just finish the current step and keep the handoff current. Outside tmux, run the reboot skill yourself at the next stopping point and carry on.</system-reminder>"
   fi
 }
 

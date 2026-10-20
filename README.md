@@ -7,8 +7,8 @@
 
 [![Quick Start](https://img.shields.io/badge/Quick_Start-5E6AD2?style=for-the-badge&logo=rocket&logoColor=white)](#quick-start)
 [![Docs Site](https://img.shields.io/badge/Docs_Site-00B8CC?style=for-the-badge&logo=book&logoColor=white)](https://ao92265.github.io/claude-code-playbook/)
-[![Skills](https://img.shields.io/badge/Skills-76_included-5E6AD2?style=for-the-badge&logo=puzzle-piece&logoColor=white)](#skills-reference)
-[![Hooks](https://img.shields.io/badge/Hooks-76_included-EB5757?style=for-the-badge&logoColor=white)](#hooks)
+[![Skills](https://img.shields.io/badge/Skills-81_included-5E6AD2?style=for-the-badge&logo=puzzle-piece&logoColor=white)](#skills-reference)
+[![Hooks](https://img.shields.io/badge/Hooks-83_included-EB5757?style=for-the-badge&logoColor=white)](#hooks)
 [![CI](https://img.shields.io/github/actions/workflow/status/ao92265/claude-code-playbook/validate.yml?style=for-the-badge&label=CI&logo=github)](https://github.com/ao92265/claude-code-playbook/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/License-MIT-27A644?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/ao92265/claude-code-playbook?style=for-the-badge&logo=github&color=F0BF00)](https://github.com/ao92265/claude-code-playbook/stargazers)
@@ -20,9 +20,9 @@
 
 <br/>
 
-<img src="https://img.shields.io/badge/76-Skills-5E6AD2?style=flat-square" alt="76 Skills"/>
+<img src="https://img.shields.io/badge/81-Skills-5E6AD2?style=flat-square" alt="81 Skills"/>
 <img src="https://img.shields.io/badge/12-Templates-FC7840?style=flat-square" alt="12 Templates"/>
-<img src="https://img.shields.io/badge/76-Hooks-EB5757?style=flat-square" alt="76 Hooks"/>
+<img src="https://img.shields.io/badge/83-Hooks-EB5757?style=flat-square" alt="83 Hooks"/>
 <img src="https://img.shields.io/badge/76-Docs-4EA7FC?style=flat-square" alt="76 Docs"/>
 <img src="https://img.shields.io/badge/5-Examples-27A644?style=flat-square" alt="5 Examples"/>
 <img src="https://img.shields.io/badge/24-Anti--Patterns-F0BF00?style=flat-square" alt="24 Anti-Patterns"/>
@@ -90,6 +90,18 @@ After months of daily production use — debugging at 2am, shipping features acr
 
 <br/>
 
+## What's New (October 20 sync)
+
+Second sync of the live setup since the 5 Oct refresh. Everything is scrubbed the same way; the
+[Setup Inventory](docs/setup-inventory.md) lists what was left out.
+
+- **Seven new guard hooks**: `worktree-gate.sh` (one file per session in a shared checkout, then a worktree), `explainer-gate.py` (explain a folder before first editing it), `restate-gate.sh` (say back the ask before the first edit), `test-gate.py` (run the code before stopping), `push-gate.py` (one nudge for commits left unpushed), `goal-pin.py` (keep the session's goal and detour in view) and `voice-queue.sh`. Shared helpers in `hooks/lib/`. Wiring in [`examples/settings.hooks.json`](examples/settings.hooks.json).
+- **Updated hooks**: `auto-mode.py`, `register-gate.py`, `verify-gate.sh`, `firewall.sh` (heredoc-safe), `context-threshold-nudge.sh`, `run-referee-guard.sh`, `daydream.sh`, `daydream-surface.sh`, `answer-shape-nudge.sh`.
+- **New skills**: `autoclear`, `overnight`, `recap`, `clean-code`, `clean-code-score`. Refreshed: `anti-ai-prose` (now with a scorer), `myinsights`, `pr-review`, `prdforge`, `done`, `reboot`.
+- **Incident replay**: `scripts/claude-ops/incident-replay.py` plus a daily launchd job scores the code reviewer against past misses. A 14th background job.
+- **Ops scripts and tests**: `autoclear.sh`, `tmux-send-line.sh`, `session-rotate.sh`, `run-referee.py`, `graveyard-sweep.py`, `restore-sessions.sh`, `hooks-smoke-test.sh` and a new `scripts/claude-ops/tests/` folder.
+- **Third party, linked not copied**: [anatomy](https://github.com/wheresryan22/anatomy) (isometric SVG figures).
+
 ## What's New (October 2026)
 
 The repo now mirrors the author's live setup, sanitised. Start with the
@@ -98,7 +110,7 @@ The repo now mirrors the author's live setup, sanitised. Start with the
 - **[RTK](docs/rtk.md)**: a Bash hook that trims command output before it reaches context. 80% fewer output tokens over about 240,000 commands.
 - **[Guard Hooks](docs/guard-hooks.md)**: recorder plus gate pairs that block an edit until the right check has happened. Rules that were ignored as prose, enforced as hooks.
 - **[Session Lifecycle](docs/session-lifecycle.md)**: per-turn handoffs, `/reboot`, automatic rotation and an out-of-band referee for runaway sessions.
-- **[Background Jobs](docs/background-jobs.md)**: 13 launchd jobs, scripts in [`scripts/claude-ops/`](scripts/claude-ops/).
+- **[Background Jobs](docs/background-jobs.md)**: 14 launchd jobs, scripts in [`scripts/claude-ops/`](scripts/claude-ops/).
 - **[Superpowers](docs/superpowers.md)** as the default process layer, the **[rules layout](rules/)** (`CLAUDE.md` plus five @-imports), **[9 role agents](agents/)** and **[commands](commands/)**.
 
 ## Architecture Overview

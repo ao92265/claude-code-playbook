@@ -107,7 +107,7 @@ promising the styled output; the markdown PLAN itself is useful without them.
   620px wide the canvas scrolls sideways inside the panel rather than shrinking.
 - Theme family: `assemble.py` takes every family's tokens and the default (`data-family` on
   `<html>`, Grid today) from `../prd-template.html`, so the plan, PRD and bundle switch together.
-  Figures bake to the family's diagram tokens (`--dg-*`, `--fig`). project-f stays one value away.
+  Figures bake to the family's diagram tokens (`--dg-*`, `--fig`). Project-F stays one value away.
 - Colours come from a **sentinel palette**: mermaid renders with unmistakable hexes
   (`#f01f01`, `#a11101`, ...) pinned through `themeVariables`, and assemble.py swaps
   each for a page token (`var(--panel)`, `var(--line2)`, `var(--head)`,

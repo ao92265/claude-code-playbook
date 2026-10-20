@@ -4,7 +4,7 @@
 Usage:
   check_contrast.py <file.html> [<file.html> ...] [--all]
 Reads the token blocks out of a built page or shell (prd-template.html, a -prd.html,
-a -plan-share.html, a bundle): the project-f base (:root[data-theme="light"|"dark"]) and
+a -plan-share.html, a bundle): the Project-F base (:root[data-theme="light"|"dark"]) and
 every :root[data-family="x"] family with its dark override. By default it checks the
 family the document names in data-family on <html>; --all checks every family found.
 

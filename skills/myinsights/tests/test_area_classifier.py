@@ -26,20 +26,28 @@ def _area_of():
 
 def test_worktree_under_repos_is_scratch_not_a_repo():
     area_of = _area_of()
-    assert area_of("/Users/x/Repos/.agent-worktrees/abc-TASK-1") == "scratch/worktree"
-    assert area_of("/Users/x/repos/.agent-worktrees/abc") == "scratch/worktree"
+    assert area_of("/home/x/Repos/.agent-worktrees/abc-TASK-1") == "scratch/worktree"
+    assert area_of("/home/x/repos/.agent-worktrees/abc") == "scratch/worktree"
+
+
+def test_native_claude_worktree_is_scratch_not_its_repo():
+    # Claude Code's own worktrees live at <repo>/.claude/worktrees/<name>; they were
+    # bucketed as their parent repo, so Isolation discipline missed them.
+    area_of = _area_of()
+    assert area_of("/home/x/Repos/app-new-ui/.claude/worktrees/wf-abc") == "scratch/worktree"
+    assert area_of("/home/x/Repos/trades-digest/.claude/worktrees/fix-1/src") == "scratch/worktree"
 
 
 def test_scratchpad_and_tmp_still_scratch():
     area_of = _area_of()
     assert area_of("/tmp/claude-502/whatever") == "scratch/worktree"
-    assert area_of("/Users/x/Repos/proj/scratchpad/run") == "scratch/worktree"
+    assert area_of("/home/x/Repos/proj/scratchpad/run") == "scratch/worktree"
 
 
 def test_ordinary_repo_still_resolves_to_its_name():
     area_of = _area_of()
-    assert area_of("/Users/x/Repos/vanguardplanner") == "vanguardplanner"
-    assert area_of("/Users/x/Repos/vanguardplanner/src/app") == "vanguardplanner"
+    assert area_of("/home/x/Repos/planner-app") == "planner-app"
+    assert area_of("/home/x/Repos/planner-app/src/app") == "planner-app"
 
 
 def test_empty_and_unknown_paths():

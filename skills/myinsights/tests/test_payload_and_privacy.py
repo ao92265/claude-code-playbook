@@ -80,3 +80,15 @@ def test_no_network_code_paths():
     for path in glob.glob(os.path.join(SKILL, "*.py")):
         src = open(path).read()
         assert not banned.search(src), f"network import found in {os.path.basename(path)}"
+
+
+if __name__ == "__main__":
+    import inspect
+    failed = 0
+    for name, fn in sorted(globals().items()):
+        if name.startswith("test_") and inspect.isfunction(fn):
+            try:
+                fn(); print("PASS", name)
+            except Exception as exc:  # noqa: BLE001
+                failed += 1; print("FAIL", name, repr(exc))
+    raise SystemExit(1 if failed else 0)

@@ -46,16 +46,16 @@ if [ "$TOOL" = "Write" ] || [ "$TOOL" = "Edit" ]; then
   esac
 fi
 
-# Second hole: /keep. Pinning a terminal is how the user stops the rotator clearing
+# Second hole: /keep and /autoclear. Pinning a terminal is how the user stops the rotator clearing
 # it, and a paused session is exactly the one he wants pinned. Only the skill
 # itself and one bare keep.sh call; anything chained onto it stays blocked.
 if [ "$TOOL" = "Skill" ]; then
-  [ "$(printf '%s' "$INPUT" | jq -r '.tool_input.skill // empty' 2>/dev/null)" = "keep" ] && exit 0
+  case "$(printf '%s' "$INPUT" | jq -r '.tool_input.skill // empty' 2>/dev/null)" in keep|autoclear) exit 0 ;; esac
 fi
 if [ "$TOOL" = "Bash" ]; then
   CMD=$(printf '%s' "$INPUT" | jq -r '.tool_input.command // empty' 2>/dev/null || true)
   case "$CMD" in *$'\n'*) CMD="" ;; esac
-  printf '%s' "$CMD" | grep -qE '^(rtk )?(~|/Users/[^/ ]+|\$HOME)/\.claude/scripts/keep\.sh( (on|off|status))?$' && exit 0
+  printf '%s' "$CMD" | grep -qE '^(rtk )?(~|/home/[^/ ]+|\$HOME)/\.claude/scripts/(keep|autoclear)\.sh( (on|off|status))?$' && exit 0
 fi
 
 VERDICT=$(jq -r '.verdict // "pause"' "$SENTINEL" 2>/dev/null || echo pause)

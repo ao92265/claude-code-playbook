@@ -1,0 +1,3 @@
+interface:
+  display_name: "Clean Code"
+  short_description: "Review and refactor code, modules, and feature flows"

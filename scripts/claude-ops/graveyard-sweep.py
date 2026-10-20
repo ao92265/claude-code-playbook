@@ -14,8 +14,8 @@ Delivery is Telegram, because a thing he has to open is a thing he abandons.
 Falls back to a macOS notification if the bot is unreachable.
 
 Auth follows the standing-orders.py pattern: the judge model uses the long-lived
-OAuth token from the macOS keychain (service: daydream-oauth). The Telegram token
-is read from assistant-bot's .env at run time and NEVER copied under ~/.claude, which
+OAuth token from the macOS keychain (service: example-oauth). The Telegram token
+is read from mybot's .env at run time and NEVER copied under ~/.claude, which
 is backed up to git and OneDrive.
 
 Read-only against the memory corpus. It never writes MEMORY.md — that index is
@@ -33,7 +33,7 @@ HEARTBEAT = os.path.join(DIR, "heartbeat")
 REPORT = os.path.join(DIR, "report.md")
 MEMDIR = os.path.join(CFG, "projects", "-Users-you", "memory")
 AGENTS = os.path.join(HOME, "Library", "LaunchAgents")
-NANOCLAW_ENV = os.path.join(HOME, "Repos", "assistant-bot", ".env")
+BOT_ENV = os.path.join(HOME, "Repos", "mybot", ".env")
 JUDGE_MODEL = "haiku"
 STALE_FACTOR = 2.5          # a job is stale once it has missed 2.5 of its own periods
 MAX_LANDED = 5              # he reads five lines, not fifteen
@@ -49,6 +49,7 @@ HEARTBEATS = {
 
 EXTRA_JOBS = {
     "daydream (Stop hook)": (os.path.join(CFG, "state", "daydream-last.ts"), 86400),
+    "setup tune (Stop hook)": (os.path.join(CFG, "state", "tune-last.ts"), 259200),
 }
 
 # Section C: repo state nobody is watching — stale worktrees and orphaned
@@ -57,6 +58,7 @@ EXTRA_JOBS = {
 REPOS_DIR = os.path.join(HOME, "Repos")
 STALE_WORKTREE_DAYS = 14
 STALE_BRANCH_DAYS = 30
+UNPUSHED_HOURS = 24  # committed but not pushed for longer than this gets listed
 
 
 def now():
@@ -83,7 +85,7 @@ def notify(title, body):
 
 def keychain_token():
     r = subprocess.run(["security", "find-generic-password", "-a", os.environ.get("USER", ""),
-                        "-s", "daydream-oauth", "-w"], capture_output=True, text=True, timeout=15)
+                        "-s", "example-oauth", "-w"], capture_output=True, text=True, timeout=15)
     return r.stdout.strip() if r.returncode == 0 else ""
 
 
@@ -193,7 +195,7 @@ def save_state(st):
 def friendly(label):
     """A job's label as a person would say it: com.example.claude-standing-orders
     becomes "standing orders". Telegram never shows the raw label."""
-    name = re.sub(r"^com\.(you|assistant-bot)\.?", "", label)
+    name = re.sub(r"^com\.(example|mybot)\.?", "", label)
     name = re.sub(r"^claude-", "", name)
     name = re.sub(r"\s*\(.*?\)", "", name)
     return re.sub(r"[-_.]+", " ", name).strip() or label
@@ -219,7 +221,7 @@ def check_jobs():
 
     for fn in sorted(f for f in os.listdir(AGENTS) if f.endswith(".plist")):
         label = fn[:-len(".plist")]
-        if not (label.startswith("com.example.") or label.startswith("com.assistant-bot")):
+        if not (label.startswith("com.example.")):
             continue
         try:
             with open(os.path.join(AGENTS, fn), "rb") as f:
@@ -284,8 +286,8 @@ def check_jobs():
             continue
         age = now_ts - os.path.getmtime(path)
         if age > per * STALE_FACTOR:
-            stale.append((f"{name}: last ran {human(age)} ago, expected daily",
-                          f"{friendly(name)}: last ran {human(age)} ago, but should run every day"))
+            stale.append((f"{name}: last ran {human(age)} ago, expected every {human(per)}",
+                          f"{friendly(name)}: last ran {human(age)} ago, but should run every {human(per)}"))
         else:
             ok.append(f"{name}: last ran {human(age)} ago")
 
@@ -457,6 +459,60 @@ def orphaned_branches(repos):
     return findings
 
 
+def unpushed_commits(repos, min_hours=UNPUSHED_HOURS):
+    """Branches that track an upstream but sit ahead of it, oldest unpushed commit
+    older than min_hours. orphaned_branches only sees branches with no upstream."""
+    now_ts = datetime.datetime.now().timestamp()
+    findings = []
+    for repo in repos:
+        out = run_git(["for-each-ref", "--format=%(refname:short)\t%(upstream:short)\t%(upstream:track)",
+                       "refs/heads/"], repo, timeout=8)
+        for line in out.splitlines():
+            parts = line.split("\t")
+            if len(parts) != 3 or not parts[1] or "ahead" not in parts[2]:
+                continue
+            branch, upstream, _ = parts
+            stamps = run_git(["log", "--format=%ct", f"{upstream}..{branch}"], repo, timeout=8).split()
+            if not stamps:
+                continue
+            try:
+                age_h = (now_ts - min(int(t) for t in stamps)) / 3600
+            except ValueError:
+                continue
+            if age_h >= min_hours:
+                findings.append(f"{os.path.basename(repo)}: branch '{branch}' has {len(stamps)} unpushed "
+                                f"commit{'s' if len(stamps) != 1 else ''}, oldest {human(age_h * 3600)} old")
+    return findings
+
+
+def unpushed_by_repo(repos, min_hours=UNPUSHED_HOURS):
+    """One line per remote: clones and worktree copies of the same project share an
+    origin URL and would otherwise repeat the same branches many times over."""
+    now_ts = datetime.datetime.now().timestamp()
+    groups = {}  # origin url -> {"name", "branches": set, "oldest": seconds}
+    for repo in repos:
+        url = run_git(["remote", "get-url", "origin"], repo).strip() or repo
+        out = run_git(["for-each-ref", "--format=%(refname:short)\t%(upstream:short)\t%(upstream:track)",
+                       "refs/heads/"], repo, timeout=8)
+        for line in out.splitlines():
+            parts = line.split("\t")
+            if len(parts) != 3 or not parts[1] or "ahead" not in parts[2]:
+                continue
+            stamps = run_git(["log", "--format=%ct", f"{parts[1]}..{parts[0]}"], repo, timeout=8).split()
+            try:
+                age = now_ts - min(int(t) for t in stamps)
+            except ValueError:
+                continue
+            if age < min_hours * 3600:
+                continue
+            g = groups.setdefault(url, {"name": os.path.basename(repo), "branches": set(), "oldest": 0})
+            g["branches"].add(parts[0])
+            g["oldest"] = max(g["oldest"], age)
+    ranked = sorted(groups.values(), key=lambda g: -g["oldest"])
+    return [f"{g['name']}: {len(g['branches'])} branch{'es' if len(g['branches']) != 1 else ''} "
+            f"with unpushed commits, oldest {human(g['oldest'])}" for g in ranked]
+
+
 def check_repo_state():
     """Report-only, never deletes anything. Section C of the sweep."""
     repos = git_repos(REPOS_DIR)
@@ -468,11 +524,11 @@ def check_repo_state():
 # Delivery
 # --------------------------------------------------------------------------
 def telegram_creds():
-    """Read the bot token from assistant-bot's .env. Never cached under ~/.claude."""
-    if not os.path.exists(NANOCLAW_ENV):
+    """Read the bot token from mybot's .env. Never cached under ~/.claude."""
+    if not os.path.exists(BOT_ENV):
         return None, None
     tok = chat = None
-    with open(NANOCLAW_ENV) as f:
+    with open(BOT_ENV) as f:
         for line in f:
             if line.startswith("TELEGRAM_BOT_TOKEN="):
                 tok = line.split("=", 1)[1].strip().strip("\"'")
@@ -551,7 +607,7 @@ def codex_usage():
     return this_week, last_week
 
 
-def compose(stale, landed, first_run=False, sections="both", repo_state=None, codex=None):
+def compose(stale, landed, first_run=False, sections="both", repo_state=None, codex=None, unpushed=None):
     """The Telegram message. Plain English for a non-technical reader: what
     happened and whether the user has to do anything. No job labels, paths, branch
     names or exit codes; those live in the report on disk."""
@@ -588,6 +644,14 @@ def compose(stale, landed, first_run=False, sections="both", repo_state=None, co
         lines.append("Codex, the second-opinion coding helper")
         note = ", which is low, so it may have dropped out of use" if this_week < CODEX_LOW_WEEK else ""
         lines.append(f"- Used {this_week} times this week and {last_week} times last week{note}.")
+    if unpushed:
+        act = True
+        lines.append("")
+        lines.append("Saved but never sent to GitHub")
+        lines.append(f"- {len(unpushed)} projects have work committed on your laptop for over a day "
+                     "and not pushed. Oldest first:")
+        for u in unpushed[:3]:
+            lines.append(f"  - {u}")
     if repo_state:
         act = True
         lines.append("")
@@ -622,11 +686,16 @@ def main():
         stale, ok, first_run = check_jobs()
 
     repo_state = []
+    unpushed = []
     if a.section in ("a", "both"):
         try:
             repo_state = check_repo_state()
         except Exception as e:
             log_event({"event": "error", "section": "repo-state", "error": str(e)[:500]})
+        try:
+            unpushed = unpushed_by_repo(git_repos(REPOS_DIR))
+        except Exception as e:
+            log_event({"event": "error", "section": "unpushed", "error": str(e)[:500]})
 
     landed = []
     if a.section in ("b", "both"):
@@ -648,7 +717,7 @@ def main():
         except Exception as e:
             log_event({"event": "error", "section": "codex-usage", "error": str(e)[:500]})
 
-    msg = compose(stale, landed, first_run, a.section, repo_state, codex)
+    msg = compose(stale, landed, first_run, a.section, repo_state, codex, unpushed)
 
     with open(REPORT, "w") as f:
         f.write(msg + "\n\n---\n\n")
@@ -661,6 +730,10 @@ def main():
             for it in landed:
                 f.write(f"- {it.get('what','?')} | waits on {it.get('who_or_what_it_waits_on','?')} "
                         f"| since {it.get('since','?')} | cost: {it.get('cost_if_ignored','?')}\n")
+        if unpushed:
+            f.write("\nFull unpushed list (one line per project):\n")
+            for u in unpushed:
+                f.write(f"- {u}\n")
         if repo_state:
             f.write("\nFull stale repo-state list:\n")
             for s in repo_state:

@@ -45,7 +45,7 @@ def family(template):
 
 
 def tokens(template):
-    """The project-f token blocks (light, dark by media, both data-theme overrides), read from
+    """The Project-F token blocks (light, dark by media, both data-theme overrides), read from
     the PRD shell so the bundle can never drift from it."""
     with open(template, encoding="utf-8") as f:
         css = f.read()

@@ -25,8 +25,8 @@ def load(f):
     except: return None
 
 # ---------- quantitative ----------
-q = dict(sessions=0, input_tokens=0, output_tokens=0, commits=0, pushes=0,
-         user_msgs=0, asst_msgs=0, total_minutes=0.0, tool_errors=0,
+q = dict(sessions=0, input_tokens=0, output_tokens=0, commits=0, pushes=0, commit_sessions=0, commit_sessions_unpushed=0,
+         user_msgs=0, asst_msgs=0, total_minutes=0.0, tool_errors=0, tool_errors_real=0, tool_errors_real_sessions=0,
          task_agent_sessions=0, mcp_sessions=0, websearch_sessions=0)
 tools = collections.Counter()
 langs = collections.Counter()
@@ -38,6 +38,12 @@ durations = []
 tok_per_session = []
 first_prompts = []
 lines_added = lines_removed = 0
+# interactive-only rates: headless SDK runs (scripted batches) dilute per-session rates
+# records harvested before the split have no "headless" key (transcript since deleted):
+# counted as unknown and left out of the rates rather than guessed
+inter = dict(sessions=0, headless_sessions=0, unknown_mode_sessions=0, worktree_sessions=0, task_agent_sessions=0)
+inter_durations = []
+headless_by_area = collections.Counter()
 
 def area_of(path):
     if not path: return "other"
@@ -46,7 +52,10 @@ def area_of(path):
     # NOTE: the scratch/worktree test must run BEFORE the /repos/ test. Worktrees now live at
     # ~/Repos/.agent-worktrees/<id>, so /repos/ matched first and bucketed them as a repo named
     # ".agent-worktrees" — leaving scratch/worktree absent and Isolation discipline scoring 0.
-    if "scratchpad" in p or "/tmp/" in p or "agent-worktrees" in p: return "scratch/worktree"
+    # Claude Code's native worktrees sit at <repo>/.claude/worktrees/<name> and would
+    # otherwise bucket as their parent repo.
+    if ("scratchpad" in p or "/tmp/" in p or "agent-worktrees" in p
+            or "/.claude/worktrees/" in p): return "scratch/worktree"
     if "/repos/" in p:
         m = re.search(r"/repos/([^/]+)", p);
         if m: return m.group(1)[:28]
@@ -63,12 +72,18 @@ for f in SM:
     q["output_tokens"] += d.get("output_tokens", 0) or 0
     q["commits"] += d.get("git_commits", 0) or 0
     q["pushes"] += d.get("git_pushes", 0) or 0
+    # interactive only, like isolation and delegation: headless pipelines commit locally on purpose
+    if d.get("ended_unpushed") is not None and d.get("headless") is False:
+        q["commit_sessions"] += 1
+        q["commit_sessions_unpushed"] += 1 if d["ended_unpushed"] else 0
     q["user_msgs"] += d.get("user_message_count", 0) or 0
     q["asst_msgs"] += d.get("assistant_message_count", 0) or 0
     mins = d.get("duration_minutes", 0) or 0
     q["total_minutes"] += mins
     if mins: durations.append(mins)
     q["tool_errors"] += d.get("tool_errors", 0) or 0
+    q["tool_errors_real"] += d.get("tool_errors_real", d.get("tool_errors", 0)) or 0
+    if "tool_errors_real" in d: q["tool_errors_real_sessions"] += 1
     if d.get("uses_task_agent"): q["task_agent_sessions"] += 1
     if d.get("uses_mcp"): q["mcp_sessions"] += 1
     if d.get("uses_web_search"): q["websearch_sessions"] += 1
@@ -82,7 +97,19 @@ for f in SM:
     for h in (d.get("message_hours") or []):
         try: byhour[int(h)] += 1
         except: pass
-    projarea[area_of(d.get("project_path", ""))] += 1
+    area = area_of(d.get("project_path", ""))
+    projarea[area] += 1
+    if "headless" not in d:
+        inter["unknown_mode_sessions"] += 1
+    elif d["headless"]:
+        inter["headless_sessions"] += 1
+        headless_by_area[area] += 1
+    else:
+        inter["sessions"] += 1
+        if area == "scratch/worktree" or any(area_of(c) == "scratch/worktree" for c in d.get("cwds") or []):
+            inter["worktree_sessions"] += 1
+        if d.get("uses_task_agent"): inter["task_agent_sessions"] += 1
+        if mins: inter_durations.append(mins)
     ot = d.get("output_tokens", 0) or 0
     if ot: tok_per_session.append(ot)
     fp = d.get("first_prompt")
@@ -96,6 +123,10 @@ q["median_output_tokens"] = med(tok_per_session)
 q["active_days"] = len(byday)
 q["lines_added"] = lines_added
 q["lines_removed"] = lines_removed
+inter_durations.sort()
+inter["median_session_min"] = round(med(inter_durations), 1)
+inter["headless_top_areas"] = headless_by_area.most_common(5)
+q["interactive"] = inter
 q["top_tools"] = tools.most_common(12)
 q["top_languages"] = langs.most_common(10)
 q["error_categories"] = errcats.most_common(10)

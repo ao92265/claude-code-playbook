@@ -31,22 +31,32 @@ One layer catches what the other misses. Belt-only drafts still leak tells under
 - **Signposting.** "First...", "Second...", "Finally...", "In summary..." Humans don't number paragraphs.
 - **"It's not just X, it's Y"** / **"Whether you're A or B, this is C"** constructions.
 - **The empty negation.** "Not a tool, a teammate." "This isn't a feature, it's a philosophy." Test it: if Y is the same idea as X in warmer words, the sentence says nothing and both halves go. Only keep it when X and Y are genuinely different things and the reader would have guessed X.
+- **Faux-insight setups and colon reveals.** "What nobody tells you...", "The part most people skip", "The best part: it learns." → drop the setup, state the claim as a plain sentence.
+- **Interpretive metadiscourse.** "That matters more than it sounds", "The key point is", "As you can see", "This distinction matters". → delete, or swap in the fact that proves it.
+- **Dramatic fragmentation and mic-drop kickers.** "X. And Y. That's it." → full sentences, end on the last concrete fact.
+- **Passive voice and "As a [role], I..." openers.** "was found to be", "are considered to be". → active, just say the thing.
+- **Hedging seesaw.** Both sides weighted equally. → pick one, give the counterpoint one sentence.
 - **Bold every 3rd noun.**
 - **Section headers for a single paragraph.**
+- **Social formatting slop.** Emoji as bullets or in headings, "🧵"/"Thread:" openers, hashtag stacks, markdown asterisks in plain-text email or DMs.
 
 ### Openers
 "Hey all", "Hey team", "So here's the thing", "I wanted to share", "Let me tell you", "I've been thinking about", "Picture this", rhetorical questions.
+Chatbot openers: "Certainly,", "Absolutely,", "Great question!", "I'd be happy to". Stock transitions: "Moreover,", "Furthermore,", "Additionally,", "Interestingly,", "Notably,", "Importantly,", "Indeed,".
 
 ### Vocabulary
 - **Hype:** amazing, powerful, transformative, game-changing, revolutionize, unlock, supercharge, seamless, robust, leverage, utilize, dive deep, comprehensive, holistic, paradigm, journey.
 - **Hedge:** you should, try to, generally, usually, typically, where appropriate, if possible, it's worth noting.
 - **Adverb hedge that means nothing:** quietly ("quietly shipped", "quietly became the standard"), subtly, effectively, arguably. "Quietly" is the loudest one. Either the thing was announced or it wasn't. Cut the adverb and the sentence loses nothing, which is the test.
 - **Filler:** at the end of the day, in today's fast-paced world, in the rapidly evolving landscape.
+- **Cliche phrases:** at its core, in the realm of, when it comes to, this is where X comes in, bridge the gap, move the needle, take it to the next level, buckle up, let's dive in, elevate, empower, streamline.
+- **Filler adjectives:** multifaceted, nuanced (as filler), crucial, enhance, emphasizing, enduring.
 - **Fake reveal:** "here's the kicker", "here's the thing", "and that's when it clicked", "plot twist". A human who has a good bit just tells you the bit.
 - **OSS-template:** "Issues and PRs welcome", "Contributions appreciated", "Star if you find it useful", "Star history".
 
 ### Closers
 "I hope this helps", "Let me know if you have any questions", "Looking forward to your thoughts", "Cheers!", "Stay tuned", "Until next time".
+"In conclusion", "Overall,", "Ultimately", "I hope this finds you well", "As per my last email", "Please don't hesitate to reach out".
 
 ## Register-neutral tells (detection pass)
 
@@ -146,6 +156,7 @@ Verify with the user. Mis-stating any of this destroys credibility.
 1. **Read the draft aloud.** If you wouldn't say a line to a colleague over coffee, rewrite it.
 2. **Cut 30%.** First-pass AI prose is bloated. Lose connective tissue.
 3. **Find the parallel structures.** Kill all but one element.
+3b. **Portability test.** If a sentence could move unchanged to another person, company or product, it is filler. Replace it with a number, name or mechanism.
 4. **Lowercase the start of at least one sentence.** Optionally headers too if channel allows.
 5. **Insert one self-deprecating line.** Wasted time, broken thing, own stupidity.
 6. **One specific, concrete number** in the opening third.
@@ -189,6 +200,18 @@ Verify with the user. Mis-stating any of this destroys credibility.
 >
 > Apache 2.0. Demo on Teams whenever. — the user
 
+## Score gate (hook-blockable)
+
+`scripts/score.py` gives a draft a 0 to 5 score and exits 0 only at 5/5, so a hook can block on a non-zero exit. Run `python3 ~/.claude/skills/anti-ai-prose/scripts/score.py FILE` (or `--text "..."`, or stdin with `-`).
+
+- Five categories, one point lost per category with any match: vocabulary, sentence patterns, punctuation (more than 2 dashes, or smart quotes), unsourced numbers, empty input. Below 5 fails.
+- **Unsourced numbers.** A figure next to users, customers, teams, clients, developers and similar (for example "2,000 customers") fails unless the same sentence has a URL, "source:", "per X" or a dated citation. `--allow-proof` reports them without the penalty, for claims you have checked.
+- **Code is not scored.** Fenced blocks and inline code are stripped first, matching "When NOT to use" below.
+- A 5/5 means no scorable tells, not good writing. The rewrite workflow still applies.
+- Proof the rules fire: `bash scripts/test_score.sh` runs the fixtures in `fixtures/` (one failing and one passing sample per rule) and exits non-zero if any case is wrong.
+
+Idea borrowed from github.com/ItsssssJack/SlopMonster (scoring, proof flag, code stripping only; its rival-model rewrite pass is deliberately not included).
+
 ## When NOT to use
 
 - Inside code blocks, commit messages, error quotes.
@@ -198,3 +221,5 @@ Verify with the user. Mis-stating any of this destroys credibility.
 ## Output contract
 
 Return ONLY the rewritten document. No "here's what I changed" preamble. No diff. No "let me know what you think".
+
+<!-- 2026-10-06: added tells from okaashish's anti-slop carousel (petergyang/no-ai-slop, jalaalrd/anti-ai-slop-writing); blader/humanizer list not fetched. -->

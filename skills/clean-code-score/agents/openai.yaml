@@ -1,0 +1,3 @@
+interface:
+  display_name: "Clean Code Score"
+  short_description: "Score codebases against Clean Code with evidence"

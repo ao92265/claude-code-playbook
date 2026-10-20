@@ -63,3 +63,15 @@ def test_report_variant_matches_export_when_in_range():
     exp, comp_e = compute_scores(q, variant="export")
     assert [(f["name"], f["score"]) for f in rep] == [(f["name"], f["score"]) for f in exp]
     assert comp_r == comp_e
+
+
+if __name__ == "__main__":
+    import inspect
+    failed = 0
+    for name, fn in sorted(globals().items()):
+        if name.startswith("test_") and inspect.isfunction(fn):
+            try:
+                fn(); print("PASS", name)
+            except Exception as exc:  # noqa: BLE001
+                failed += 1; print("FAIL", name, repr(exc))
+    raise SystemExit(1 if failed else 0)

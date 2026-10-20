@@ -9,6 +9,8 @@ On any non-trivial UI, frontend or landing-page task: grep the index, read the o
 - Mobbin: screenshots of real shipped screens by flow (onboarding, paywall, empty state). Answers "what does a good version of THIS screen look like", which the brand library cannot. Free tier is limited, say so rather than promising a search.
 - Fontshare: free typefaces outside the overused Google set, for when a build needs a voice and the chosen system does not license its own.
 - motion.dev: worked examples for hover, drag and layout transitions. Reach for it when a build needs motion, rather than hand-rolling keyframes.
+- Forever (forevercomponents.com): 600+ animated components as copy-paste HTML, CSS and JS, no npm or registry. Reach for it when a build needs one distinctive animated section. Free tier is 3 copies a day and the licence is unstated, so check terms before client work.
+- Unicorn.Studio: no-code WebGL shaders for backgrounds and hover effects. Use for a subtle touch, never where it costs text legibility.
 
 ## Prompting /design
 Every `/design` prompt names five things: how many directions you want, wireframe or polished, ONE bounded surface by name (a settings panel, not "the dashboard"), which existing components must appear, and either a named aesthetic or an explicit "structure only, ignore styling". The last is the one you skip and the one that matters: silence gets you the generic AI house style. Then judge the set by whether the options disagree about hierarchy or only about colour. Only about colour means the prompt was too narrow.

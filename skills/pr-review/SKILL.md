@@ -26,7 +26,7 @@ so the JSON payload is never hand-built.
 2. **Never dismiss, resolve, or reply to an existing review thread.**
 3. **Repos the user does not own always get a confirmation before posting**, even
    when `--post` was passed. Owned = `<your-gh-user>`. Everything else — `<your-org>`,
-   `<your-org>`, `HIG-Innovation Team`, any other org — is somebody else's PR.
+   `<your-org>`, `<your-org>`, any other org — is somebody else's PR.
 4. **Never invent a line number.** Every inline anchor must exist in the diff.
    The script enforces this; do not work around it.
 5. **Attribution:** the PR author's name comes from `gh`, never from memory.

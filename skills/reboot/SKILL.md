@@ -23,7 +23,8 @@ Capture only what a fresh Claude needs:
 - **State** — what's already done / decided.
 - **Next step** — the immediate thing to do.
 - **Constraints** — hard rules or decisions already locked in.
-- **Key paths** — files/dirs in play.
+- **Key paths**: files/dirs in play.
+- **Remaining differences (UI work only)**: if the session touched a screen, theme or mockup match, list every difference still visible against the target, one per line, with the theme it was judged under. Write "none, the user confirmed in his browser" only if he did. UI passes were the most common way sessions ended part-done (myinsights, Oct 2026), and a vague "mostly matches" made the next session start the comparison from scratch.
 
 Drop dead-ends, resolved tangents, and tool noise.
 
@@ -31,7 +32,7 @@ Drop dead-ends, resolved tangents, and tool noise.
 
 Write the reprompt to a file. After `/clear`, the startup hook loads it back on its own — so there is usually nothing to paste.
 
-1. **Pick the session name (slug) first.** If the session already has an explicit name AND that name describes the work this session actually did, REUSE it: the session keeps its identity across the clear. If the work drifted off the name (a pane named `innovation-team` that spent the day fixing Outlook), do NOT reuse it: invent a slug for the real work (`outlook-whatsapp-fix`). Stamping an errand with a project's name makes the next `/clear` load the errand as that project (2026-09-24). Read the current name with:
+1. **Pick the session name (slug) first.** If the session already has an explicit name AND that name describes the work this session actually did, REUSE it: the session keeps its identity across the clear. If the work drifted off the name (a pane named `parentco` that spent the day fixing Outlook), do NOT reuse it: invent a slug for the real work (`outlook-whatsapp-fix`). Stamping an errand with a project's name makes the next `/clear` load the errand as that project (2026-09-24). Read the current name with:
 
    ```bash
    . ~/.claude/hooks/lib/session-ident.sh && session_ident_name

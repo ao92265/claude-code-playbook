@@ -94,3 +94,15 @@ def test_v1_report_variant_untouched():
     _, comp = compute_scores(q, variant="report")
     assert abs(comp - 70.9) < 1e-9
     assert FORMULA_VERSION_CALIBRATED != "1.0"
+
+
+if __name__ == "__main__":
+    import inspect
+    failed = 0
+    for name, fn in sorted(globals().items()):
+        if name.startswith("test_") and inspect.isfunction(fn):
+            try:
+                fn(); print("PASS", name)
+            except Exception as exc:  # noqa: BLE001
+                failed += 1; print("FAIL", name, repr(exc))
+    raise SystemExit(1 if failed else 0)

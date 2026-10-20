@@ -236,7 +236,7 @@ def to_prompt(p):
             f"Boundaries: {g(s, 'boundaries')}\n\nValidation: {g(s, 'validation')}\n")
 
 
-# ---------------------------------------------------------------- html (project-f style)
+# ---------------------------------------------------------------- html (Project-F style)
 def table(headers, rows):
     h = "".join(f"<th>{E(x)}</th>" for x in headers)
     b = "".join("<tr>" + "".join(f"<td>{c}</td>" for c in r) + "</tr>" for r in rows)

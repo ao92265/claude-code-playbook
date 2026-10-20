@@ -3,7 +3,7 @@
 Merged, all-logins Claude Code insights report. Quantitative rollups (full corpus, n=sessions) +
 qualitative narrative at /insights depth (sampled facets, n=facets). Body-only self-contained HTML.
 Honesty-first: full-corpus and sampled figures are badged and never mixed.
-Design system: Linear (~/Repos/design-ai/design-md/linear/DESIGN.md) — near-black layered
+Design system: Linear (~/Repos/design-ai/design-md/linear/DESIGN.md), near-black layered
 surfaces, indigo accents, compact type, fine borders. All CSS inline, no webfonts/CDN (CSP-safe).
 Includes a deterministic ranked Scorecard: 9 factors scored 0-100 by disclosed formulas over
 quant.json, graded, ranked, and combined into a weighted composite. No LLM-invented numbers.
@@ -30,6 +30,10 @@ C = dict(bg="#08090A", panel="#0F1011", panel2="#141516", elev="#1C1C1F",
          yellow="#F0BF00", orange="#FC7840", red="#EB5757")
 
 N_FULL = q.get("sessions", 0)
+_IN = q.get("interactive") or {}
+SPLIT_KPI = (f'<div class="kpi"><div class="n">{_IN.get("sessions", 0):,}</div><div class="l">interactive sessions</div>'
+             f'<div class="s">median {_IN.get("median_session_min", 0)}m · {_IN.get("headless_sessions", 0):,} headless (scripted) · '
+             f'{_IN.get("unknown_mode_sessions", 0):,} unknown (harvested before the split)</div></div>') if _IN else ""
 N_FACET = q.get("facet_n", q.get("facet_count", 0))
 def fmt(x): return f"{x:,}" if isinstance(x, int) else x
 def g(d, k, default=""): return (d or {}).get(k, default)
@@ -59,7 +63,7 @@ def hour_spark():
     for h, v in data:
         bh = (H - pad*2 - 10) * v / mx
         col = C["indigo"] if 8 <= h <= 20 else C["line2"]
-        b.append(f'<rect x="{h*bw+1:.1f}" y="{H-pad-10-bh:.1f}" width="{bw-2:.1f}" height="{max(bh,0.5):.1f}" rx="1.5" fill="{col}"><title>{h:02d}:00 — {v} msgs</title></rect>')
+        b.append(f'<rect x="{h*bw+1:.1f}" y="{H-pad-10-bh:.1f}" width="{bw-2:.1f}" height="{max(bh,0.5):.1f}" rx="1.5" fill="{col}"><title>{h:02d}:00, {v} msgs</title></rect>')
     ticks = "".join(f'<text x="{h*bw+bw/2:.1f}" y="{H-1}" class="tick">{h:02d}</text>' for h in (0,3,6,9,12,15,18,21,23))
     return f'<svg viewBox="0 0 {W} {H}" width="100%" height="{H}" preserveAspectRatio="none" role="img" aria-label="Messages by hour">{"".join(b)}{ticks}</svg>'
 
@@ -144,7 +148,7 @@ for i, f in enumerate(FACTORS, 1):
         f'</div></div>')
 rank_html = "".join(rank_rows)
 
-# TL;DR derivations — all deterministic from FACTORS/quant, no narrative input
+# TL;DR derivations, all deterministic from FACTORS/quant, no narrative input
 TL_BEST = FACTORS[0]
 TL_DRAG = max(FACTORS, key=lambda f: (100 - f["score"]) * f["w"])  # biggest weighted headroom
 TL_LANDED = outc.get("fully_achieved", 0) + outc.get("mostly_achieved", 0)
@@ -164,7 +168,7 @@ ww = n.get("what_works", {})
 ww_intro = g(ww, "intro"); ww_items = ww.get("impressive_workflows", []) if isinstance(ww, dict) else []
 if not ww_items and isinstance(n.get("what_works"), list):
     ww_items = [{"title":"", "description":x} for x in n["what_works"]]
-ww_html = "".join(f'<div class="wf"><div class="wf-t">{E(g(w,"title") or "•")}</div><div class="wf-d">{E(g(w,"description"))}</div></div>' for w in ww_items) or '<p class="cap">—</p>'
+ww_html = "".join(f'<div class="wf"><div class="wf-t">{E(g(w,"title") or "•")}</div><div class="wf-d">{E(g(w,"description"))}</div></div>' for w in ww_items) or '<p class="cap">none</p>'
 
 fr = n.get("friction", {})
 fr_intro = g(fr, "intro"); fr_cats = fr.get("categories", []) if isinstance(fr, dict) else []
@@ -173,12 +177,12 @@ if not fr_cats and isinstance(n.get("friction"), list):
 def fr_examples(ex): return ("<ul class='ex'>"+"".join(f"<li>{E(e)}</li>" for e in ex)+"</ul>") if ex else ""
 fr_html = "".join(
     f'<div class="fc"><div class="fc-c">{E(g(c,"category"))}</div><div class="fc-d">{E(g(c,"description"))}</div>{fr_examples(c.get("examples",[]))}</div>'
-    for c in fr_cats) or '<p class="cap">—</p>'
+    for c in fr_cats) or '<p class="cap">none</p>'
 
 sug = n.get("suggestions", {})
 if isinstance(sug, list): sug = {"usage_patterns":[{"title":"","suggestion":x,"copyable_prompt":""} for x in sug]}
 cma = sug.get("claude_md_additions", []); ftt = sug.get("features_to_try", []); ups = sug.get("usage_patterns", [])
-cma_html = "".join(f'<div class="sg"><div class="sg-t">{E(g(a,"addition"))}{scaffold_tag(g(a,"prompt_scaffold"))}</div><div class="sg-w">why — {E(g(a,"why"))}</div></div>' for a in cma)
+cma_html = "".join(f'<div class="sg"><div class="sg-t">{E(g(a,"addition"))}{scaffold_tag(g(a,"prompt_scaffold"))}</div><div class="sg-w">why, {E(g(a,"why"))}</div></div>' for a in cma)
 ftt_html = "".join(f'<div class="sg"><div class="sg-t">{E(g(f,"feature"))} <span class="sg-1">{E(g(f,"one_liner"))}</span></div><div class="sg-w">{E(g(f,"why_for_you"))}</div>{code(g(f,"example_code"))}</div>' for f in ftt)
 ups_parts = []
 for u in ups:
@@ -190,9 +194,9 @@ oth = n.get("on_the_horizon", {})
 oth_intro = g(oth, "intro"); ops = oth.get("opportunities", []) if isinstance(oth, dict) else []
 oth_parts = []
 for o in ops:
-    how = f'<div class="how">How to try — {E(g(o,"how_to_try"))}</div>' if g(o,"how_to_try") else ""
+    how = f'<div class="how">How to try, {E(g(o,"how_to_try"))}</div>' if g(o,"how_to_try") else ""
     oth_parts.append(f'<div class="op"><div class="op-t">{E(g(o,"title"))}</div><div class="op-d">{E(g(o,"whats_possible"))}</div>{how}{prompt_box(g(o,"copyable_prompt"))}</div>')
-oth_html = "".join(oth_parts) or '<p class="cap">—</p>'
+oth_html = "".join(oth_parts) or '<p class="cap">none</p>'
 
 fe = n.get("fun_ending", {})
 if isinstance(fe, str): fe = {"headline": fe, "detail": ""}
@@ -290,7 +294,7 @@ footer{{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:
   <p class="eyebrow">Claude Code · myinsights · all logins merged</p>
   <h1>{E(n.get("headline","Your full picture across every login"))}</h1>
   <p class="metastrip"><b>{fmt(N_FULL)}</b> sessions counted<span class="sep">·</span><b>{N_FACET}</b> narrated<span class="sep">·</span><b>{fmt(q.get('raw_transcripts',0))}</b> on disk<span class="sep">·</span><b>{fmt(q.get('user_msgs',0))}</b> your messages<span class="sep">·</span><b>{q.get('total_hours',0)}h</b> wall-clock*<span class="sep">·</span><b>{fmt(q.get('commits',0))}</b> commits<span class="sep">·</span><b>{q.get('active_days',0)}</b> active days</p>
-  <p class="lede">The report the built-in <span class="mono">/insights</span> can't give you: your <b>whole local corpus</b>, both logins merged. <span class="mono">/login</span> swaps only your identity — it never erases session history.</p>
+  <p class="lede">The report the built-in <span class="mono">/insights</span> can't give you: your <b>whole local corpus</b>, both logins merged. <span class="mono">/login</span> swaps only your identity, it never erases session history.</p>
 
   <div class="tiers">
     <div class="tier t1"><div class="tn">{fmt(q.get('raw_transcripts',0))}</div><div class="tl">raw session files on disk</div></div>
@@ -298,20 +302,20 @@ footer{{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:
     <div class="tier t3"><div class="tn">{N_FACET}</div><div class="tl">with facets → narrative (sample)</div></div>
   </div>
   <p class="cap" style="max-width:82ch">Built-in <span class="mono">/insights</span> narrated ~131. This narrates {N_FACET} and <b>counts all {fmt(N_FULL)}</b>.</p>
-  <p class="caveat">⚠︎ Merged, not segmented. Session history on disk carries <b>no account tag</b>, so this cannot split work vs personal — and both logins are the same person who asked for a merged view. Full-corpus stats (n={fmt(N_FULL)}) and sampled narrative stats (n={N_FACET}) are badged separately and never blended.</p>
+  <p class="caveat">⚠︎ Merged, not segmented. Session history on disk carries <b>no account tag</b>, so this cannot split work vs personal, and both logins are the same person who asked for a merged view. Full-corpus stats (n={fmt(N_FULL)}) and sampled narrative stats (n={N_FACET}) are badged separately and never blended.</p>
 
   <section class="section">
     {h2("TL;DR")}
     <div class="card tldr">
-      <div class="tl-row"><span class="tl-k">verdict</span><span class="tl-v"><b style="color:{COMP_COL}">{COMP_GRADE} ({COMPOSITE:.0f}/100)</b> — strongest factor: <b>{E(TL_BEST["name"])}</b> ({TL_BEST["score"]:.0f}); biggest weighted drag: <b>{E(TL_DRAG["name"])}</b> ({TL_DRAG["score"]:.0f}, weight {TL_DRAG["w"]}%)</span></div>
+      <div class="tl-row"><span class="tl-k">verdict</span><span class="tl-v"><b style="color:{COMP_COL}">{COMP_GRADE} ({COMPOSITE:.0f}/100)</b>, strongest factor: <b>{E(TL_BEST["name"])}</b> ({TL_BEST["score"]:.0f}); biggest weighted drag: <b>{E(TL_DRAG["name"])}</b> ({TL_DRAG["score"]:.0f}, weight {TL_DRAG["w"]}%)</span></div>
       <div class="tl-row"><span class="tl-k">scale</span><span class="tl-v"><b>{fmt(N_FULL)}</b> sessions · <b>{q.get('total_hours',0)}h</b> wall-clock · <b>{fmt(q.get('commits',0))}</b> commits · <b>{TL_LANDED} of {N_FACET}</b> analyzed sessions landed</span></div>
-      <div class="tl-row"><span class="tl-k">cost</span><span class="tl-v">API-rate ceiling <b>${COST_OPUS:,.0f}</b> if every token were Opus — floor <b>${COST_HAIKU:,.0f}</b> all-Haiku — over just <b>{q.get('active_days',0)} active days</b>. Breakdown below.</span></div>
+      <div class="tl-row"><span class="tl-k">cost</span><span class="tl-v">API-rate ceiling <b>${COST_OPUS:,.0f}</b> if every token were Opus, floor <b>${COST_HAIKU:,.0f}</b> all-Haiku, over just <b>{q.get('active_days',0)} active days</b>. Breakdown below.</span></div>
       <div class="tl-row"><span class="tl-k">fix first</span><span class="tl-v">{E(TL_DRAG["lever"])}</span></div>
     </div>
   </section>
 
   <section class="section">
-    {h2("Scorecard — every factor, ranked")}
+    {h2("Scorecard, every factor, ranked")}
     <div class="scoregrid">
       <div class="card gauge-card">
         {gauge()}
@@ -320,16 +324,16 @@ footer{{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:
       </div>
       <div class="card">{rank_html}</div>
     </div>
-    <p class="cap" style="max-width:92ch">Every score is a disclosed formula over the corpus data — nothing is model-vibes. Sampled-badge rows are measured on the {N_FACET} analyzed sessions only; full-badge rows on all {fmt(N_FULL)}. The 25-commits/day and 20%-delegation yardsticks are chosen targets, not industry benchmarks.</p>
+    <p class="cap" style="max-width:92ch">Every score is a disclosed formula over the corpus data, nothing is model-vibes. Sampled-badge rows are measured on the {N_FACET} analyzed sessions only; full-badge rows on all {fmt(N_FULL)}. The 25-commits/day and 20%-delegation yardsticks are chosen targets, not industry benchmarks.</p>
   </section>
 
   <section class="section">
     {h2("At a glance")}
     <div class="grid glance">
-      <div class="card gq w"><h3>What's working</h3><p>{E(g(ag,"whats_working","—"))}</p></div>
-      <div class="card gq h"><h3>What's hindering</h3><p>{E(g(ag,"whats_hindering","—"))}</p></div>
-      <div class="card gq q"><h3>Quick wins</h3><p>{E(g(ag,"quick_wins","—"))}</p></div>
-      <div class="card gq a"><h3>Ambitious workflows</h3><p>{E(g(ag,"ambitious_workflows","—"))}</p></div>
+      <div class="card gq w"><h3>What's working</h3><p>{E(g(ag,"whats_working","none"))}</p></div>
+      <div class="card gq h"><h3>What's hindering</h3><p>{E(g(ag,"whats_hindering","none"))}</p></div>
+      <div class="card gq q"><h3>Quick wins</h3><p>{E(g(ag,"quick_wins","none"))}</p></div>
+      <div class="card gq a"><h3>Ambitious workflows</h3><p>{E(g(ag,"ambitious_workflows","none"))}</p></div>
     </div>
   </section>
 
@@ -337,9 +341,10 @@ footer{{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:
     {h2("By the numbers ", badge_full())}
     <div class="grid kpis">
       <div class="kpi"><div class="n">{fmt(N_FULL)}</div><div class="l">sessions</div><div class="s">{q.get('active_days')} active days · median {q.get('median_session_min')}m</div></div>
+      {SPLIT_KPI}
       <div class="kpi"><div class="n">{q.get('output_tokens',0)//1_000_000}M</div><div class="l">output tokens</div><div class="s">{q.get('input_tokens',0)//1_000_000}M in · {q.get('output_tokens',1)/max(q.get('input_tokens',1),1):.1f}:1</div></div>
       <div class="kpi"><div class="n">{fmt(q.get('commits',0))}</div><div class="l">commits</div><div class="s">{q.get('pushes')} pushes · +{fmt(q.get('lines_added',0))}/−{fmt(q.get('lines_removed',0))}</div></div>
-      <div class="kpi"><div class="n">{q.get('total_hours')}h</div><div class="l">wall-clock*</div><div class="s">*summed across overlapping terminals — NOT calendar</div></div>
+      <div class="kpi"><div class="n">{q.get('total_hours')}h</div><div class="l">wall-clock*</div><div class="s">*summed across overlapping terminals, NOT calendar</div></div>
     </div>
   </section>
 
@@ -356,7 +361,7 @@ footer{{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:
       <div class="card">
         <div class="mono" style="font-size:12px;color:var(--muted);margin-bottom:10px">NAMED PROJECT PATHS {badge_full()}</div>
         {bars(named, C['teal'])}
-        <p class="cap">Plus <b>{fmt(scratch)}</b> sessions in ephemeral worktrees/scratch (~{round(100*scratch/max(N_FULL,1))}% of all) — not one project, excluded from the ranking.</p>
+        <p class="cap">Plus <b>{fmt(scratch)}</b> sessions in ephemeral worktrees/scratch (~{round(100*scratch/max(N_FULL,1))}% of all), not one project, excluded from the ranking.</p>
       </div>
     </div>
   </section>
@@ -375,8 +380,8 @@ footer{{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:
   </section>
 
   <section class="section">
-    {h2("When you work ", badge_full() + '<span style="color:var(--faint)">— messages by hour</span>')}
-    <div class="card">{hour_spark()}<p class="cap">Lit bars = 08:00–20:00. Busiest day: {(q.get('busiest_days') or [['—',0]])[0][0]} ({(q.get('busiest_days') or [['—',0]])[0][1]} sessions). A rhythm, not a login-detector.</p></div>
+    {h2("When you work ", badge_full() + '<span style="color:var(--faint)">,  messages by hour</span>')}
+    <div class="card">{hour_spark()}<p class="cap">Lit bars = 08:00 to 20:00. Busiest day: {(q.get('busiest_days') or [[', ',0]])[0][0]} ({(q.get('busiest_days') or [[', ',0]])[0][1]} sessions). A rhythm, not a login-detector.</p></div>
   </section>
 
   <section class="section">
@@ -425,16 +430,16 @@ footer{{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:
   <section class="section">
     {h2("What the API would have charged ", badge_full())}
     <div class="grid three">
-      <div class="card stat"><div class="n" style="color:var(--green)">${COST_HAIKU:,.0f}</div><div class="l">floor — all Haiku 4.5 ($1/$5 per Mtok)</div></div>
-      <div class="card stat"><div class="n" style="color:var(--blue)">${COST_SONNET:,.0f}</div><div class="l">mid — all Sonnet 5 ($3/$15 per Mtok)</div></div>
-      <div class="card stat"><div class="n" style="color:var(--yellow)">${COST_OPUS:,.0f}</div><div class="l">ceiling — all Opus 4.8 ($5/$25 per Mtok)</div></div>
+      <div class="card stat"><div class="n" style="color:var(--green)">${COST_HAIKU:,.0f}</div><div class="l">floor, all Haiku 4.5 ($1/$5 per Mtok)</div></div>
+      <div class="card stat"><div class="n" style="color:var(--blue)">${COST_SONNET:,.0f}</div><div class="l">mid, all Sonnet 5 ($3/$15 per Mtok)</div></div>
+      <div class="card stat"><div class="n" style="color:var(--yellow)">${COST_OPUS:,.0f}</div><div class="l">ceiling, all Opus 4.8 ($5/$25 per Mtok)</div></div>
     </div>
-    <p class="cost-note">All three price EVERY token ({_in_m:.1f}M in / {_out_m:.1f}M out) at that tier's standard API rate with <b>no prompt-caching discount</b> — cached reads bill at ~0.1× on the real API, so an actual API bill for this mix would land well inside these bounds. The corpus spans {q.get('active_days',0)} active days — roughly one subscription month. Rates: standard list prices (Sonnet 5 has intro pricing through 2026-08-31, not used here). Scenario, not a bill — model-tier per session isn't logged.</p>
+    <p class="cost-note">All three price EVERY token ({_in_m:.1f}M in / {_out_m:.1f}M out) at that tier's standard API rate with <b>no prompt-caching discount</b>, cached reads bill at ~0.1× on the real API, so an actual API bill for this mix would land well inside these bounds. The corpus spans {q.get('active_days',0)} active days, roughly one subscription month. Rates: standard list prices (Sonnet 5 has intro pricing through 2026-08-31, not used here). Scenario, not a bill, model-tier per session isn't logged.</p>
   </section>
 
   <section class="section">
     {h2("One last thing")}
-    <div class="card"><div class="wf-t" style="color:var(--orange);font-size:16px">{E(g(fe,"headline","—"))}</div><p class="narr" style="margin-top:8px">{E(g(fe,"detail",""))}</p></div>
+    <div class="card"><div class="wf-t" style="color:var(--orange);font-size:16px">{E(g(fe,"headline","none"))}</div><p class="narr" style="margin-top:8px">{E(g(fe,"detail",""))}</p></div>
   </section>
 
   <footer>
