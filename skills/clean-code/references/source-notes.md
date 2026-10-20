@@ -1,6 +1,6 @@
 # Source and interpretation
 
-Basis: Robert C. Martin and contributors, *Clean Code: A Handbook of Agile Software Craftsmanship*, ISBN 978-0-13-235088-4. Reviewed from the user-supplied PDF `Clean Code ( PDFDrive.com ).pdf`. The PDF carries a 2009 copyright and a July 2008 first-printing statement. Page references below are printed book pages; PDF page numbers are 31 higher for the main chapters.
+Basis: Robert C. Martin and contributors, *Clean Code: A Handbook of Agile Software Craftsmanship*, ISBN 978-0-13-235088-4. Copyright 2009, first printing July 2008. Page references below are printed book pages.
 
 The review covered the contents, substantive guidance across chapters 2–13, selected case-study passages in chapters 14–16, the chapter 17 heuristic catalogue, and relevant concurrency appendix passages. The case studies and source-code appendices were not line-by-line audited. The skill contains original operational guidance and examples; the book/PDF and extracted text are not bundled or required at runtime.
 

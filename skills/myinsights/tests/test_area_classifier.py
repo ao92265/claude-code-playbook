@@ -35,7 +35,7 @@ def test_native_claude_worktree_is_scratch_not_its_repo():
     # bucketed as their parent repo, so Isolation discipline missed them.
     area_of = _area_of()
     assert area_of("/home/x/Repos/app-new-ui/.claude/worktrees/wf-abc") == "scratch/worktree"
-    assert area_of("/home/x/Repos/trades-digest/.claude/worktrees/fix-1/src") == "scratch/worktree"
+    assert area_of("/home/x/Repos/sample-app/.claude/worktrees/fix-1/src") == "scratch/worktree"
 
 
 def test_scratchpad_and_tmp_still_scratch():

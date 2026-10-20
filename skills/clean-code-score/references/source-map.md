@@ -1,6 +1,6 @@
 # Source traceability and interpretation
 
-Source: Robert C. Martin and contributors, *Clean Code: A Handbook of Agile Software Craftsmanship*, ISBN 978-0-13-235088-4. Based on the user-provided `Clean Code ( PDFDrive.com ).pdf`, first printing July 2008, copyright 2009 Pearson. Main-text PDF page numbers are printed page +31.
+Source: Robert C. Martin and contributors, *Clean Code: A Handbook of Agile Software Craftsmanship*, ISBN 978-0-13-235088-4. First printing July 2008, copyright 2009 Pearson. Page numbers are printed page numbers.
 
 | Chapters | Printed pages | Assessment use |
 |---|---|---|

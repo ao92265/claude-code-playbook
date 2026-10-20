@@ -1,6 +1,6 @@
 """Regression tests for harvest_local.harvest:
 - headless (SDK / `claude -p`) runs carry entrypoint sdk-*; they must be flagged so the
-  report can score rates on interactive sessions only (mocksmith bank runs were 40% of all
+  report can score rates on interactive sessions only (headless batch runs were 40% of all
   sessions and dragged every rate).
 - lines_added / lines_removed were never computed, so the KPI read 0.
 """

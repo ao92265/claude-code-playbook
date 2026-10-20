@@ -452,7 +452,7 @@ if [ -f "$SSH_HOOK" ]; then
   # env var on the claude process, so it outlives the first session: every later /clear
   # in that pane re-injected the morning's restore file and exited before the pid claim
   # ticket, so a /reboot -> /clear in a restored pane resumed the WRONG session.
-  # Bitten 2026-09-23 (project-f pane got the outlook handoff). On source=clear the var is
+  # Bitten 2026-09-23 (one pane got another project's handoff). On source=clear the var is
   # ignored and the ticket wins.
   SSC=$(mktemp -d 2>/dev/null || echo "/tmp/ss-smoke-c-$$")
   ss_setup "$SSC"
