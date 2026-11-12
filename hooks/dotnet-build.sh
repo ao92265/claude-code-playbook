@@ -5,10 +5,10 @@
 # Required: DOTNET_BUILD_TARGET=path/to/App.sln or App.csproj. With it unset the build is skipped,
 #   so auto-detection can never pick up a project the model just created.
 # MUST be installed together with hooks/dotnet-msbuild-guard.sh (PreToolUse), which is the real
-# control: it denies Edit/Write to MSBuild/NuGet files. The checks below are a second layer only.
-# The guard covers Edit/Write/MultiEdit/NotebookEdit, not files written through Bash, so keep Bash
-# on "ask" (not auto or bypass) in repos using this hook. Committing a build file is a human review step.
-# Directory.Build.* files in parent directories outside the repo are not covered.
+# control: an allowlist that asks before Edit/Write to anything but plain source/doc files.
+# The checks below are a second layer only.
+# Not covered: files written through Bash, Directory.Build.* in parent dirs, build-time code in the
+# repo itself (analyzers, source generators, custom tasks), bypass-permissions mode. See docs/dotnet-teams.md.
 # Adapted from Mehdi Mohseni, "Claude Code for .NET Developers" (Medium, 30 Oct 2026)
 
 INPUT=$(cat)
@@ -70,7 +70,23 @@ while IFS= read -r objdir; do
   fi
 done < <(find . -type d -name obj -not -path '*/node_modules/*' 2>/dev/null)
 
-if OUTPUT=$(dotnet build "$DOTNET_BUILD_TARGET" --no-restore -v q -nologo 2>&1); then
+# Layer 2c: skip if any *.user file is newer than obj/project.assets.json (gitignored, so git
+# status does not see it).
+while IFS= read -r objdir; do
+  [ -f "$objdir/project.assets.json" ] || continue
+  if [ -n "$(find "$(dirname "$objdir")" -maxdepth 3 -name '*.user' -newer "$objdir/project.assets.json" -not -path '*/node_modules/*' -print -quit 2>/dev/null)" ]; then
+    echo "dotnet-build: build skipped (*.user file newer than $objdir/project.assets.json)" >&2
+    exit 0
+  fi
+done < <(find . -type d -name obj -not -path '*/node_modules/*' 2>/dev/null)
+
+# The four properties switch off MSBuild's wildcard imports of per-user ImportBefore/ImportAfter
+# folders (names checked in Microsoft.Common.props and Microsoft.Common.targets of SDK 8.0.425).
+if OUTPUT=$(dotnet build "$DOTNET_BUILD_TARGET" --no-restore -v q -nologo \
+  -p:ImportUserLocationsByWildcardBeforeMicrosoftCommonProps=false \
+  -p:ImportUserLocationsByWildcardAfterMicrosoftCommonProps=false \
+  -p:ImportUserLocationsByWildcardBeforeMicrosoftCommonTargets=false \
+  -p:ImportUserLocationsByWildcardAfterMicrosoftCommonTargets=false 2>&1); then
   exit 0
 fi
 

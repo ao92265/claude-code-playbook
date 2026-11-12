@@ -80,7 +80,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 **Use**
 - [76 production-ready skills](skills/) (custom `/commands`) you can drop into any project
 - [11 CLAUDE.md templates + 1 team onboarding template](templates/) — TypeScript, React, Node, Python, Full-stack, Go, Rust, Mobile, DevOps, Java, C#
-- [29 hook scripts](hooks/) that catch errors before they reach your commits
+- [85 hook scripts](hooks/) that catch errors before they reach your commits
 - [5 annotated example sessions](examples/) showing real workflows in action
 - **One-line installer** for skills, hooks, and templates
 
@@ -183,7 +183,7 @@ graph TB
 |:----------|:---------|
 | **[docs/](docs/)** | 76 guides — patterns, configuration, architecture, enterprise, troubleshooting — plus [News & Research](docs/news/) with 59 deep-read article pages |
 | **[skills/](skills/)** | 52 ready-to-use custom slash commands ([full reference below](#skills-reference)) |
-| **[hooks/](hooks/)** | 29 hook scripts — deterministic guard rails for commits, builds, secrets, and session state ([list below](#hooks)) |
+| **[hooks/](hooks/)** | 85 hook scripts — deterministic guard rails for commits, builds, secrets, and session state ([list below](#hooks)) |
 | **[templates/](templates/)** | 11 stack-specific CLAUDE.md files + a team onboarding template |
 | **[examples/](examples/)** | 5 annotated real-session transcripts |
 | **[onboarding/](onboarding/)** | Structured 2-hour team onboarding program |
@@ -702,7 +702,7 @@ sequenceDiagram
     Claude-->>You: "Bug fixed, types clean"
 ```
 
-**29 hook scripts included.** 11 are auto-wired when you install the playbook as a plugin (via [hooks/hooks.json](hooks/hooks.json)); the rest are opt-in via your `settings.json`.
+**85 hook scripts included.** 11 are auto-wired when you install the playbook as a plugin (via [hooks/hooks.json](hooks/hooks.json)); the rest are opt-in via your `settings.json`.
 
 **Auto-wired (11):** [session-start-check.sh](hooks/session-start-check.sh) (environment validation) · [pre-commit-guard.sh](hooks/pre-commit-guard.sh) (debug statements) · [env-guard.sh](hooks/env-guard.sh) (secrets) · [firewall.sh](hooks/firewall.sh) (dangerous command blocker) · [protect-paths.sh](hooks/protect-paths.sh) (protected file guard) · [ts-check.sh](hooks/ts-check.sh) (type errors) · [lint-check.sh](hooks/lint-check.sh) (ESLint) · [format-check.sh](hooks/format-check.sh) (Prettier) · [build-check.sh](hooks/build-check.sh) (OOM-safe builds) · [daydream.sh](hooks/daydream.sh) (idle memory → ideas → quick PRD) · [daydream-surface.sh](hooks/daydream-surface.sh) (surface daydreams at session start)
 

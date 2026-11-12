@@ -1,38 +1,82 @@
 #!/bin/bash
-# .NET MSBuild write guard: denies Edit/Write to files MSBuild evaluates or generates
+# .NET MSBuild write guard: allowlist with "ask". Edit/Write to anything not on the allowlist
+# prompts the developer instead of running silently.
 # Hook point: PreToolUse (matcher: "Edit|Write|MultiEdit|NotebookEdit")
-# Exit codes: 0=allowed, 2=denied (reason on stderr)
-# Companion to dotnet-build.sh: install both. Those files can carry an Exec target that runs on
-# the next build, so the real control is refusing the write, not inspecting the tree afterwards.
-# Also denied: .gitignore and anything under .git/ (they could hide a payload from the build hook's git check).
-# Scope: covers Edit/Write/MultiEdit/NotebookEdit only. Files written through Bash are NOT covered,
-# so keep Bash on "ask" (not auto or bypass) in repos that use this hook.
-# Directory.Build.* files in parent directories outside the repo are not covered either.
-# Changing a build file is a human review step: make the edit yourself, then commit it.
+# Exit codes: always 0. "ask" is the PreToolUse JSON on stdout (permissionDecision "ask").
+# Companion to dotnet-build.sh: install both. Many files can carry code that MSBuild runs on the
+# next build, and a denylist of them keeps being bypassed (lookalike Unicode names, backslash
+# paths, wildcard import folders), so the default here is to ask.
+# Allowed silently: inside CLAUDE_PROJECT_DIR, ASCII-only path, no .git/obj/bin/.claude/.nuget or
+# msbuild/importbefore/importafter component, and an extension on the list below.
+# Not covered: files written through Bash, Directory.Build.* in parent dirs, build-time code in the
+# repo (analyzers, source generators, custom tasks), bypass-permissions mode. See docs/dotnet-teams.md.
 
-command -v jq >/dev/null 2>&1 || { echo "dotnet-msbuild-guard: jq not found, write denied (fail closed)" >&2; exit 2; }
+ask() {
+  # Static JSON, no jq needed. $1 is a fixed reason string without quotes or backslashes.
+  printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"dotnet-msbuild-guard: %s"}}\n' "$1"
+  exit 0
+}
+
+command -v jq >/dev/null 2>&1 || ask "jq not found, cannot inspect this write"
 
 INPUT=$(cat)
-FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // .tool_input.notebook_path // empty')
+FILE_PATH=$(printf '%s' "$INPUT" | jq -r '.tool_input.file_path // .tool_input.notebook_path // empty')
 
 [ -z "$FILE_PATH" ] && exit 0
 
-# Case-insensitive match on the lowercased path
-LOWER=$(printf '%s' "$FILE_PATH" | tr '[:upper:]' '[:lower:]')
-BASE="${LOWER##*/}"
+# Backslashes to slashes, then any non-ASCII or control byte means ask
+P=${FILE_PATH//\\//}
+if printf '%s' "$P" | LC_ALL=C grep -q '[^ -~]'; then
+  ask "path has non-ASCII or control characters"
+fi
 
-deny() {
-  echo "dotnet-msbuild-guard: write to $FILE_PATH denied. MSBuild/NuGet files, .gitignore, .git/ and obj/ bin/ contents can run code on the next build or hide it. Ask the developer to make this change and commit it." >&2
-  exit 2
+command -v python3 >/dev/null 2>&1 || ask "python3 not found, cannot resolve the path"
+
+PROJ=${CLAUDE_PROJECT_DIR:-$PWD}
+# Prints the resolved path relative to the project root, or OUTSIDE. Symlinks are followed
+# (the parent dir when the file is new).
+REL=$(python3 -I -c '
+import os, sys
+proj = os.path.realpath(sys.argv[1])
+p = sys.argv[2]
+if not os.path.isabs(p):
+    p = os.path.join(proj, p)
+r = os.path.realpath(p)
+if r != proj and not r.startswith(proj.rstrip("/") + "/"):
+    print("OUTSIDE")
+else:
+    print(os.path.relpath(r, proj))
+' "$PROJ" "$P" 2>/dev/null) || ask "could not resolve the path"
+[ -z "$REL" ] && ask "could not resolve the path"
+[ "$REL" = "OUTSIDE" ] && ask "path resolves outside the project directory"
+
+# Components of both the given path and the resolved path (relative to the project)
+LOWER=$(printf '%s\n%s' "$P" "$REL" | tr '[:upper:]' '[:lower:]')
+while IFS= read -r line; do
+  IFS='/' read -r -a parts <<< "$line"
+  for c in "${parts[@]}"; do
+    case "$c" in
+      .git|obj|bin|.claude|.nuget|*msbuild*|*importbefore*|*importafter*)
+        ask "a path component is a build, tooling or git location" ;;
+    esac
+  done
+done <<< "$LOWER"
+
+check_name() {
+  local base ext
+  base=$(printf '%s' "${1##*/}" | tr '[:upper:]' '[:lower:]')
+  [ "$base" = "global.json" ] && ask "global.json can redirect the SDK"
+  case "$base" in
+    *.*) ext=".${base##*.}" ;;
+    *) ext="" ;;
+  esac
+  case "$ext" in
+    .cs|.md|.razor|.cshtml|.css|.scss|.js|.ts|.tsx|.html|.txt|.json) ;;
+    *) ask "this file extension is not on the silent allowlist" ;;
+  esac
 }
-
-case "$BASE" in
-  *.csproj|*.fsproj|*.vbproj|*.[a-z]*proj|*.user|*.sln|*.slnx|*.slnf|*.props|*.targets|*.tasks|*.projitems|*.rsp) deny ;;
-  directory.build.*|nuget.config|global.json|.gitignore) deny ;;
-esac
-
-case "/$LOWER" in
-  */obj/*|*/bin/*|*/.git/*) deny ;;
-esac
+# The resolved name and the name as given must both be allowed (a symlink can rename a file)
+check_name "$REL"
+check_name "$P"
 
 exit 0
