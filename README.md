@@ -8,7 +8,7 @@
 [![Quick Start](https://img.shields.io/badge/Quick_Start-5E6AD2?style=for-the-badge&logo=rocket&logoColor=white)](#quick-start)
 [![Docs Site](https://img.shields.io/badge/Docs_Site-00B8CC?style=for-the-badge&logo=book&logoColor=white)](https://ao92265.github.io/claude-code-playbook/)
 [![Skills](https://img.shields.io/badge/Skills-81_included-5E6AD2?style=for-the-badge&logo=puzzle-piece&logoColor=white)](#skills-reference)
-[![Hooks](https://img.shields.io/badge/Hooks-83_included-EB5757?style=for-the-badge&logoColor=white)](#hooks)
+[![Hooks](https://img.shields.io/badge/Hooks-84_included-EB5757?style=for-the-badge&logoColor=white)](#hooks)
 [![CI](https://img.shields.io/github/actions/workflow/status/ao92265/claude-code-playbook/validate.yml?style=for-the-badge&label=CI&logo=github)](https://github.com/ao92265/claude-code-playbook/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/License-MIT-27A644?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/ao92265/claude-code-playbook?style=for-the-badge&logo=github&color=F0BF00)](https://github.com/ao92265/claude-code-playbook/stargazers)
@@ -22,7 +22,7 @@
 
 <img src="https://img.shields.io/badge/81-Skills-5E6AD2?style=flat-square" alt="81 Skills"/>
 <img src="https://img.shields.io/badge/12-Templates-FC7840?style=flat-square" alt="12 Templates"/>
-<img src="https://img.shields.io/badge/83-Hooks-EB5757?style=flat-square" alt="83 Hooks"/>
+<img src="https://img.shields.io/badge/84-Hooks-EB5757?style=flat-square" alt="84 Hooks"/>
 <img src="https://img.shields.io/badge/76-Docs-4EA7FC?style=flat-square" alt="76 Docs"/>
 <img src="https://img.shields.io/badge/5-Examples-27A644?style=flat-square" alt="5 Examples"/>
 <img src="https://img.shields.io/badge/24-Anti--Patterns-F0BF00?style=flat-square" alt="24 Anti-Patterns"/>

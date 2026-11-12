@@ -10,7 +10,11 @@ FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 
 [ -z "$FILE_PATH" ] && exit 0
 
-# Only react to C# source files. .csproj is excluded on purpose: a written .csproj can carry an Exec target that runs code with no Bash prompt.
+# Only react to C# source files. Excluding .csproj narrows the risk, it does not prevent it:
+# any MSBuild file the model writes (.csproj, Directory.Build.props/targets, .props, .targets)
+# can carry an Exec target that runs on the next build, which a .cs edit triggers.
+# The git guard below skips the build when such a file is new or changed. Also add a
+# PreToolUse ask/deny on those files.
 case "$FILE_PATH" in
   *.cs) ;;
   *) exit 0 ;;
@@ -19,6 +23,14 @@ esac
 command -v dotnet >/dev/null 2>&1 || exit 0
 
 cd "${CLAUDE_PROJECT_DIR:-.}" || exit 0
+
+# Skip the build if any MSBuild-evaluated file is new or changed versus HEAD (untracked included),
+# or if this is not a git repo, so a model-written Exec target never runs unreviewed.
+CHANGED=$(git status --porcelain 2>/dev/null) || { echo "dotnet-build: not a git repo, build skipped" >&2; exit 0; }
+if echo "$CHANGED" | cut -c4- | grep -qiE '(\.(csproj|fsproj|vbproj|sln|slnx|props|targets|rsp)"?$|(^|/)Directory\.Build\.[^/]*$|(^|/)Directory\.Packages\.props"?$|(^|/)nuget\.config"?$|(^|/)global\.json"?$)'; then
+  echo "dotnet-build: MSBuild/NuGet file changed or untracked, build skipped (review it, commit it)" >&2
+  exit 0
+fi
 
 # No explicit target and nothing buildable in the project root: skip silently
 if [ -z "${DOTNET_BUILD_TARGET:-}" ]; then

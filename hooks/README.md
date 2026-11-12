@@ -120,7 +120,7 @@ Typecheck, lint, format, test and plan checks around edits, commits and stops.
 |--------|-----------------|--------------|
 | `ts-check.sh` | PostToolUse (Edit|Write) | Runs `tsc --noEmit` after a TypeScript file is edited. |
 | `build-check.sh` | PostToolUse (Edit|Write) | Runs a TypeScript build with OOM escalation after `.ts`/`.tsx` edits. |
-| `dotnet-build.sh` | PostToolUse (Edit|Write) | Runs `dotnet build` after `.cs`/`.csproj` edits and returns only compiler error lines. See [.NET Teams](../docs/dotnet-teams.md). |
+| `dotnet-build.sh` | PostToolUse (Edit|Write) | Runs `dotnet build` after `.cs` edits and returns only compiler error lines. See [.NET Teams](../docs/dotnet-teams.md). |
 | `lint-check.sh` | PostToolUse (Edit|Write) | Runs ESLint when a JS or TS file was edited. |
 | `format-check.sh` | PostToolUse (Edit|Write) | Warns (exit 1) when an edited file fails Prettier. |
 | `test-on-save.sh` | PostToolUse (Edit|Write) | Finds and runs the test file matching an edited source file. |

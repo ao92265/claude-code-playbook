@@ -11,7 +11,7 @@ Source: Mehdi Mohseni, ["Claude Code for .NET Developers"](https://medium.com/@m
 
 ## 1. Build check after C# edits
 
-[`hooks/dotnet-build.sh`](../hooks/dotnet-build.sh) is a `PostToolUse` hook on `Edit|Write`. It does nothing unless the edited file is a `.cs` file. `.csproj` is excluded on purpose: a written `.csproj` can carry an `Exec` target that runs code with no Bash prompt. When it is, it runs `dotnet build --no-restore -v q -nologo` and, on failure, sends back only the compiler error lines (`grep -E "error [A-Z]+[0-9]+" | sort -u | head -20`) on stderr with exit 2, so Claude sees the errors and nothing else.
+[`hooks/dotnet-build.sh`](../hooks/dotnet-build.sh) is a `PostToolUse` hook on `Edit|Write`. It does nothing unless the edited file is a `.cs` file. Excluding `.csproj` narrows the risk, it does not prevent it: any MSBuild file Claude writes (`.csproj`, `Directory.Build.props`, `Directory.Build.targets`, `.props`, `.targets`) can carry an `Exec` target that runs on the next build, and a `.cs` edit triggers that build. So the hook runs `git status --porcelain` first and skips the build (exit 0, one-line note on stderr) when any MSBuild or NuGet file (`*.csproj *.fsproj *.vbproj *.sln *.slnx *.props *.targets *.rsp`, `Directory.Build.*`, `Directory.Packages.props`, `nuget.config`, `global.json`) is new or changed versus HEAD, or when the project is not a git repo. Also add a `PreToolUse` ask or deny on those files, so they are reviewed before they are written. On a `.cs` edit it it runs `dotnet build --no-restore -v q -nologo` and, on failure, sends back only the compiler error lines (`grep -E "error [A-Z]+[0-9]+" | sort -u | head -20`) on stderr with exit 2, so Claude sees the errors and nothing else.
 
 The article matches the file name with a string pattern on the raw JSON. This version reads `tool_input.file_path` with `jq` instead, the same way [`build-check.sh`](../hooks/build-check.sh) does for TypeScript.
 
@@ -24,7 +24,7 @@ Wire it in `.claude/settings.json`:
       {
         "matcher": "Edit|Write",
         "hooks": [
-          { "type": "command", "command": "\"${CLAUDE_PROJECT_DIR}\"/.claude/hooks/dotnet-build.sh" }
+          { "type": "command", "command": "\"${CLAUDE_PROJECT_DIR}\"/.claude/hooks/dotnet-build.sh", "timeout": 300 }
         ]
       }
     ]
@@ -36,6 +36,7 @@ Copy the script to `.claude/hooks/dotnet-build.sh` and make it executable.
 
 Notes:
 
+- Parallel edits can start two builds on the same `obj/` folder, and file-lock errors may come back as build errors. Re-run the build before trusting them.
 - `--no-restore` assumes packages are already restored. Run `dotnet restore` once at session start or after changing package references.
 - With one solution or project in the project root, `dotnet build` finds it. With several, or with a solution in a subfolder, set `DOTNET_BUILD_TARGET` to the `.sln` or `.csproj` to build.
 - On large solutions a full build after every edit is slow. Point `DOTNET_BUILD_TARGET` at the nearest project, or leave the build to a `Stop` hook and run tests there (see [Guard Hooks](guard-hooks.md): keep `PostToolUse` fast, push slow work to `Stop`).
