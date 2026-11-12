@@ -10,9 +10,9 @@ FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 
 [ -z "$FILE_PATH" ] && exit 0
 
-# Only react to C# source and project files
+# Only react to C# source files. .csproj is excluded on purpose: a written .csproj can carry an Exec target that runs code with no Bash prompt.
 case "$FILE_PATH" in
-  *.cs|*.csproj) ;;
+  *.cs) ;;
   *) exit 0 ;;
 esac
 
@@ -20,9 +20,19 @@ command -v dotnet >/dev/null 2>&1 || exit 0
 
 cd "${CLAUDE_PROJECT_DIR:-.}" || exit 0
 
+# No explicit target and nothing buildable in the project root: skip silently
+if [ -z "${DOTNET_BUILD_TARGET:-}" ]; then
+  compgen -G "./*.sln" >/dev/null || compgen -G "./*.slnx" >/dev/null || compgen -G "./*.csproj" >/dev/null || exit 0
+fi
+
 if OUTPUT=$(dotnet build ${DOTNET_BUILD_TARGET:+"$DOTNET_BUILD_TARGET"} --no-restore -v q -nologo 2>&1); then
   exit 0
 fi
 
-echo "$OUTPUT" | grep -E "error [A-Z]+[0-9]+" | sort -u | head -20 >&2
+ERRORS=$(echo "$OUTPUT" | grep -E "error [A-Z]+[0-9]+" | sort -u | head -20)
+if [ -n "$ERRORS" ]; then
+  echo "$ERRORS" >&2
+else
+  echo "$OUTPUT" | tail -20 >&2
+fi
 exit 2

@@ -11,7 +11,7 @@ Source: Mehdi Mohseni, ["Claude Code for .NET Developers"](https://medium.com/@m
 
 ## 1. Build check after C# edits
 
-[`hooks/dotnet-build.sh`](../hooks/dotnet-build.sh) is a `PostToolUse` hook on `Edit|Write`. It does nothing unless the edited file is a `.cs` or `.csproj`. When it is, it runs `dotnet build --no-restore -v q -nologo` and, on failure, sends back only the compiler error lines (`grep -E "error [A-Z]+[0-9]+" | sort -u | head -20`) on stderr with exit 2, so Claude sees the errors and nothing else.
+[`hooks/dotnet-build.sh`](../hooks/dotnet-build.sh) is a `PostToolUse` hook on `Edit|Write`. It does nothing unless the edited file is a `.cs` file. `.csproj` is excluded on purpose: a written `.csproj` can carry an `Exec` target that runs code with no Bash prompt. When it is, it runs `dotnet build --no-restore -v q -nologo` and, on failure, sends back only the compiler error lines (`grep -E "error [A-Z]+[0-9]+" | sort -u | head -20`) on stderr with exit 2, so Claude sees the errors and nothing else.
 
 The article matches the file name with a string pattern on the raw JSON. This version reads `tool_input.file_path` with `jq` instead, the same way [`build-check.sh`](../hooks/build-check.sh) does for TypeScript.
 
@@ -24,7 +24,7 @@ Wire it in `.claude/settings.json`:
       {
         "matcher": "Edit|Write",
         "hooks": [
-          { "type": "command", "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/dotnet-build.sh" }
+          { "type": "command", "command": "\"${CLAUDE_PROJECT_DIR}\"/.claude/hooks/dotnet-build.sh" }
         ]
       }
     ]
@@ -37,9 +37,9 @@ Copy the script to `.claude/hooks/dotnet-build.sh` and make it executable.
 Notes:
 
 - `--no-restore` assumes packages are already restored. Run `dotnet restore` once at session start or after changing package references.
-- With one solution in the project root, `dotnet build` finds it. With several, set `DOTNET_BUILD_TARGET` to the `.sln` or `.csproj` to build.
+- With one solution or project in the project root, `dotnet build` finds it. With several, or with a solution in a subfolder, set `DOTNET_BUILD_TARGET` to the `.sln` or `.csproj` to build.
 - On large solutions a full build after every edit is slow. Point `DOTNET_BUILD_TARGET` at the nearest project, or leave the build to a `Stop` hook and run tests there (see [Guard Hooks](guard-hooks.md): keep `PostToolUse` fast, push slow work to `Stop`).
-- No dotnet SDK on the path, or no solution in the project root: the first exits 0 silently; the second fails with `error MSB1003` and exit 2, which is a handled failure, not a crash.
+- No dotnet SDK on the path, or no `.sln`, `.slnx` or `.csproj` in the project root with `DOTNET_BUILD_TARGET` unset: the hook exits 0 silently. If the build fails with no coded compiler error, the last 20 lines of build output go to stderr with exit 2.
 
 ## 2. One instruction file for every tool
 
