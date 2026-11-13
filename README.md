@@ -68,7 +68,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 <td width="50%">
 
 **Learn**
-- The **[docs site](https://ao92265.github.io/claude-code-playbook/)** — 77 guides organised by section, from [Getting Started](docs/getting-started.md) to enterprise governance, plus 59 news deep-reads
+- The **[docs site](https://ao92265.github.io/claude-code-playbook/)**, 77 guides organised by section, from [Getting Started](docs/getting-started.md) to enterprise governance, plus 59 news deep-reads
 - [24 prompt engineering patterns](docs/prompt-patterns.md) with copy-paste examples and a decision tree
 - [Quick-reference cheat sheet](docs/cheat-sheet.md) for commands, model routing, and session management
 - [Troubleshooting guide](docs/troubleshooting.md) with 15 common issues and diagnostic flowcharts
@@ -181,7 +181,7 @@ graph TB
 
 | Directory | Contents |
 |:----------|:---------|
-| **[docs/](docs/)** | 77 guides — patterns, configuration, architecture, enterprise, troubleshooting — plus [News & Research](docs/news/) with 59 deep-read article pages |
+| **[docs/](docs/)** | 77 guides, patterns, configuration, architecture, enterprise, troubleshooting, plus [News & Research](docs/news/) with 59 deep-read article pages |
 | **[skills/](skills/)** | 81 ready-to-use custom slash commands ([full reference below](#skills-reference)) |
 | **[hooks/](hooks/)** | 85 hook scripts — deterministic guard rails for commits, builds, secrets, and session state ([list below](#hooks)) |
 | **[templates/](templates/)** | 11 stack-specific CLAUDE.md files + a team onboarding template |
