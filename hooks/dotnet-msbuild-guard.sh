@@ -20,7 +20,9 @@ ask() {
 command -v jq >/dev/null 2>&1 || ask "jq not found, cannot inspect this write"
 
 INPUT=$(cat)
-FILE_PATH=$(printf '%s' "$INPUT" | jq -r '.tool_input.file_path // .tool_input.notebook_path // empty')
+# jq -j plus a sentinel keeps trailing newlines, which $(...) would otherwise strip
+FILE_PATH=$(printf '%s' "$INPUT" | jq -j '.tool_input.file_path // .tool_input.notebook_path // empty'; printf x)
+FILE_PATH=${FILE_PATH%x}
 
 [ -z "$FILE_PATH" ] && exit 0
 
