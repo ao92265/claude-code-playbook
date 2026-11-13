@@ -11,7 +11,7 @@ How to use Claude Code's native Agent Teams for parallel, coordinated multi-agen
 
 ## What Are Agent Teams?
 
-Agent Teams (shipped February 2026, experimental) let you run multiple fully independent Claude Code sessions that coordinate via a shared task list and peer-to-peer messaging. Unlike sub-agents (which run inside your session), team agents are separate processes with their own context windows.
+Agent Teams (shipped February 2026 (Unverified Nov 2026: ship date), experimental and disabled by default. Source: https://code.claude.com/docs/en/agent-teams) let you run multiple fully independent Claude Code sessions that coordinate via a shared task list and peer-to-peer messaging. Unlike sub-agents (which run inside your session), team agents are separate processes with their own context windows.
 
 ```mermaid
 sequenceDiagram
@@ -43,14 +43,14 @@ sequenceDiagram
 | **Coordination** | Returns summary to parent | Shared task list + messaging |
 | **Parallelism** | Limited by parent context | True parallel (separate processes) |
 | **Use case** | Quick exploration, fan-out searches | Multi-file features, parallel implementation |
-| **Overhead** | Low (runs in your session) | Higher (separate sessions, tmux/iTerm2 required) |
+| **Overhead** | Low (runs in your session) | Higher (separate sessions; split panes need tmux/iTerm2, in-process mode works in any terminal. Source: https://code.claude.com/docs/en/agent-teams#choose-a-display-mode) |
 | **Availability** | Stable | Experimental (flag-gated) |
 
 ---
 
 ## Setup
 
-Agent Teams requires tmux or iTerm2 for split-pane display.
+Agent Teams default to in-process mode, which works in any terminal. Split-pane display requires tmux or iTerm2 (Stale as of Nov 2026: tmux/iTerm2 is optional. Set `teammateMode` to `auto` or `tmux`, or pass `--teammate-mode`. Source: https://code.claude.com/docs/en/agent-teams#choose-a-display-mode).
 
 ### Enable the Feature
 
@@ -58,12 +58,12 @@ Agent Teams requires tmux or iTerm2 for split-pane display.
 export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
 ```
 
-Add to your shell profile (`~/.zshrc` or `~/.bashrc`) to persist.
+Add to your shell profile (`~/.zshrc` or `~/.bashrc`) to persist. You can also set it under `env` in `settings.json` (Source: https://code.claude.com/docs/en/agent-teams#enable-agent-teams).
 
 ### Requirements
 
-- Claude Code v2.1.32 or later
-- tmux (`brew install tmux`) or iTerm2
+- Claude Code v2.1.32 or later (Unverified Nov 2026: minimum version is not stated in the current docs)
+- Optional, for split panes only: tmux (`brew install tmux`) or iTerm2 with the `it2` CLI
 - Sufficient API quota (each agent uses its own token budget)
 
 ---
@@ -86,7 +86,7 @@ Task List (shared):
 
 Agents communicate via two channels:
 
-- **Broadcast** — Send a message to all agents (e.g., "Schema changed, column renamed from `user_id` to `account_id`")
+- **Broadcast** — Send a message to all agents (e.g., "Schema changed, column renamed from `user_id` to `account_id`") (Stale as of Nov 2026: there is no broadcast; to reach everyone, send one message per recipient by name. Source: https://code.claude.com/docs/en/agent-teams#context-and-communication)
 - **Direct** — Send to a specific agent (e.g., "Agent B: the endpoint you need is POST /api/users")
 
 ### Agent Lifecycle
@@ -180,25 +180,27 @@ Agent Teams multiply your token usage. Each agent runs a full session independen
 | Sub-agents (fan-out) | 1 + 3 sub | $2-5 | 20-30 min |
 | Agent Team | 4 parallel | $3-8 | 10-20 min |
 
-**Rule of thumb:** Agent Teams cost 2-3x more but finish 3-4x faster. Use them when developer time is more valuable than API costs.
+(Unverified Nov 2026: the dollar and time figures above are illustrative and not from official docs. Stale as of Nov 2026: official docs say teams use significantly more tokens, roughly 7x a standard session when teammates run in plan mode. Source: https://code.claude.com/docs/en/costs#manage-agent-team-costs.)
+
+**Rule of thumb:** Agent Teams cost 2-3x more but finish 3-4x faster (Unverified Nov 2026). Use them when developer time is more valuable than API costs.
 
 ### Budget Controls
 
-- Limit team size to 3-4 agents (diminishing returns beyond that)
+- Limit team size to 3-4 agents (diminishing returns beyond that) (Stale as of Nov 2026: official docs say there is no hard limit and suggest starting with 3-5 teammates. Source: https://code.claude.com/docs/en/agent-teams#choose-an-appropriate-team-size)
 - Use Sonnet for implementation agents, Haiku for exploration agents
-- Set `--max-turns` per agent to prevent runaway sessions
+- Set `--max-turns` per agent to prevent runaway sessions (Stale as of Nov 2026: `--max-turns` is print mode (`-p`) only, so it does not apply to interactive teammates. Source: https://code.claude.com/docs/en/cli-reference)
 - Monitor total spend across all agents in a team session
 
 ---
 
 ## Hooks for Agent Teams
 
-Two hook events are specific to Agent Teams:
+Hook events specific to Agent Teams (Stale as of Nov 2026: there are three, `TeammateIdle`, `TaskCreated` and `TaskCompleted`. Source: https://code.claude.com/docs/en/agent-teams#enforce-quality-gates-with-hooks):
 
 | Event | Fires When | Use Case |
 |:------|:----------|:---------|
-| `TeammateIdle` | An agent finishes its current task | Trigger quality checks, reassign work |
-| `TaskCompleted` | A task is marked done | Run tests, lint checks, notify lead |
+| `TeammateIdle` | A teammate is about to go idle (exit code 2 keeps it working) | Trigger quality checks, reassign work |
+| `TaskCompleted` | A task is being marked complete (exit code 2 blocks completion) | Run tests, lint checks, notify lead |
 
 ### Example: Auto-Test on Task Completion
 
@@ -206,31 +208,35 @@ Two hook events are specific to Agent Teams:
 {
   "hooks": {
     "TaskCompleted": [{
-      "command": "npm test -- --related",
-      "description": "Run related tests when a task completes"
+      "hooks": [{
+        "type": "command",
+        "command": "npm test -- --related"
+      }]
     }]
   }
 }
 ```
 
+(Corrected Nov 2026: hooks use a matcher group containing a `hooks` array of handlers with a `type`. The old flat `command` plus `description` shape is not documented. A failing command should exit with code 2 to block completion. Source: https://code.claude.com/docs/en/hooks)
+
 ---
 
 ## Limitations (Experimental)
 
-As of March 2026, Agent Teams are experimental:
+As of March 2026, Agent Teams are experimental (Stale as of Nov 2026: still experimental, but the limitations list below is outdated. Current list: no `/resume` or `/rewind` for in-process teammates, task status can lag, slow shutdown, one team per session, no nested teams, lead is fixed, no per-teammate permission modes at spawn. Source: https://code.claude.com/docs/en/agent-teams#limitations):
 
 - Requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` flag
-- tmux or iTerm2 required for the split-pane UI
+- tmux or iTerm2 required for the split-pane UI only (in-process mode works in any terminal; split panes are unsupported in VS Code's integrated terminal, Windows Terminal and Ghostty)
 - No built-in rollback if an agent makes conflicting changes
 - Git merge conflicts between agents must be resolved manually
-- No persistent state between team sessions (each session starts fresh)
-- Rate limits apply per-agent — 4 agents hit rate limits 4x faster
+- No persistent state between team sessions (each session starts fresh) (Unverified Nov 2026: the task list directory stays on disk after a session ends, but a team does not carry over)
+- Rate limits apply per-agent — 4 agents hit rate limits 4x faster (Unverified Nov 2026)
 
 ---
 
 ## Best Practices
 
-1. **Keep teams small** — 3-4 agents maximum. Coordination overhead grows quadratically.
+1. **Keep teams small** — 3-4 agents maximum (official docs suggest 3-5; see above). Coordination overhead grows quadratically.
 2. **Make tasks independent** — If Agent B needs Agent A's output, they shouldn't run in parallel.
 3. **Use the lead agent for verification** — Don't trust agents to verify their own work.
 4. **Communicate schema changes via broadcast** — When one agent changes a shared interface, all agents need to know.

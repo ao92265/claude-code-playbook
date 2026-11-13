@@ -85,11 +85,11 @@ These are the most common mistakes from 900+ sessions. Each one has burned real 
 
 ### 7. Never Starting Fresh
 
-**Don't:** Keep `/compact`-ing and pushing through at 80%+ context usage.
+**Don't:** Keep `/compact`-ing (`/compact` is a built-in command. Source: https://code.claude.com/docs/en/commands) and pushing through at 80%+ context usage.
 
 **Why it fails:** Compressed context loses nuance. Claude starts giving generic, safe answers instead of specific, correct ones. Quality degrades silently.
 
-**Do instead:** Start fresh above 80%. Write a handoff note (`/handoff`) so the new session has context.
+**Do instead:** Start fresh above 80% (Unverified Nov 2026: the 80% threshold is a playbook heuristic, not an official figure). Write a handoff note (`/handoff`, a skill in this playbook, not a built-in command. Source: https://code.claude.com/docs/en/commands) so the new session has context.
 
 ---
 
@@ -109,7 +109,7 @@ These are the most common mistakes from 900+ sessions. Each one has burned real 
 
 **Why it fails:** Claude will endlessly modify correct code trying to fix an environment issue. You waste an hour before checking that Docker isn't running.
 
-**Do instead:** Run `/check-env` at session start. Verify the environment before assuming the code is wrong.
+**Do instead:** Run `/check-env` at session start (a skill in this playbook, not a built-in command. Source: https://code.claude.com/docs/en/commands). Verify the environment before assuming the code is wrong.
 
 ---
 
@@ -117,9 +117,9 @@ These are the most common mistakes from 900+ sessions. Each one has burned real 
 
 **Don't:** Append to SESSION_NOTES.md, PROGRESS.md, or TODO.md without limit.
 
-**Why it fails:** Files that grow unbounded silently exceed what Claude reads. After ~30 lines, Claude may drop the file entirely without warning.
+**Why it fails:** Files that grow unbounded silently exceed what Claude reads. After ~30 lines, Claude may drop the file entirely without warning. (Wrong as of Nov 2026: no 30-line cutoff is documented. Official guidance is to keep each CLAUDE.md under 200 lines for adherence, and only the first 200 lines or 25KB of an auto-memory `MEMORY.md` load at session start. Source: https://code.claude.com/docs/en/memory)
 
-**Do instead:** Replace the entire file content. Keep shared context files under 30 lines.
+**Do instead:** Replace the entire file content. Keep shared context files under 30 lines (a playbook heuristic; official docs say under 200 lines for CLAUDE.md. Source: https://code.claude.com/docs/en/memory).
 
 ---
 
@@ -131,7 +131,7 @@ These are the most common mistakes from 900+ sessions. Each one has burned real 
 
 **Why it fails:** API rate limits, credential contention, and memory pressure. Agents start failing, retrying, and producing inconsistent results.
 
-**Do instead:** Cap at 3-4 agents. Quality and reliability beat raw parallelism.
+**Do instead:** Cap at 3-4 agents. Quality and reliability beat raw parallelism. (Stale as of Nov 2026: official agent teams docs say there is no hard limit and suggest starting with 3-5 teammates. The rate-limit and contention reasoning above is Unverified Nov 2026. Source: https://code.claude.com/docs/en/agent-teams#choose-an-appropriate-team-size)
 
 ---
 
@@ -159,9 +159,9 @@ These are the most common mistakes from 900+ sessions. Each one has burned real 
 
 **Don't:** Default every sub-agent to `model: "opus"` for maximum quality.
 
-**Why it fails:** 5x cost increase with minimal quality improvement for simple tasks. Haiku and Sonnet handle 95% of sub-agent work perfectly.
+**Why it fails:** 5x cost increase with minimal quality improvement for simple tasks (Unverified Nov 2026: the 5x figure. Official guidance agrees Sonnet suits most tasks and Opus is for complex decisions. Source: https://code.claude.com/docs/en/costs#choose-the-right-model). Haiku and Sonnet handle 95% of sub-agent work perfectly.
 
-**Do instead:** Haiku for searches, Sonnet for implementation, Opus only for architecture and complex debugging.
+**Do instead:** Haiku for searches (`model: haiku` in subagent config is documented), Sonnet for implementation, Opus only for architecture and complex debugging.
 
 ---
 
