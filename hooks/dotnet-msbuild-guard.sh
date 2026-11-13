@@ -20,19 +20,25 @@ ask() {
 command -v jq >/dev/null 2>&1 || ask "jq not found, cannot inspect this write"
 
 INPUT=$(cat)
-FILE_PATH=$(printf '%s' "$INPUT" | jq -r '.tool_input.file_path // .tool_input.notebook_path // empty')
+# jq -j plus a sentinel keeps trailing newlines, which $(...) would otherwise strip
+FILE_PATH=$(printf '%s' "$INPUT" | jq -j '.tool_input.file_path // .tool_input.notebook_path // empty'; printf x)
+FILE_PATH=${FILE_PATH%x}
 
 [ -z "$FILE_PATH" ] && exit 0
 
 # Backslashes to slashes, then any non-ASCII or control byte means ask
 P=${FILE_PATH//\\//}
+# grep reads line by line, so a newline must be caught here
+case "$P" in *$'\n'*) ask "path has non-ASCII or control characters" ;; esac
 if printf '%s' "$P" | LC_ALL=C grep -q '[^ -~]'; then
   ask "path has non-ASCII or control characters"
 fi
 
 command -v python3 >/dev/null 2>&1 || ask "python3 not found, cannot resolve the path"
 
-PROJ=${CLAUDE_PROJECT_DIR:-$PWD}
+# Claude Code sets CLAUDE_PROJECT_DIR for hooks. If it is missing, do not guess the project root.
+[ -n "${CLAUDE_PROJECT_DIR:-}" ] || ask "CLAUDE_PROJECT_DIR not set, cannot tell project files from the rest of the disk"
+PROJ=$CLAUDE_PROJECT_DIR
 # Prints the resolved path relative to the project root, or OUTSIDE. Symlinks are followed
 # (the parent dir when the file is new).
 REL=$(python3 -I -c '
