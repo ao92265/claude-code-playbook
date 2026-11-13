@@ -1,6 +1,7 @@
 ---
 name: visual-verdict
-description: Judge UI screenshots against a reference and return a strict pass or fail verdict naming every difference. Use when a build is being checked against an approved mockup or design, on a before and after of a UI change, or on a route by route or theme sweep. Triggers: "/visual-verdict", "does it match the mock", "compare these screenshots", "is this the approved design", "spot the differences", "before and after". Judges images only: driving the browser and root-causing a fault is demo-qa.
+description: >-
+  Judge UI screenshots against a reference and return a strict pass or fail verdict naming every difference. Use when a build is being checked against an approved mockup or design, on a before and after of a UI change, or on a route by route or theme sweep. Triggers: "/visual-verdict", "does it match the mock", "compare these screenshots", "is this the approved design", "spot the differences", "before and after". Judges images only: driving the browser and root-causing a fault is demo-qa.
 level: 2
 ---
 

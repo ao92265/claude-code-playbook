@@ -1,7 +1,8 @@
 ---
 disable-model-invocation: true
 name: pr-fleet
-description: Parallel PR processing via subagent fleet + git worktrees, autonomous overnight (default) or interactive batched with user checkpoints (--interactive flag). Coordinator triages backlog, spawns one worker per PR (capped at 3 concurrent), only escalates protected-path or non-trivial conflicts to user. Triggers "/pr-fleet", "overnight pr fleet", "parallel pr merge", "merge queue", "pr backlog", "/pr-merge-queue". Do NOT use for: a single PR (merge it directly) or non-GitHub repos.
+description: >-
+  Parallel PR processing via subagent fleet + git worktrees, autonomous overnight (default) or interactive batched with user checkpoints (--interactive flag). Coordinator triages backlog, spawns one worker per PR (capped at 3 concurrent), only escalates protected-path or non-trivial conflicts to user. Triggers "/pr-fleet", "overnight pr fleet", "parallel pr merge", "merge queue", "pr backlog", "/pr-merge-queue". Do NOT use for: a single PR (merge it directly) or non-GitHub repos.
 ---
 
 # PR Fleet — Parallel PR Orchestrator

@@ -1,6 +1,7 @@
 ---
 name: crosscheck
-description: Read one source twice with two independent readers, then reconcile into a single spec where every line is labelled confirmed, single-source or conflict. Explicit invoke only: /crosscheck.
+description: >-
+  Read one source twice with two independent readers, then reconcile into a single spec where every line is labelled confirmed, single-source or conflict. Explicit invoke only: /crosscheck.
 effort: high
 ---
 

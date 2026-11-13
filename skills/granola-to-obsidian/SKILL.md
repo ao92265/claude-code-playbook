@@ -1,6 +1,7 @@
 ---
 name: granola-to-obsidian
-description: Pull meeting notes from Granola and write them into the Obsidian Work vault. Always use this skill for a Granola to vault capture rather than writing the vault by hand, it carries the current paths and rules. Explicit invoke: /granola-to-obsidian.
+description: >-
+  Pull meeting notes from Granola and write them into the Obsidian Work vault. Always use this skill for a Granola to vault capture rather than writing the vault by hand, it carries the current paths and rules. Explicit invoke: /granola-to-obsidian.
 ---
 
 # Granola → Obsidian

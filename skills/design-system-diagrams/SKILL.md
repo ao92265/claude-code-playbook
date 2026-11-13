@@ -1,6 +1,7 @@
 ---
 name: design-system-diagrams
-description: Make a diagram or explainer slide that has to look designed, as a 16:9 HTML file plus a PNG, styled with a real brand's colour, type and spacing tokens. Use for a deck, a talk, a training session, a one-pager or a doc header. Triggers: "/design-system-diagrams", "slide for my deck", "diagram for the talk", "explainer graphic", "concept slide", "before and after slide", "run sheet graphic", "visualise this process", "make this look designed", "make it deck ready". Do NOT use for charts of numeric data, UI mockups of real product screens, sketch style output (hand-drawn-diagrams), or an engineering architecture diagram (archify).
+description: >-
+  Make a diagram or explainer slide that has to look designed, as a 16:9 HTML file plus a PNG, styled with a real brand's colour, type and spacing tokens. Use for a deck, a talk, a training session, a one-pager or a doc header. Triggers: "/design-system-diagrams", "slide for my deck", "diagram for the talk", "explainer graphic", "concept slide", "before and after slide", "run sheet graphic", "visualise this process", "make this look designed", "make it deck ready". Do NOT use for charts of numeric data, UI mockups of real product screens, sketch style output (hand-drawn-diagrams), or an engineering architecture diagram (archify).
 metadata:
   user-invocable: true
   slash-command: /design-system-diagrams

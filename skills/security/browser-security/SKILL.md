@@ -1,4 +1,7 @@
 ---
+name: browser-security
+description: >-
+  Placeholder stub: browser security hardening skill, awaiting contribution.
 title: Browser Security Hardening Skill
 nav_exclude: true
 search_exclude: true
