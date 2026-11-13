@@ -113,6 +113,8 @@ jobs:
             python3 -m py_compile "$py" || exit 1
             echo "OK: $py"
           done
+      - name: Run hook behaviour tests
+        run: bash hooks/tests/run-all.sh
 
   validate-templates:
     name: Validate Templates
