@@ -1,5 +1,5 @@
 #!/bin/zsh
-# matcha-run - delegate an AGENTIC task to the Harris Matcha gateway.
+# matcha-run - delegate an AGENTIC task to the ParentCo Matcha gateway.
 #
 # Unlike matcha.sh (one API call, no tools) this runs the real Claude Code
 # binary headless against Matcha, so it can read the repo, grep it and, with
