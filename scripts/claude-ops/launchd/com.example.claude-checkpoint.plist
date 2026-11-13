@@ -7,7 +7,7 @@
 	<key>ProgramArguments</key>
 	<array>
 		<string>/bin/bash</string>
-		<string>~/.claude/scripts/checkpoint-sessions.sh</string>
+		<string>/Users/YOU/.claude/scripts/checkpoint-sessions.sh</string>
 	</array>
 	<key>EnvironmentVariables</key>
 	<dict>
@@ -24,8 +24,8 @@
 	<key>RunAtLoad</key>
 	<true/>
 	<key>StandardOutPath</key>
-	<string>~/Library/Logs/claude-checkpoint.log</string>
+	<string>/Users/YOU/Library/Logs/claude-checkpoint.log</string>
 	<key>StandardErrorPath</key>
-	<string>~/Library/Logs/claude-checkpoint.log</string>
+	<string>/Users/YOU/Library/Logs/claude-checkpoint.log</string>
 </dict>
 </plist>

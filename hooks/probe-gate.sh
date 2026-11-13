@@ -35,7 +35,7 @@ case "$FILE" in
   *) exit 0 ;;
 esac
 case "$FILE" in
-  *test*|*spec*|*/tests/*|*/__tests__*|*fixture*|*mock*|*smoke*|*sample*) exit 0 ;;
+  *.test.*|*.spec.*|*/test/*|*/tests/*|*/spec/*|*/__tests__/*|*/fixtures/*|*/mocks/*|*/smoke/*|*/samples/*) exit 0 ;;
 esac
 
 BODY=$(printf '%s' "$INPUT" | jq -r '

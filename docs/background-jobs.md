@@ -22,7 +22,7 @@ it in the environment, never on the command line.
 | pr-review-check | daily 07:47 | Confirms the sweep actually ran |
 | post-merge-digest | daily 07:45 | Summarises review comments on PRs merged since yesterday |
 | backup | daily 09:30 | Commits the `~/.claude` config to a private repo |
-| maintenance | Mon 09:00 | Rule budget check, hook smoke test, stale file cleanup |
+| maintenance | Mon 09:00 | Rule budget check, stale file cleanup |
 | incident-replay | daily 06:40 | Replays past bad changes against the code-reviewer agent, scores whether it still catches them, alerts when the score drops |
 | graveyard | Mon 08:05 | Finds jobs that stopped firing and finished work nobody collected |
 | rule-drift-prune | Mon 08:30 | Trims the rule-drift log that measures whether hooks are obeyed |

@@ -65,6 +65,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install zsh so zsh hooks are syntax-checked
+        run: sudo apt-get install -y zsh
       - name: Check hook scripts
         run: |
           errors=0
@@ -222,6 +224,9 @@ jobs:
           grep -q "Skills-${skills}_" README.md          || { echo "FAIL: README skills badge != ${skills}"; fail=1; }
           grep -q "Hooks-${hooks}" README.md             || { echo "FAIL: README hooks badge != ${hooks}"; fail=1; }
           grep -qi "${anti} anti-patterns" README.md     || { echo "FAIL: README anti-patterns claim != ${anti}"; fail=1; }
+          grep -q "badge/${docs}-Docs" README.md        || { echo "FAIL: README docs badge != ${docs}"; fail=1; }
+          grep -q "${docs} guides" README.md             || { echo "FAIL: README docs prose != ${docs}"; fail=1; }
+          grep -q "${skills} production-ready skills" README.md || { echo "FAIL: README skills prose != ${skills}"; fail=1; }
           grep -q "| ${skills} |" index.md               || { echo "FAIL: index.md skills count != ${skills}"; fail=1; }
           grep -q "| ${hooks} |" index.md                || { echo "FAIL: index.md hooks count != ${hooks}"; fail=1; }
           grep -q "| ${docs} |" index.md                 || { echo "FAIL: index.md docs count != ${docs}"; fail=1; }

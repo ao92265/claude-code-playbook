@@ -31,6 +31,7 @@ Place your hook scripts in `~/.claude/hooks/` (global) or `.claude/hooks/` (proj
 ```bash
 mkdir -p ~/.claude/hooks
 cp hooks/*.sh hooks/*.py ~/.claude/hooks/
+cp -R hooks/lib ~/.claude/hooks/
 chmod +x ~/.claude/hooks/*.sh ~/.claude/hooks/*.py
 ```
 
@@ -68,7 +69,7 @@ Hook points not in the table above that the example wiring also uses: `PreCompac
 
 | Field | Description |
 |-------|-------------|
-| `matcher` | Regex pattern matching tool names (e.g., `"Edit"`, `"Edit\|Write"`, `""` for all) |
+| `matcher` | Regex pattern matching tool names (e.g., `"Edit"`, `"Edit\\|Write"`, `""` for all) |
 | `type` | Always `"command"` |
 | `command` | Path to the hook script, with any flags |
 | `timeout` | Maximum execution time in seconds |
@@ -94,22 +95,22 @@ Block or warn before something irreversible, leaky or out of scope happens.
 | Script | Event (matcher) | What it does |
 |--------|-----------------|--------------|
 | `firewall.sh` | PreToolUse (Bash) | Deny gate for irreversible or destructive commands. Fires in every permission mode. |
-| `protect-paths.sh` | PreToolUse (Edit|Write) | Blocks edits to protected paths such as env files, lockfiles and credentials. |
-| `secret-scanner.py` | PreToolUse (Edit|Write|MultiEdit|NotebookEdit), PostToolUse (Read|Bash|Grep|WebFetch) | Scans content about to be written, and tool output already read, for secrets. Exit 2 blocks or flags. |
+| `protect-paths.sh` | PreToolUse (Edit\|Write) | Blocks edits to protected paths such as env files, lockfiles and credentials. |
+| `secret-scanner.py` | PreToolUse (Edit\|Write\|MultiEdit\|NotebookEdit), PostToolUse (Read\|Bash\|Grep\|WebFetch) | Scans content about to be written, and tool output already read, for secrets. Exit 2 blocks or flags. |
 | `paste-guard.py` | UserPromptSubmit | DLP gate on what you paste: blocks prompts with credentials, PII or images and puts a sanitised copy on the clipboard. |
 | `env-guard.sh` | PreToolUse (Bash) | Blocks committing `.env` files or diffs containing secret patterns. |
 | `pre-commit-guard.sh` | PreToolUse (Bash) | Blocks `git commit` when staged code has `console.log`, `console.debug` or `debugger`. |
 | `commit-message-check.sh` | PreToolUse (Bash) | Enforces conventional commit message prefixes on `git commit`. |
-| `research-only-guard.sh` | PreToolUse (Edit|Write|NotebookEdit and Bash) | While a `research-only.flag` sentinel exists, blocks edits and state-mutating shell commands. |
+| `research-only-guard.sh` | PreToolUse (Edit\|Write\|NotebookEdit and Bash) | While a `research-only.flag` sentinel exists, blocks edits and state-mutating shell commands. |
 | `run-referee-guard.sh` | PreToolUse (all tools) | Enforcement half of a run watchdog: blocks tool calls in a session the watchdog has paused or killed. |
-| `branch-guard.sh` | PreToolUse (Edit|Write|MultiEdit|NotebookEdit|Bash) | Prints the live branch, dirty state and any other session in the same checkout before editing. |
-| `worktree-gate.sh` | PreToolUse (Edit\|Write\|MultiEdit\|NotebookEdit) | Allows one tracked file per session to be edited in a repo's main checkout, then blocks a second and tells the session to enter a worktree. Never gates linked worktrees, gitignored files or headless runs. |
-| `explainer-gate.py` | PreToolUse (Edit\|Write\|MultiEdit) | Blocks the first edit to an existing source file in a folder, once per session, until the reply contains an `Explainer:` line describing that slice. Gives up after two blocks so it cannot trap a session. |
-| `require-agent-model.sh` | PreToolUse (Agent|Task) | Blocks subagent spawns that carry no explicit `model`. |
-| `no-new-dep.sh` | PreToolUse (Edit|Write) | Warns when a new dependency name is about to be added to a `package.json`. |
+| `branch-guard.sh` | PreToolUse (Edit\|Write\|MultiEdit\|NotebookEdit\|Bash) | Prints the live branch, dirty state and any other session in the same checkout before editing. |
+| `worktree-gate.sh` | PreToolUse (Edit\\|Write\\|MultiEdit\\|NotebookEdit) | Allows one tracked file per session to be edited in a repo's main checkout, then blocks a second and tells the session to enter a worktree. Never gates linked worktrees, gitignored files or headless runs. |
+| `explainer-gate.py` | PreToolUse (Edit\\|Write\\|MultiEdit) | Blocks the first edit to an existing source file in a folder, once per session, until the reply contains an `Explainer:` line describing that slice. Gives up after two blocks so it cannot trap a session. |
+| `require-agent-model.sh` | PreToolUse (Agent\|Task) | Blocks subagent spawns that carry no explicit `model`. |
+| `no-new-dep.sh` | PreToolUse (Edit\|Write) | Warns when a new dependency name is about to be added to a `package.json`. |
 | `test-no-new-dep.sh` | manual | Assertion checklist for `no-new-dep.sh`; run it before and after changing that hook. |
-| `hook-edit-smoke.sh` | PostToolUse (Edit|Write) | When a hook script is edited, runs the hooks smoke test and surfaces failures in the same turn. |
-| `prose-guard.sh` | PostToolUse (Edit|Write|MultiEdit) | Flags em and en dashes in prose files at the moment they are written. |
+| `hook-edit-smoke.sh` | PostToolUse (Edit\|Write) | When a hook script is edited, runs the hooks smoke test and surfaces failures in the same turn. |
+| `prose-guard.sh` | PostToolUse (Edit\|Write\|MultiEdit) | Flags em and en dashes in prose files at the moment they are written. |
 | `audit-log.sh` | UserPromptSubmit (optional) | Appends every user prompt to a compliance log. |
 
 ### Quality gates
@@ -118,24 +119,24 @@ Typecheck, lint, format, test and plan checks around edits, commits and stops.
 
 | Script | Event (matcher) | What it does |
 |--------|-----------------|--------------|
-| `ts-check.sh` | PostToolUse (Edit|Write) | Runs `tsc --noEmit` after a TypeScript file is edited. |
-| `build-check.sh` | PostToolUse (Edit|Write) | Runs a TypeScript build with OOM escalation after `.ts`/`.tsx` edits. |
-| `dotnet-build.sh` | PostToolUse (Edit\|Write) | Runs `dotnet build` after `.cs` edits and returns only compiler error lines. Install it together with `dotnet-msbuild-guard.sh`. See [.NET Teams](../docs/dotnet-teams.md). |
-| `dotnet-msbuild-guard.sh` | PreToolUse (Edit\|Write\|MultiEdit\|NotebookEdit) | Allowlist: asks the developer before any write outside the project, to a non-ASCII path, under `.git`/`obj`/`bin`/`.claude`/`.nuget` or MSBuild folders, or to a file type other than plain source and docs. Edit/Write only; Bash is not covered. |
-| `lint-check.sh` | PostToolUse (Edit|Write) | Runs ESLint when a JS or TS file was edited. |
-| `format-check.sh` | PostToolUse (Edit|Write) | Warns (exit 1) when an edited file fails Prettier. |
-| `test-on-save.sh` | PostToolUse (Edit|Write) | Finds and runs the test file matching an edited source file. |
-| `tdd-gate.sh` | PreToolUse (Edit|Write) | Warns, or blocks with `TDD_GATE_BLOCK=1`, when editing production code that has no matching test. |
-| `plan-gate.sh` | PreToolUse (Edit|Write) | Warns when source is edited with no recent plan or spec on disk. |
+| `ts-check.sh` | PostToolUse (Edit\|Write) | Runs `tsc --noEmit` after a TypeScript file is edited. |
+| `build-check.sh` | PostToolUse (Edit\|Write) | Runs a TypeScript build with OOM escalation after `.ts`/`.tsx` edits. |
+| `dotnet-build.sh` | PostToolUse (Edit\\|Write) | Runs `dotnet build` after `.cs` edits and returns only compiler error lines. Install it together with `dotnet-msbuild-guard.sh`. See [.NET Teams](../docs/dotnet-teams.md). |
+| `dotnet-msbuild-guard.sh` | PreToolUse (Edit\\|Write\\|MultiEdit\\|NotebookEdit) | Allowlist: asks the developer before any write outside the project, to a non-ASCII path, under `.git`/`obj`/`bin`/`.claude`/`.nuget` or MSBuild folders, or to a file type other than plain source and docs. Edit/Write only; Bash is not covered. |
+| `lint-check.sh` | PostToolUse (Edit\|Write) | Runs ESLint when a JS or TS file was edited. |
+| `format-check.sh` | PostToolUse (Edit\|Write) | Warns (exit 1) when an edited file fails Prettier. |
+| `test-on-save.sh` | PostToolUse (Edit\|Write) | Finds and runs the test file matching an edited source file. |
+| `tdd-gate.sh` | PreToolUse (Edit\|Write) | Warns, or blocks with `TDD_GATE_BLOCK=1`, when editing production code that has no matching test. |
+| `plan-gate.sh` | PreToolUse (Edit\|Write) | Warns when source is edited with no recent plan or spec on disk. |
 | `pre-commit-verify.sh` | PreToolUse (Bash) | Blocks `git commit` when the repo's verification bundle fails. |
 | `precommit-format.sh` | PreToolUse (Bash) | On `git commit`, normalises CRLF to LF on staged text files and runs the formatter. Opt-out. |
-| `verify-gate.sh` | PreToolUse (Edit|Write) with `--auto-arm`, Stop | Arms a typecheck baseline on first edit, then blocks the stop if typecheck or tests regressed. |
+| `verify-gate.sh` | PreToolUse (Edit\|Write) with `--auto-arm`, Stop | Arms a typecheck baseline on first edit, then blocks the stop if typecheck or tests regressed. |
 | `test-gate.py` | Stop | Blocks the stop, once per session, when source changed and nothing ran that code afterwards (test runner, build, typecheck, a test script, a request to the local app). Reading a file does not count. |
 | `push-gate.py` | Stop | One nudge when a session committed but did not push: push, or say in one line why not. Skips headless runs, repos with no remote and an allow list. |
 | `auto-simplify.sh` | PreToolUse (Bash) | On `git commit`, sends the staged diff to a Codex review and blocks on P1 findings. |
 | `codex-prepush-review.sh` | PreToolUse (Bash) | On `git push`, sends HEAD vs the main branch to a Codex review and blocks on P1 findings. |
 | `matcha-review.sh` | Stop | Sends the working diff to an alternate gateway for a background, read-only second review. |
-| `matcha-offload-gate.sh` | PreToolUse (Agent|Task) | When the subscription window is nearly spent, steers cheap mechanical subagent work to the gateway. |
+| `matcha-offload-gate.sh` | PreToolUse (Agent\|Task) | When the subscription window is nearly spent, steers cheap mechanical subagent work to the gateway. |
 
 ### Evidence recorder and gate pairs
 
@@ -145,11 +146,11 @@ A passive PostToolUse recorder logs that something really happened; a PreToolUse
 |--------|-----------------|--------------|
 | `evidence-recorder.sh` | PostToolUse (Bash) | Records verification runs (tests, typecheck, builds) as they happen. |
 | `mutation-proof-gate.sh` | PreToolUse (Bash) | Uses the recorded evidence to require new tests to be shown failing before they count. |
-| `probe-recorder.sh` | PostToolUse (Bash|WebFetch|chrome navigate) | Records that an external service answered at least once. |
-| `probe-gate.sh` | PreToolUse (Edit|Write|MultiEdit) | Blocks writes that build around an external dependency until a probe has succeeded. |
+| `probe-recorder.sh` | PostToolUse (Bash\|WebFetch\|chrome navigate) | Records that an external service answered at least once. |
+| `probe-gate.sh` | PreToolUse (Edit\|Write\|MultiEdit) | Blocks writes that build around an external dependency until a probe has succeeded. |
 | `ui-state-recorder.sh` | PostToolUse (Bash and chrome page tools) | Records the live theme or state queried from the running UI. |
-| `ui-state-gate.sh` | PreToolUse (Edit|Write|MultiEdit) | Blocks the first style edit of a visual QA session until a real state query has returned. |
-| `leg-scope.sh` | UserPromptSubmit `--arm`, PostToolUse (Bash) `--record`, PreToolUse (Edit|Write|MultiEdit) `--gate` | Forces a continuation session to state its own finish line before its first edit. |
+| `ui-state-gate.sh` | PreToolUse (Edit\|Write\|MultiEdit) | Blocks the first style edit of a visual QA session until a real state query has returned. |
+| `leg-scope.sh` | UserPromptSubmit `--arm`, PostToolUse (Bash) `--record`, PreToolUse (Edit\|Write\|MultiEdit) `--gate` | Forces a continuation session to state its own finish line before its first edit. |
 
 ### Session lifecycle and handoff
 
@@ -166,7 +167,7 @@ Preserve and restore state across compaction, stops and fresh sessions.
 | `tmux-name-sync.sh` | UserPromptSubmit | Keeps the tmux session name matching the Claude session name. |
 | `precompact-handoff.sh` | PreCompact | Saves state before compaction discards it. |
 | `stop-handoff.sh` | Stop | Writes a compact, deterministic where-I-left-off handoff. |
-| `reboot-stamp.sh` | PostToolUse (Edit|Write) | Guarantees an identity block on handoff files and drops a same-terminal claim ticket. |
+| `reboot-stamp.sh` | PostToolUse (Edit\|Write) | Guarantees an identity block on handoff files and drops a same-terminal claim ticket. |
 | `push-sweep.sh` | Stop | Surfaces unpushed commits before they strand. |
 | `daydream.sh` | Stop | When idle, occasionally spawns a detached headless pass that recombines memory notes into ideas. |
 | `daydream-surface.sh` | SessionStart | Surfaces the daydreams generated while you were away. |

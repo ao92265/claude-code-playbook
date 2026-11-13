@@ -7,12 +7,12 @@
 	<key>ProgramArguments</key>
 	<array>
 		<string>/opt/homebrew/bin/python3</string>
-		<string>~/.claude/scripts/run-referee.py</string>
+		<string>/Users/YOU/.claude/scripts/run-referee.py</string>
 	</array>
 	<key>StandardErrorPath</key>
-	<string>~/.claude/run-referee/launchd.log</string>
+	<string>/Users/YOU/.claude/run-referee/launchd.log</string>
 	<key>StandardOutPath</key>
-	<string>~/.claude/run-referee/launchd.log</string>
+	<string>/Users/YOU/.claude/run-referee/launchd.log</string>
 	<key>StartInterval</key>
 	<integer>600</integer>
 </dict>

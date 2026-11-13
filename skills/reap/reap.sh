@@ -6,6 +6,14 @@
 #
 # Default run reports only. --kill does the killing.
 set -uo pipefail
+
+# True when stdin (a ps command line) is the claude program itself, judged by
+# the basename of argv[0] or a claude-code cli.js, not by a mere argument.
+is_claude_cmd() {
+  awk '{ n=split($1,a,"/"); if (a[n]=="claude") ok=1
+         else if (($1 ~ /(^|\/)node$/) && $2 ~ /claude-code\/(cli|bin\/claude)/) ok=1 }
+       END { exit ok?0:1 }'
+}
 # The launchd job sets only PATH, so it runs in the C locale. There, sed, tr and
 # grep treat ❯ and the no-break space Claude draws after it as raw bytes, the
 # empty prompt reads as typed text, and every Claude session gets spared. Pin a
@@ -105,11 +113,11 @@ while IFS='|' read -r NAME ATTACHED ACTIVITY; do
   PANE_PID="$(tmux list-panes -t "$NAME" -F '#{pane_pid}' 2>/dev/null | head -1)"
   IS_CLAUDE=0
   if [ -n "$PANE_PID" ]; then
-    if ps -o command= -p "$PANE_PID" 2>/dev/null | grep -q '/claude\b\|[[:space:]]claude\b\|^claude\b'; then
+    if ps -o command= -p "$PANE_PID" 2>/dev/null | is_claude_cmd; then
       IS_CLAUDE=1
     else
       for kid in $(pgrep -P "$PANE_PID" 2>/dev/null); do
-        if ps -o command= -p "$kid" 2>/dev/null | grep -q '/claude\b\|[[:space:]]claude\b\|^claude\b'; then
+        if ps -o command= -p "$kid" 2>/dev/null | is_claude_cmd; then
           IS_CLAUDE=1; break
         fi
       done

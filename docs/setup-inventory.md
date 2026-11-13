@@ -64,7 +64,7 @@ These are in daily use but belong to their authors. Install from upstream.
 | Two persona profiles of real people in `skills/bro/personas/` | They describe real people. `default.md` stays |
 | Five work-bound skills: a team-chat blocker bot, a chat persona bot, an accelerator audit report, an internal newsletter builder, an expenses filer | Each is built around named colleagues, internal chats or an employer system; placeholders would leave nothing useful |
 | Coin-rain sound files and `coin-state.json` | Audio of unknown licence; the state file is runtime data |
-| One more work-bound skill, a review lane that delegates to an internal model gateway, plus its wrapper script | Built around an employer's internal gateway and named colleagues; placeholders would leave nothing useful |
+| The wrapper script (`matcha-run.sh`) behind the `matcha` skill and the `matcha-*` hooks | Built around an employer's internal gateway; the skill and hooks ship but need you to supply your own wrapper |
 | Skill `__pycache__`, `node_modules`, `.omc/` and `.claude/` evidence folders, `myinsights` data snapshots and its dated tool-error notes | Runtime state, not setup |
 | `*.bak`, `*.bak-<date>` and `*.pre-*` script backups | Superseded versions |
 | `pr-review-sweep.sh` update | The published copy already carries the lockdown (narrow tools, credential scan, shared repos parked by default); the live version only differs by personal defaults |
