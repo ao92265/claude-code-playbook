@@ -61,6 +61,8 @@ like. A bare "review this" gets a bare review.
 Send one whole feature slice per run, not a string of small ones. For a
 `--write` job that means build, test and fix-until-green in one task, with the
 check command named in the prompt so the delegate knows what finished means.
+Note that headless runs deny shell commands nothing has pre-approved, so the
+delegate may be unable to run that check itself. Re-run it yourself afterwards.
 Every separate run pays again to read the repo, so five small runs cost more
 than one run that does all five parts.
 
@@ -74,7 +76,7 @@ Writing is the mode that can hurt. Check both before launching:
 
 - The working directory is a git checkout with the current work committed or
   stashed, so the delegate's edits are reviewable as a diff and reversible.
-- the user asked for edits. If he asked for an opinion, a review or a diagnosis,
+- the user asked for edits. If the user asked for an opinion, a review or a diagnosis,
   stay read only.
 
 Never point a write run at a shared checkout another session is using. Use a

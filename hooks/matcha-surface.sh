@@ -17,7 +17,7 @@ if REPO="$(git -C "$CWD" rev-parse --show-toplevel 2>/dev/null)"; then
   SEEN="$STATE/$KEY.seen"
   if [[ -f "$F" ]] && { [[ ! -f "$SEEN" ]] || [[ "$F" -nt "$SEEN" ]]; }; then
     BODY="$(cat "$F")"
-    if [[ -n "$BODY" && "$BODY" != *CLEAN* ]]; then
+    if [[ -n "$BODY" && "${BODY//[[:space:]]/}" != CLEAN ]]; then
       print "MATCHA SECOND REVIEW of the working diff in $(basename "$REPO"). Independent reader, read only, no edits made."
       print "VISIBILITY IS MANDATORY: the user cannot see this text. Open your very next reply to the user with a line that starts 'Matcha reviewed the diff:' and give the user the verdict and what you are doing about it. Do not silently absorb it, and do not defer it to a later turn."
       print "Treat every bullet as a claim to verify against the code first. Say which ones held up and which did not."

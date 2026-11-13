@@ -46,7 +46,7 @@ The nested run also ignores your own hooks on purpose, because it launches in re
 
 The two quota aware hooks, `matcha-surface.sh` and `matcha-offload-gate.sh`, only work if something outside Claude Code is writing a usage sampler file (a record of how much of the five hour and seven day subscription window has been used). Claude Code does not ship that sampler. Without it, both hooks read nothing, find nothing, and exit quietly: no warning, no gate, no error. They are not broken in that state, they are simply inert, and nothing in a normal session will tell you that.
 
-The sampler is a JSON lines file at `~/.claude/usage-history.jsonl`, one record per sample with `five_hour` and `seven_day` objects that each carry `used_percentage`. Write it from your own statusline or a small cron job.
+The sampler is a JSON lines file at `~/.claude/usage-history.jsonl`, one record per sample with `five_hour` and `seven_day` objects that each carry `used_percentage`. Write it from your own statusline or a small job that runs at least every few minutes: both hooks ignore the file once it is more than 30 minutes old.
 
 `matcha-review.sh` does not need the sampler, but it is not self-contained either. See Setup below.
 
@@ -55,7 +55,7 @@ The sampler is a JSON lines file at `~/.claude/usage-history.jsonl`, one record 
 The lane needs all of this before any run works:
 
 - macOS, because the script reads the key with `security` (Keychain) and uses BSD `stat`. On other systems the script needs adapting.
-- `claude` and `python3` on your PATH, and a git repository for the review hook.
+- `claude`, `python3` and `jq` on your PATH, and a git repository for the review hook.
 - The skill folder installed, so the script lives at `~/.claude/skills/matcha/matcha-run.sh` (the installer copies `skills/matcha/` there). The hooks and the skill all call that path.
 - A file `~/.claude/matcha.env` that sets `MATCHA_BASE_URL` to your gateway's base URL.
 - A Keychain entry with service name `matcha-api-key` holding your gateway key. Create it with `security add-generic-password -a "$USER" -s matcha-api-key -w`.

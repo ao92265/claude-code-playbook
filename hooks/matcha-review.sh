@@ -57,7 +57,7 @@ $DIFF"
 
 # Detach fully (stdin, stdout, stderr) so the hook's pipes close at once and the
 # Stop hook never waits on the review.
-{ "$HOME/.claude/skills/matcha/matcha-run.sh" --dir "$REPO" --tier deep \
+{ nohup "$HOME/.claude/skills/matcha/matcha-run.sh" --dir "$REPO" --tier deep \
   --budget 0.60 --timeout 540 "$PROMPT" > "$OUT.tmp" 2>"$OUT.log" \
   && mv "$OUT.tmp" "$OUT"; } </dev/null >/dev/null 2>&1 &
 disown 2>/dev/null
