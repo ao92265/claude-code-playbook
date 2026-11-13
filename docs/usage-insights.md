@@ -171,7 +171,7 @@ The `/insights` recommendation list assumed several gaps that turned out to alre
 
 - "Firewall blocks `--force-with-lease`" — `firewall.sh:33` already allows the safe variant; the friction was a stale workflow assumption, not a hook bug.
 - "Add anti-sycophancy rule" / "plain-English rule" — both already in CLAUDE.md ("Epistemic + Candor" and "Communication Register" sections).
-- "Build a /pr-fix skill" — covered by existing `pr-fleet` / `pr-merge-queue` / `wraith-pr-review`.
+- "Build a /pr-fix skill" — covered by existing `pr-fleet` / `pr-merge-queue` / `example-pr-review`.
 
 Gap analysis BEFORE building saved roughly 4 hours of duplicate-work effort. The pattern: every `/insights` recommendation needs a "does this already exist?" pass before it goes on the build list.
 
@@ -179,7 +179,7 @@ Gap analysis BEFORE building saved roughly 4 hours of duplicate-work effort. The
 
 1. **A no-op stub hook is worse than no hook.** `~/.claude/read-once/hook.sh` had been a `exit 0` placeholder for months. The slot was reserved but the enforcement was zero, so the friction the hook was supposed to kill kept appearing. Audit your `settings.json` for hooks whose script body is a stub.
 2. **Worker swarms need shared state OR they're sequential cosplay.** Pre-state-file, three `pr-fleet` workers running in parallel could each claim the same PR; in practice they didn't, but only because triage filtered to disjoint queues. With explicit `claim`/`done`/`block` semantics the swarm survives partial failures and overlapping triage, which is the whole point.
-3. **Refactor-first ≠ TDD.** Existing `tdd-fix` is bug-fix-first: write the failing test, then fix. `refactor-loop` is the inverse: pin behavior FIRST with characterization tests, then refactor without changing behavior. Conflating them led to the Centurion redesign shipping regressions.
+3. **Refactor-first ≠ TDD.** Existing `tdd-fix` is bug-fix-first: write the failing test, then fix. `refactor-loop` is the inverse: pin behavior FIRST with characterization tests, then refactor without changing behavior. Conflating them led to the Banking redesign shipping regressions.
 4. **Horizon items are usually one-day builds.** The report framed self-healing swarms and TDD refactor loops as "as models get stronger." Both shipped same-day as small extensions to existing skills. Don't defer ambitious-sounding workflows until you've checked whether they're actually 200 lines on top of what already exists.
 
 ## Methodology notes

@@ -62,7 +62,7 @@ the user stated a team/project preference or corrected an approach — and
 turn qualifying ones into skill or `CLAUDE.md` updates.
 
 1. **Resolve project context.** Extract the project name from `$CWD` (e.g.
-   `/Users/aoreilly/Repos/Wraith` → `wraith`). Check whether
+   `/Users/me/Repos/example-app` → `example-app`). Check whether
    `.claude/skills/` exists in the project root.
 2. **Subcommands** (from `$ARGUMENTS`): `review` = steps 3-5 only, propose
    without applying; `history` = run

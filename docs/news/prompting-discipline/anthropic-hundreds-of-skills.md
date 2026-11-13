@@ -261,10 +261,10 @@ Rezvani's recommendation:
 
 ## Why this matters for Harris / Constellation
 
-Directly applicable to the 4 TypeScript projects (Wraith, ACT, Centurion, NanoClaw):
+Directly applicable to the 4 TypeScript projects (ExampleApp, ACT, Banking, Assistant):
 
 1. **Audit your OMC skill library with Rezvani's methodology.** Pull invocation data (the Rezvani monitoring stack gives you this). Count what actually ran last 30 days. Everything else: audit or delete.
-2. **The 4 compounding categories map directly:** Library references (for Zoho API, Azure APIs, specific internal libraries), Scaffolding (Wraith/Centurion/NanoClaw have repeated code artefacts), Business processes (standups, ticket creation, weekly summaries for small-team Harris product squads), Adversarial code review (essential for any PR touching regulated code).
+2. **The 4 compounding categories map directly:** Library references (for Zoho API, Azure APIs, specific internal libraries), Scaffolding (ExampleApp/Banking/Assistant have repeated code artefacts), Business processes (standups, ticket creation, weekly summaries for small-team Harris product squads), Adversarial code review (essential for any PR touching regulated code).
 3. **The 3 traps apply at our scale too.** FIS product teams are small; dedicating a week to a verification skill probably won't compound. Runbooks are better as markdown.
 4. **Skill bloat has a real cost:** "A rotten skill is worse than no skill, because Claude will still invoke it and produce confidently wrong output." Validates the CLAUDE.md lesson about skill bloat with concrete audit data.
 

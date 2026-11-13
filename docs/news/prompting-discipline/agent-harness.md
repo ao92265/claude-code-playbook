@@ -46,7 +46,7 @@ The wider community is converging on shared language:
 
 ## Why it matters for Harris / Constellation
 
-Four-project CLAUDE.md files (Wraith, ACT, Centurion, NanoClaw) are the most leveraged thing in your setup. Every Claude Code session across the four projects reads them. If they're guidance-language, Opus 4.7 now follows them better; if they're suggestion-language, 4.7 pushes back more. Upgrading to authority-language is a one-hour task with compound returns across the entire engineering team.
+Four-project CLAUDE.md files (ExampleApp, ACT, Banking, Assistant) are the most leveraged thing in your setup. Every Claude Code session across the four projects reads them. If they're guidance-language, Opus 4.7 now follows them better; if they're suggestion-language, 4.7 pushes back more. Upgrading to authority-language is a one-hour task with compound returns across the entire engineering team.
 
 ## Related Playbook pages
 

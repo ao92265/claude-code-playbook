@@ -520,7 +520,7 @@ Apache 2.0 licensed, 256K context, self-hostable on Azure ML or on-prem.
 
 ### When it's worth it
 
-- **Privacy-sensitive workloads** — codebases that can't leave the machine. Especially relevant for Centurion (banking) and any regulated Constellation vertical.
+- **Privacy-sensitive workloads** — codebases that can't leave the machine. Especially relevant for a banking product and any regulated Constellation vertical.
 - **Cost-sensitive iteration loops** — multiple parallel sessions add up on cloud; local is free after hardware.
 - **Resilience against cloud outages / pricing changes**
 
@@ -728,7 +728,7 @@ If you read nothing else, do this:
 6. **Audit every CLAUDE.md** for authority-language vs suggestion-language. Add a rationalisation table for your agents' top 3 excuses. Takes less than an hour per project.
 7. **If you're evaluating Copilot Cowork** for any regulated vertical, put the three vendor questions in writing before signing.
 8. **If you're building on LangGraph / CrewAI / custom multi-agent** — read the Anthropic Managed Agents blog and try the quickstart before your next architectural decision.
-9. **For any privacy-sensitive codebase** (Centurion banking, regulated verticals) — stand up a Gemma 4 local-model test this quarter.
+9. **For any privacy-sensitive codebase** (banking, regulated verticals) — stand up a Gemma 4 local-model test this quarter.
 10. **Pilot one Claude Code Routine** on a low-risk scheduled job (nightly dep audit, changelog). Research preview; daily limits are tight on Pro (5), roomier on Team/Enterprise (25). Keep outputs as draft PRs until you've watched a few dozen runs.
 11. **Skim the Playbook** (link below) — the full technical detail for every topic above sits in a dedicated page there.
 
@@ -764,7 +764,7 @@ Key sources linked inline in each section above:
 - Reza Rezvani, [The CLI vs MCP Debate Is Asking the Wrong Question]({{ site.baseurl }}/docs/news/cli-vs-mcp/)
 - Anthropic, [Introducing Claude Managed Agents]({{ site.baseurl }}/docs/news/managed-agents-launch/) — public beta
 
-**Contact:** Alex O'Reilly, Harris Computer, aoreilly@harriscomputer.com
+**Contact:** Alex O'Reilly, Harris Computer, see the repository owner profile
 
 ---
 

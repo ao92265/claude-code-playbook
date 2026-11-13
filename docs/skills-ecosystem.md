@@ -196,7 +196,7 @@ Community skills can overlap with MCP servers and built-in tools. Before install
 | Playwright MCP plugin | `microsoft/playwright-cli` skill + `claude --chrome` |
 | Manual `.claude/skills/*.md` for generic patterns | Community skills with updates via `npx skills update` |
 
-Keep custom project-specific skills (like `wraith-backend-module.md`) alongside community skills — they complement each other. Community skills provide general best practices; custom skills encode your project's specific conventions.
+Keep custom project-specific skills (like `example-backend-module.md`) alongside community skills — they complement each other. Community skills provide general best practices; custom skills encode your project's specific conventions.
 
 ---
 

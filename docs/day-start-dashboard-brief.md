@@ -28,7 +28,7 @@ on the day's output.
    ```
    # Handoff — <repo> — <YYYY-MM-DD HH:MM>
    ## State
-   - Path: `/Users/me/Repos/Wraith`
+   - Path: `/Users/me/Repos/ExampleApp`
    - Branch: `feature/x`
    - Last commit: <hash msg>
    - Uncommitted: <N> file(s)
@@ -118,27 +118,27 @@ messy cases (unknown branch, big dirty tree, duplicate repo names, hook-noise as
 
 | slug (file = `<slug>.md`) | last active | branch | uncommitted |
 |---|---|---|---|
-| `Users-aoreilly-Wraith` | 06-03 11:04 | _(unknown — show a muted "—")_ | 0 |
-| `Users-aoreilly-Repos-ai-news-digest` | 06-03 10:49 | `main` | 1 |
-| `Users-aoreilly-Repos-force-uk-portal` | 06-02 17:09 | `redesign/marketing-tokens` | **8** |
-| `Users-aoreilly-Repos-Wraith` | 06-02 15:01 | `docs/pr-review-light-routing` | 2 |
-| `Users-aoreilly-Repos` | 06-02 14:55 | _(unknown — "—")_ | 0 |
-| `Users-aoreilly-Repos-claude-code-playbook` | 06-02 14:46 | `main` | 6 |
+| `Users-me-ExampleApp` | 06-03 11:04 | _(unknown — show a muted "—")_ | 0 |
+| `Users-me-Repos-ai-news-digest` | 06-03 10:49 | `main` | 1 |
+| `Users-me-Repos-force-uk-portal` | 06-02 17:09 | `redesign/marketing-tokens` | **8** |
+| `Users-me-Repos-ExampleApp` | 06-02 15:01 | `docs/pr-review-light-routing` | 2 |
+| `Users-me-Repos` | 06-02 14:55 | _(unknown — "—")_ | 0 |
+| `Users-me-Repos-claude-code-playbook` | 06-02 14:46 | `main` | 6 |
 
 Real-world wrinkles to design for, visible above:
-- **Two "Wraith" cards** (`~/Wraith` and `~/Repos/Wraith`) — derive a readable title from
+- **Two "ExampleApp" cards** (`~/ExampleApp` and `~/Repos/ExampleApp`) — derive a readable title from
   the slug but disambiguate (show the tail path) so near-duplicate names don't confuse.
 - **Branch can be `?`/empty** (non-git dir or detached) — render a muted em-dash, not "?".
 - **Dirty count drives the amber attention signal** — `force-uk-portal` (8) and
   `claude-code-playbook` (6) should read as "needs attention"; the two 0-file cards as calm.
 
-### A2. A real CLEAN-ish card (1 dirty file) — verbatim `Users-aoreilly-Repos-ai-news-digest.md`
+### A2. A real CLEAN-ish card (1 dirty file) — verbatim `Users-me-Repos-ai-news-digest.md`
 ```markdown
 # Handoff — ai-news-digest — 2026-06-03 10:49
 _Auto (stop-handoff). Live state, overwritten each turn._
 
 ## State
-- Path: `/Users/aoreilly/Repos/ai-news-digest`
+- Path: `/Users/me/Repos/ai-news-digest`
 - Branch: `main`
 - Last commit: e8fd8fa feat(research): keep every email, de-paywall robustly, no silent drops
 - Uncommitted: 1 file(s)
@@ -158,13 +158,13 @@ Design note: the first two "asks" are **hook noise** (`Stop hook feedback: [AUTO
 not real human asks. The card should visually de-emphasize or filter `Stop hook feedback:`-
 prefixed lines so the one real ask ("so where are we at…") stands out.
 
-### A3. A real DIRTY card (uncommitted file block) — verbatim `Users-aoreilly-Repos-Wraith.md`
+### A3. A real DIRTY card (uncommitted file block) — verbatim `Users-me-Repos-ExampleApp.md`
 ```markdown
-# Handoff — Wraith — 2026-06-02 15:01
+# Handoff — ExampleApp — 2026-06-02 15:01
 ## State
-- Path: `/Users/aoreilly/Repos/Wraith`
+- Path: `/Users/me/Repos/ExampleApp`
 - Branch: `docs/pr-review-light-routing`
-- Last commit: 1125ce569 docs: route dev-iteration reviews to wraith-pr-review-light
+- Last commit: 1125ce569 docs: route dev-iteration reviews to example-pr-review-light
 - Uncommitted: 2 file(s)
 ​```
 ?? docs/reports/2026-05-29-pr-cycle-time.md
@@ -188,8 +188,8 @@ Written by the PreCompact hook, **appended** (multiple snapshots accumulate in o
 ```markdown
 ## Pre-compaction snapshot — 2026-06-02 14:30 (trigger: auto)
 **Files edited this session:**
-- `/Users/aoreilly/Repos/ai-news-digest/src/fetchers/local-folder.ts`
-- `/Users/aoreilly/Repos/ai-news-digest/src/fetchers/extract-article.ts`
+- `/Users/me/Repos/ai-news-digest/src/fetchers/local-folder.ts`
+- `/Users/me/Repos/ai-news-digest/src/fetchers/extract-article.ts`
 
 **Ask history this session (oldest→newest):**
 - build the research-folder pipeline

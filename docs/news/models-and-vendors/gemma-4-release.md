@@ -41,10 +41,10 @@ For concrete setup walk-throughs see:
 
 ## Where it fits in the Harris / Constellation stack
 
-- **FIS Centurion (banking)** — privacy-sensitive by definition. Apache 2.0 Gemma 4 on Azure ML or on-prem is a genuinely differentiated deployment model for regulated banking customers.
+- **Banking product** — privacy-sensitive by definition. Apache 2.0 Gemma 4 on Azure ML or on-prem is a genuinely differentiated deployment model for regulated banking customers.
 - **Public sector / utilities** — same argument. Data-residency requirements become easier when inference is local.
 - **Harris Azure tenants** — self-host on Azure ML as a compliance-clean alternative to OpenAI / Anthropic API endpoints for specific workloads.
-- **NanoClaw (if cost-sensitive)** — for iteration loops where privacy doesn't matter, Gemma 4 locally replaces a non-trivial fraction of API spend.
+- **Assistant (if cost-sensitive)** — for iteration loops where privacy doesn't matter, Gemma 4 locally replaces a non-trivial fraction of API spend.
 
 ## Related Playbook pages
 
