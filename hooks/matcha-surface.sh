@@ -17,9 +17,9 @@ if REPO="$(git -C "$CWD" rev-parse --show-toplevel 2>/dev/null)"; then
   SEEN="$STATE/$KEY.seen"
   if [[ -f "$F" ]] && { [[ ! -f "$SEEN" ]] || [[ "$F" -nt "$SEEN" ]]; }; then
     BODY="$(cat "$F")"
-    if [[ -n "$BODY" && "$BODY" != *CLEAN* ]]; then
+    if [[ -n "$BODY" && "${BODY//[[:space:]]/}" != CLEAN ]]; then
       print "MATCHA SECOND REVIEW of the working diff in $(basename "$REPO"). Independent reader, read only, no edits made."
-      print "VISIBILITY IS MANDATORY: the user cannot see this text. Open your very next reply to him with a line that starts 'Matcha reviewed the diff:' and give him the verdict and what you are doing about it. Do not silently absorb it, and do not defer it to a later turn."
+      print "VISIBILITY IS MANDATORY: the user cannot see this text. Open your very next reply to the user with a line that starts 'Matcha reviewed the diff:' and give the user the verdict and what you are doing about it. Do not silently absorb it, and do not defer it to a later turn."
       print "Treat every bullet as a claim to verify against the code first. Say which ones held up and which did not."
       print "$BODY"
     fi
@@ -45,16 +45,15 @@ except Exception:
 
 if week >= 99 or five >= 99:
     print(
-        "MATCHA TAKEOVER ARMED: subscription at %d%% of the 5 hour window and %d%% of the week. "
-        "When this session hits the wall it will relaunch itself on Matcha and carry on, so do "
-        "not warn the user that work is about to be lost. Route everything you can through "
-        "~/.claude/scripts/matcha-run.sh now rather than spending the last of the window here. "
-        "Tell him once, in one line, that the takeover is armed." % (five, week)
+        "MATCHA OFFLOAD, URGENT: subscription at %d%% of the 5 hour window and %d%% of the week. "
+        "This session is about to hit the wall. Route everything you can through "
+        "~/.claude/skills/matcha/matcha-run.sh now rather than spending the last of the window here, "
+        "and tell the user once, in one line, that the limit is nearly gone." % (five, week)
     )
 elif week >= 90 or five >= 85:
     print(
         "MATCHA OFFLOAD: subscription at %d%% of the 5 hour window and %d%% of the week. "
-        "Push heavy or bulk work off it now: run it through ~/.claude/scripts/matcha-run.sh "
+        "Push heavy or bulk work off it now: run it through ~/.claude/skills/matcha/matcha-run.sh "
         "(the matcha skill) instead of doing it here or spawning a subagent. "
         "That spend lands on the ParentCo account, not the user's limit. "
         "Keep judgment and orchestration in this session." % (five, week)

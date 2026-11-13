@@ -23,7 +23,7 @@
 <img src="https://img.shields.io/badge/81-Skills-5E6AD2?style=flat-square" alt="81 Skills"/>
 <img src="https://img.shields.io/badge/12-Templates-FC7840?style=flat-square" alt="12 Templates"/>
 <img src="https://img.shields.io/badge/85-Hooks-EB5757?style=flat-square" alt="85 Hooks"/>
-<img src="https://img.shields.io/badge/76-Docs-4EA7FC?style=flat-square" alt="76 Docs"/>
+<img src="https://img.shields.io/badge/78-Docs-4EA7FC?style=flat-square" alt="78 Docs"/>
 <img src="https://img.shields.io/badge/5-Examples-27A644?style=flat-square" alt="5 Examples"/>
 <img src="https://img.shields.io/badge/24-Anti--Patterns-F0BF00?style=flat-square" alt="24 Anti-Patterns"/>
 
@@ -68,7 +68,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 <td width="50%">
 
 **Learn**
-- The **[docs site](https://ao92265.github.io/claude-code-playbook/)** — 76 guides organised by section, from [Getting Started](docs/getting-started.md) to enterprise governance, plus 59 news deep-reads
+- The **[docs site](https://ao92265.github.io/claude-code-playbook/)** — 78 guides organised by section, from [Getting Started](docs/getting-started.md) to enterprise governance, plus 59 news deep-reads
 - [24 prompt engineering patterns](docs/prompt-patterns.md) with copy-paste examples and a decision tree
 - [Quick-reference cheat sheet](docs/cheat-sheet.md) for commands, model routing, and session management
 - [Troubleshooting guide](docs/troubleshooting.md) with 15 common issues and diagnostic flowcharts
@@ -181,7 +181,7 @@ graph TB
 
 | Directory | Contents |
 |:----------|:---------|
-| **[docs/](docs/)** | 76 guides — patterns, configuration, architecture, enterprise, troubleshooting — plus [News & Research](docs/news/) with 59 deep-read article pages |
+| **[docs/](docs/)** | 78 guides — patterns, configuration, architecture, enterprise, troubleshooting — plus [News & Research](docs/news/) with 59 deep-read article pages |
 | **[skills/](skills/)** | 52 ready-to-use custom slash commands ([full reference below](#skills-reference)) |
 | **[hooks/](hooks/)** | 85 hook scripts — deterministic guard rails for commits, builds, secrets, and session state ([list below](#hooks)) |
 | **[templates/](templates/)** | 11 stack-specific CLAUDE.md files + a team onboarding template |
@@ -638,13 +638,13 @@ Token limits are a *scheduled* failure mode for long loops, not a surprise. The 
 
 ## Documentation
 
-76 docs organised into sections on the **[docs site](https://ao92265.github.io/claude-code-playbook/)** — highlights by section:
+78 docs organised into sections on the **[docs site](https://ao92265.github.io/claude-code-playbook/)** — highlights by section:
 
 | Section | Key Pages |
 |:--------|:----------|
 | **Getting Started** | [Getting Started](docs/getting-started.md) · [Account Setup](docs/account-setup.md) · [Cheat Sheet](docs/cheat-sheet.md) · [CLI Reference](docs/cli-reference.md) · [Complete Guide hub](docs/guide.md) |
 | **Patterns & Techniques** | [Prompt Patterns](docs/prompt-patterns.md) (24 patterns) · [Prompt Library](docs/prompt-library.md) (50+ prompts) · [Prompt Discipline](docs/prompt-discipline.md) · [Anti-Patterns](docs/anti-patterns.md) (24 items) · [Workflows](docs/workflows.md) · [Usage Insights](docs/usage-insights.md) · [Spec-Driven Stack](docs/spec-driven-stack.md) · [RPI Workflow](docs/rpi-workflow.md) |
-| **Configuration** | [Permissions](docs/permissions.md) · [MCP Servers](docs/mcp-servers.md) · [Model Comparison](docs/model-comparison.md) · [GLM on Claude Code (z.AI)](docs/glm-zai.md) · [Cost Guide](docs/cost-guide.md) · [Path-Scoped Rules](docs/path-scoped-rules.md) · [Auto Mode](docs/auto-mode.md) · [Verify Gate Hook](docs/verify-gate-hook.md) · [Daydream Hook](docs/daydream-hook.md) · [Audit Log Hook](docs/audit-log-hook.md) · [.NET Teams](docs/dotnet-teams.md) |
+| **Configuration** | [Permissions](docs/permissions.md) · [MCP Servers](docs/mcp-servers.md) · [Model Comparison](docs/model-comparison.md) · [GLM on Claude Code (z.AI)](docs/glm-zai.md) · [Cost Guide](docs/cost-guide.md) · [Matcha Lane](docs/matcha-lane.md) · [Path-Scoped Rules](docs/path-scoped-rules.md) · [Auto Mode](docs/auto-mode.md) · [Verify Gate Hook](docs/verify-gate-hook.md) · [Daydream Hook](docs/daydream-hook.md) · [Audit Log Hook](docs/audit-log-hook.md) · [.NET Teams](docs/dotnet-teams.md) |
 | **Architecture** | [Harness](docs/harness.md) · [Harness Pattern](docs/harness-pattern.md) · [Steering Files](docs/steering-files.md) · [Setup Atlas](docs/setup-atlas.md) · [Setup Audit](docs/setup-audit.md) |
 | **Skills & Extensibility** | [Skills Ecosystem](docs/skills-ecosystem.md) · [Skills 2.0](docs/skills-v2.md) · [Plugin Authoring](docs/plugin-authoring.md) · [Agent Memory](docs/agent-memory.md) |
 | **Advanced** | [Continuous Development (ACT)](docs/continuous-development.md) · [Agent Teams](docs/agent-teams.md) · [Superpowers](docs/superpowers.md) · [RTK](docs/rtk.md) · [Guard Hooks](docs/guard-hooks.md) · [Session Lifecycle](docs/session-lifecycle.md) · [Background Jobs](docs/background-jobs.md) · [Setup Inventory](docs/setup-inventory.md) · [Multi-Model Orchestration](docs/multi-model-orchestration.md) · [BMad Autonomous Development](docs/bmad.md) · [Planning Blueprint](docs/planning-blueprint.md) · [Code Container](docs/code-container.md) · [Local Models](docs/local-models.md) · [Cost & Observability](docs/cost-and-observability.md) · [Knowledge & Context](docs/knowledge-and-context.md) · [Advanced Tool Use](docs/advanced-tool-use.md) · [SDK vs CLI](docs/sdk-vs-cli.md) · [Opus 4.7 Reference](docs/opus-4-7.md) |
