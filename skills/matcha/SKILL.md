@@ -16,13 +16,14 @@ That is the whole point, and also the reason every run is capped.
 ## The command
 
 ```
-~/.claude/scripts/matcha-run.sh [--write] [--tier deep|standard|fast] \
+~/.claude/skills/matcha/matcha-run.sh [--write] [--tier deep|standard|fast] \
   [--dir PATH] [--budget USD] [--timeout SEC] "task"
 ```
 
 Read only by default. It can read, grep and glob inside the working directory
-and nothing else. `--write` adds editing and shell, still confined to that
-directory.
+and nothing else. `--write` adds editing and a shell. The file tools stay
+confined to the working directory, but the shell is not confined: it can reach
+anywhere the user can, so point `--write` only at a clean git checkout.
 
 ## Choosing the tier
 
@@ -61,8 +62,7 @@ Send one whole feature slice per run, not a string of small ones. For a
 `--write` job that means build, test and fix-until-green in one task, with the
 check command named in the prompt so the delegate knows what finished means.
 Every separate run pays again to read the repo, so five small runs cost more
-than one run that does all five parts. (This comes from the
-astra-flash-orchestrator "coherent assignment" pattern.)
+than one run that does all five parts.
 
 Bound the output the same way subagent prompts are bounded: a verdict plus at
 most five bullets, no full body. An unbounded prompt on Opus is how a delegate
@@ -89,7 +89,7 @@ what it did is a claim, not evidence. Run the project's own checks.
 
 - **The nested run ignores the user's hooks on purpose.** It is launched in
   restricted mode, which skips the user and project settings files. Without
-  that, his hooks fire inside the delegate and block its own allowed tools,
+  that, the user's hooks fire inside the delegate and block its own allowed tools,
   which is what broke the earlier headless bots. Do not "fix" this by
   re-enabling them.
 - **Bypass permissions is refused in restricted mode.** If a run dies
@@ -101,5 +101,5 @@ what it did is a claim, not evidence. Run the project's own checks.
   This skill is the agentic one.
 - **A killed run exits 124.** That is the wall clock cap, not a crash. The
   partial log path is on stderr.
-- **No timeout command on this Mac.** The script carries its own watchdog, so
+- **No timeout command on macOS.** The script carries its own watchdog, so
   do not wrap it in `timeout` or `gtimeout`, neither exists here.

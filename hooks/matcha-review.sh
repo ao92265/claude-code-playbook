@@ -55,8 +55,10 @@ Output strictly: one line VERDICT, then at most 5 bullets, each naming the input
 --- DIFF ---
 $DIFF"
 
-nohup "$HOME/.claude/scripts/matcha-run.sh" --dir "$REPO" --tier deep \
+# Detach fully (stdin, stdout, stderr) so the hook's pipes close at once and the
+# Stop hook never waits on the review.
+{ "$HOME/.claude/skills/matcha/matcha-run.sh" --dir "$REPO" --tier deep \
   --budget 0.60 --timeout 540 "$PROMPT" > "$OUT.tmp" 2>"$OUT.log" \
-  && mv "$OUT.tmp" "$OUT" &
+  && mv "$OUT.tmp" "$OUT"; } </dev/null >/dev/null 2>&1 &
 disown 2>/dev/null
 exit 0

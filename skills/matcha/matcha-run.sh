@@ -1,7 +1,7 @@
 #!/bin/zsh
 # matcha-run - delegate an AGENTIC task to the ParentCo Matcha gateway.
 #
-# Unlike matcha.sh (one API call, no tools) this runs the real Claude Code
+# Unlike a plain one-shot API call to the gateway (no tools) this runs the real Claude Code
 # binary headless against Matcha, so it can read the repo, grep it and, with
 # --write, edit it. The Codex shape, different engine, billed to Matcha.
 #
@@ -46,9 +46,10 @@ case "$TIER" in
   deep|standard|fast) ;;
   *) print -u2 "matcha-run: unknown tier '$TIER' (deep, standard or fast)"; exit 1 ;;
 esac
+[[ -n "$MATCHA_BASE_URL" ]] || { print -u2 "matcha-run: MATCHA_BASE_URL is not set in $CFG"; exit 1; }
 # A bad number here would otherwise fire the watchdog instantly and be reported
 # as a real timeout, which sends you hunting a hang that never happened.
-[[ "$TIMEOUT" == <-> ]] || { print -u2 "matcha-run: --timeout must be whole seconds, got '$TIMEOUT'"; exit 1; }
+[[ "$TIMEOUT" == <-> && "$TIMEOUT" -ge 1 ]] || { print -u2 "matcha-run: --timeout must be whole seconds, got '$TIMEOUT'"; exit 1; }
 [[ "$BUDGET" =~ '^[0-9]+(\.[0-9]+)?$' ]] || { print -u2 "matcha-run: --budget must be a number, got '$BUDGET'"; exit 1; }
 [[ -n "$TASK" ]] || { print -u2 "matcha-run: no task given"; exit 1; }
 [[ -d "$DIR" ]]  || { print -u2 "matcha-run: no such directory: $DIR"; exit 1; }
@@ -57,8 +58,9 @@ esac
 # Never guess a deployment name: ask the gateway. Cached for a day, because a
 # wrong name is reported as HTTP 500 and retried with backoff, which hangs.
 refresh_models() {
-  curl -s -m 30 "$MATCHA_BASE_URL/v1/models/" \
-    -H "MATCHA-API-KEY: $KEY" -H "anthropic-version: 2023-06-01" > "$CACHE.tmp" 2>/dev/null
+  # Headers go over stdin (-K -) so the key never appears in the process list.
+  printf 'header = "MATCHA-API-KEY: %s"\nheader = "anthropic-version: 2023-06-01"\n' "$KEY" \
+    | curl -s -m 30 -K - "$MATCHA_BASE_URL/v1/models/" > "$CACHE.tmp" 2>/dev/null
   if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); assert d.get("data")' "$CACHE.tmp" 2>/dev/null; then
     mv "$CACHE.tmp" "$CACHE"; return 0
   fi
@@ -106,7 +108,7 @@ SMALL="$(pick_model fast)"
 [[ -n "$SMALL" ]] || SMALL="$MODEL"
 
 # Prove the pick is a real deployment before handing over, else a 500 storm.
-"$HOME/.claude/scripts/matcha-preflight.sh" "$MODEL" || exit 1
+grep -qF "\"$MODEL\"" "$CACHE" || { print -u2 "matcha-run: model $MODEL is not in the gateway model list"; exit 1; }
 
 # --- tools ----------------------------------------------------------------
 # --restricted drops the code-running tools AND ignores user/project/local
@@ -123,7 +125,7 @@ fi
 # Log goes to a temp dir, never into $DIR: a stray .matcha-run.json in a repo
 # shows up in git status and gets committed by accident.
 LOGDIR="${TMPDIR:-/tmp}/matcha-run"
-mkdir -p "$LOGDIR"
+mkdir -m 700 -p "$LOGDIR"
 LOG="${MATCHA_RUN_LOG:-$LOGDIR/$(date +%Y%m%d-%H%M%S)-$$.json}"
 print -u2 "matcha-run: model=$MODEL tier=$TIER write=$WRITE budget=\$$BUDGET timeout=${TIMEOUT}s dir=$DIR"
 
@@ -133,18 +135,21 @@ env -u CLAUDECODE -u CLAUDE_CODE_ENTRYPOINT -u CLAUDE_CODE_SESSION_ID \
     -u CLAUDE_CODE_MESSAGING_TOKEN -u CLAUDE_CODE_BRIDGE_SESSION_ID \
     -u CLAUDE_PID -u CLAUDE_EFFORT -u CODEX_COMPANION_TRANSCRIPT_PATH \
     -u CLAUDE_PLUGIN_DATA -u ANTHROPIC_API_KEY \
+    -u CLAUDE_CODE_USE_BEDROCK -u CLAUDE_CODE_USE_VERTEX \
+    -u ANTHROPIC_DEFAULT_OPUS_MODEL -u ANTHROPIC_DEFAULT_SONNET_MODEL -u ANTHROPIC_DEFAULT_HAIKU_MODEL \
     ANTHROPIC_BASE_URL="$MATCHA_BASE_URL" ANTHROPIC_AUTH_TOKEN="$KEY" \
     ANTHROPIC_MODEL="$MODEL" ANTHROPIC_SMALL_FAST_MODEL="$SMALL" \
-    claude -p "$TASK" --restricted --tools "$TOOLS" --strict-mcp-config \
-      --permission-mode "$PERM" --output-format json --max-budget-usd "$BUDGET" \
+    claude -p --restricted --tools "$TOOLS" --strict-mcp-config \
+      --permission-mode "$PERM" --output-format json --max-budget-usd "$BUDGET" -- "$TASK" \
       > "$LOG" 2>"$LOG.err" &
 RUN_PID=$!
-( sleep "$TIMEOUT"; kill -TERM $RUN_PID 2>/dev/null ) &
+FLAG="$LOG.timeout"; rm -f "$FLAG"
+( sleep "$TIMEOUT" & SP=$!; trap 'kill $SP 2>/dev/null; exit 0' TERM; wait $SP && touch "$FLAG" && kill -TERM $RUN_PID 2>/dev/null ) &
 WATCHDOG=$!
 wait $RUN_PID; RC=$?
-kill $WATCHDOG 2>/dev/null
+kill -TERM $WATCHDOG 2>/dev/null
 
-if [[ $RC -eq 143 || $RC -eq 137 ]]; then
+if [[ -f "$FLAG" ]]; then
   print -u2 "matcha-run: killed at the ${TIMEOUT}s wall clock cap. Partial log: $LOG"
   exit 124
 fi
