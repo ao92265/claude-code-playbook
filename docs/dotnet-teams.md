@@ -20,6 +20,7 @@ The build hook keeps a second layer. It needs `DOTNET_BUILD_TARGET` set to the `
 - Files written through Bash. Keep Bash on ask in repos using these hooks.
 - `Directory.Build.*` files in parent directories outside the repo.
 - Build-time code in the repo itself: Roslyn analyzers, source generators and custom MSBuild tasks run from `.cs` code. Any build of such a repo runs code Claude edited.
+- Scripts the build runs. A project can call `package.json` scripts or JavaScript through an `Exec` target or an `.esproj`. The guard allows `.js`, `.ts` and `.json` edits silently, and the build hook skips only on git changes, so a manual build still runs that code.
 - Bypass-permissions mode, where "ask" prompts are not shown.
 - Windows. The scripts are tested on macOS only.
 
