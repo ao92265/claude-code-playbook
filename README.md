@@ -23,7 +23,7 @@
 <img src="https://img.shields.io/badge/81-Skills-5E6AD2?style=flat-square" alt="81 Skills"/>
 <img src="https://img.shields.io/badge/12-Templates-FC7840?style=flat-square" alt="12 Templates"/>
 <img src="https://img.shields.io/badge/85-Hooks-EB5757?style=flat-square" alt="85 Hooks"/>
-<img src="https://img.shields.io/badge/76-Docs-4EA7FC?style=flat-square" alt="76 Docs"/>
+<img src="https://img.shields.io/badge/78-Docs-4EA7FC?style=flat-square" alt="78 Docs"/>
 <img src="https://img.shields.io/badge/5-Examples-27A644?style=flat-square" alt="5 Examples"/>
 <img src="https://img.shields.io/badge/24-Anti--Patterns-F0BF00?style=flat-square" alt="24 Anti-Patterns"/>
 
@@ -68,7 +68,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 <td width="50%">
 
 **Learn**
-- The **[docs site](https://ao92265.github.io/claude-code-playbook/)** — 76 guides organised by section, from [Getting Started](docs/getting-started.md) to enterprise governance, plus 59 news deep-reads
+- The **[docs site](https://ao92265.github.io/claude-code-playbook/)** — 78 guides organised by section, from [Getting Started](docs/getting-started.md) to enterprise governance, plus 59 news deep-reads
 - [24 prompt engineering patterns](docs/prompt-patterns.md) with copy-paste examples and a decision tree
 - [Quick-reference cheat sheet](docs/cheat-sheet.md) for commands, model routing, and session management
 - [Troubleshooting guide](docs/troubleshooting.md) with 15 common issues and diagnostic flowcharts
@@ -181,7 +181,7 @@ graph TB
 
 | Directory | Contents |
 |:----------|:---------|
-| **[docs/](docs/)** | 76 guides — patterns, configuration, architecture, enterprise, troubleshooting — plus [News & Research](docs/news/) with 59 deep-read article pages |
+| **[docs/](docs/)** | 78 guides — patterns, configuration, architecture, enterprise, troubleshooting — plus [News & Research](docs/news/) with 59 deep-read article pages |
 | **[skills/](skills/)** | 52 ready-to-use custom slash commands ([full reference below](#skills-reference)) |
 | **[hooks/](hooks/)** | 85 hook scripts — deterministic guard rails for commits, builds, secrets, and session state ([list below](#hooks)) |
 | **[templates/](templates/)** | 11 stack-specific CLAUDE.md files + a team onboarding template |
@@ -638,7 +638,7 @@ Token limits are a *scheduled* failure mode for long loops, not a surprise. The 
 
 ## Documentation
 
-76 docs organised into sections on the **[docs site](https://ao92265.github.io/claude-code-playbook/)** — highlights by section:
+78 docs organised into sections on the **[docs site](https://ao92265.github.io/claude-code-playbook/)** — highlights by section:
 
 | Section | Key Pages |
 |:--------|:----------|
