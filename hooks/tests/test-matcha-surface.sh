@@ -20,6 +20,10 @@ expect_has "includes the bullets" "$OUT" "empty input crashes"
 zrun
 expect_lacks "delivers only once" "$OUT" "empty input crashes"
 
+sleep 1; printf 'VERDICT again\n- second finding\n' > "$STATE/$KEY.findings"
+zrun
+expect_has "delivers a newer review" "$OUT" "second finding"
+
 sleep 1; echo CLEAN > "$STATE/$KEY.findings"
 zrun
 expect_lacks "a CLEAN review stays quiet" "$OUT" "MATCHA SECOND REVIEW"

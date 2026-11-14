@@ -28,4 +28,11 @@ expect_lacks "daydream child does not consume it" "$OUT" "kept"
 run $H '{}' CLAUDE_SKIP_HOOKS=daydream
 expect_lacks "skip switch honoured" "$OUT" "kept"
 expect_has "pending file left for the real session" "$(cat "$DD/digest-pending.md")" "kept"
+run $H '{}' CLAUDE_DISABLE_HOOKS=1
+expect_lacks "disable switch honoured" "$OUT" "kept"
+
+: > "$DD/digest-pending.md"
+mkdir -p "$HOME/.claude/tune"; printf 'tune idea\n' > "$HOME/.claude/tune/digest-pending.md"
+run $H '{}'
+expect_has "surfaces the tune digest" "$OUT" "tune idea"
 finish

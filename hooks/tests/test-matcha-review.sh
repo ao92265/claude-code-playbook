@@ -45,4 +45,5 @@ zrun
 
 (cd "$TD" && zsh "$HOOKS_DIR/$H" </dev/null >/dev/null 2>&1); RC=$?
 expect "outside a repo exits 0" 0
+[[ $(calls) == 2 ]] && RC=0 || RC=1;                    expect "outside a repo nothing is sent" 0
 finish
