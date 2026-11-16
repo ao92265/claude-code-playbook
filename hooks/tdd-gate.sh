@@ -52,19 +52,25 @@ dir="$(dirname "$file")"
 
 # Hunt for a matching test file. Cheap globs only — keep the hook fast.
 matches=()
-shopt -s nullglob globstar 2>/dev/null || true
+shopt -s nullglob
+# macOS ships bash 3.2, which has no globstar, so tests/**/x only matches one
+# folder down there. The explicit tests/x candidates below cover the top level.
+shopt -s globstar 2>/dev/null || true
 case "$ext" in
   ts|tsx|js|jsx|mjs|cjs)
     for cand in \
       "$dir/$name.test.$ext" "$dir/$name.spec.$ext" \
       "$dir/__tests__/$name.test.$ext" "$dir/__tests__/$name.spec.$ext" \
+      tests/"$name".test.* tests/"$name".spec.* \
       tests/**/"$name".test.* tests/**/"$name".spec.* \
+      test/"$name".test.* test/"$name".spec.* \
       test/**/"$name".test.* test/**/"$name".spec.*; do
       [[ -f "$cand" ]] && matches+=("$cand")
     done
     ;;
   py)
-    for cand in "$dir/test_$name.py" tests/**/"test_$name.py" tests/**/"${name}_test.py"; do
+    for cand in "$dir/test_$name.py" tests/"test_$name.py" tests/"${name}_test.py" \
+      tests/**/"test_$name.py" tests/**/"${name}_test.py"; do
       [[ -f "$cand" ]] && matches+=("$cand")
     done
     ;;
