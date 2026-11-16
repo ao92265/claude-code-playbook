@@ -1,6 +1,6 @@
 #!/bin/bash
 # Assertion checklist for no-new-dep.sh. Run before and after any change to it.
-HOOK="$HOME/.claude/hooks/no-new-dep.sh"
+HOOK="${HOOK:-$(cd "$(dirname "$0")" && pwd)/no-new-dep.sh}"
 TD="$(mktemp -d)"
 trap 'rm -rf "$TD"' EXIT
 pass=0; fail=0
