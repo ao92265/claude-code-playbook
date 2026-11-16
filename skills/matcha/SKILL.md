@@ -1,6 +1,6 @@
 ---
 name: matcha
-description: Delegate a bounded task to an agentic Claude run on the ParentCo Matcha gateway, the way the codex plugin delegates to Codex. Runs headless in the background, reads the repo, and with --write edits it, billed to Matcha per token instead of the user's subscription. Use when the user says "/matcha", "send it to matcha", "matcha this", "delegate to matcha", "second opinion from matcha", "have matcha review this", "run that on matcha", "offload this", or when the subscription is close to its limit and work can be pushed off it. Do NOT use for a one-line lookup (the plain `matcha "prompt"` command is cheaper), for image generation (that is imagegen), or as a substitute for a Codex review when the user specifically asked for Codex.
+description: Delegate a bounded task to an agentic Claude run on the ParentCo Matcha gateway, the way the codex plugin delegates to Codex. Runs headless in the background, reads the repo, and with --write edits it, billed to Matcha per token instead of the user's subscription. Use when the user says "/matcha", "send it to matcha", "matcha this", "delegate to matcha", "second opinion from matcha", "have matcha review this", "run that on matcha", "offload this", or when the subscription is close to its limit and work can be pushed off it. Do NOT use for a one-line lookup (a plain one-shot API call to the gateway is cheaper), for image generation (that is imagegen), or as a substitute for a Codex review when the user specifically asked for Codex.
 ---
 
 # Delegating to Matcha
@@ -16,13 +16,14 @@ That is the whole point, and also the reason every run is capped.
 ## The command
 
 ```
-~/.claude/scripts/matcha-run.sh [--write] [--tier deep|standard|fast] \
+~/.claude/skills/matcha/matcha-run.sh [--write] [--tier deep|standard|fast] \
   [--dir PATH] [--budget USD] [--timeout SEC] "task"
 ```
 
 Read only by default. It can read, grep and glob inside the working directory
-and nothing else. `--write` adds editing and shell, still confined to that
-directory.
+and nothing else. `--write` adds editing and a shell. The file tools stay
+confined to the working directory, but the shell is not confined: it can reach
+anywhere the user can, so point `--write` only at a clean git checkout.
 
 ## Choosing the tier
 
@@ -60,9 +61,10 @@ like. A bare "review this" gets a bare review.
 Send one whole feature slice per run, not a string of small ones. For a
 `--write` job that means build, test and fix-until-green in one task, with the
 check command named in the prompt so the delegate knows what finished means.
+Note that headless runs deny shell commands nothing has pre-approved, so the
+delegate may be unable to run that check itself. Re-run it yourself afterwards.
 Every separate run pays again to read the repo, so five small runs cost more
-than one run that does all five parts. (This comes from the
-astra-flash-orchestrator "coherent assignment" pattern.)
+than one run that does all five parts.
 
 Bound the output the same way subagent prompts are bounded: a verdict plus at
 most five bullets, no full body. An unbounded prompt on Opus is how a delegate
@@ -74,7 +76,7 @@ Writing is the mode that can hurt. Check both before launching:
 
 - The working directory is a git checkout with the current work committed or
   stashed, so the delegate's edits are reviewable as a diff and reversible.
-- the user asked for edits. If he asked for an opinion, a review or a diagnosis,
+- the user asked for edits. If the user asked for an opinion, a review or a diagnosis,
   stay read only.
 
 Never point a write run at a shared checkout another session is using. Use a
@@ -89,17 +91,17 @@ what it did is a claim, not evidence. Run the project's own checks.
 
 - **The nested run ignores the user's hooks on purpose.** It is launched in
   restricted mode, which skips the user and project settings files. Without
-  that, his hooks fire inside the delegate and block its own allowed tools,
+  that, the user's hooks fire inside the delegate and block its own allowed tools,
   which is what broke the earlier headless bots. Do not "fix" this by
   re-enabling them.
 - **Bypass permissions is refused in restricted mode.** If a run dies
   immediately saying so, something is passing a permission mode through the
   environment. The script scrubs the inherited session variables for this
   reason.
-- **`matcha` and `matcha-run.sh` are different things.** `matcha "prompt"` is
-  one API call with no tools and a short cap, right for a quick question.
-  This skill is the agentic one.
+- **This skill is the agentic lane.** For a quick question, a plain one-shot
+  API call to the gateway is cheaper, since it uses no tools. This repo does
+  not ship a helper for that.
 - **A killed run exits 124.** That is the wall clock cap, not a crash. The
   partial log path is on stderr.
-- **No timeout command on this Mac.** The script carries its own watchdog, so
+- **No timeout command on macOS.** The script carries its own watchdog, so
   do not wrap it in `timeout` or `gtimeout`, neither exists here.

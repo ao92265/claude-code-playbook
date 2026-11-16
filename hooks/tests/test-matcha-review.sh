@@ -10,16 +10,23 @@ TOP=$(git -C "$REPO" rev-parse --show-toplevel)
 KEY=$(printf '%s' "$TOP" | shasum | cut -c1-12)
 STATE="$HOME/.claude/.matcha-review"
 CALLS="$TD/calls"
-mkdir -p "$HOME/.claude/scripts"
-cat > "$HOME/.claude/scripts/matcha-run.sh" <<EOF
+mkdir -p "$HOME/.claude/skills/matcha"
+mkdir -p "$HOME/.claude"
+cat > "$HOME/.claude/skills/matcha/matcha-run.sh" <<EOF
 #!/bin/bash
 echo call >> "$CALLS"
 echo "VERDICT stub"
 EOF
-chmod +x "$HOME/.claude/scripts/matcha-run.sh"
+chmod +x "$HOME/.claude/skills/matcha/matcha-run.sh"
 
 zrun() { (cd "$REPO" && env "$@" zsh "$HOOKS_DIR/$H" </dev/null >/dev/null 2>&1); RC=$?; sleep 1; }
 calls() { if [[ -f "$CALLS" ]]; then wc -l < "$CALLS" | tr -d ' '; else echo 0; fi; }
+
+seq 1 30 > "$REPO/optin.txt"; git -C "$REPO" add optin.txt
+zrun
+[[ $(calls) == 0 ]] && RC=0 || RC=1;                    expect "repo not on the allow list is not sent" 0
+git -C "$REPO" reset -q; rm -f "$REPO/optin.txt"
+printf '%s\n' "$TOP" > "$HOME/.claude/matcha-review.allow"
 
 printf 'a\nb\n' > "$REPO/small.txt"; git -C "$REPO" add small.txt
 zrun;                                                   expect "small diff exits 0" 0
@@ -42,6 +49,11 @@ zrun MATCHA_REVIEW_DAILY_MAX=1
 
 zrun
 [[ $(calls) == 2 ]] && RC=0 || RC=1;                    expect "changed diff under the cap is sent" 0
+
+{ seq 1 30; echo 'api_key = "abcdefghijklmnop1234567890"'; } > "$REPO/leak.txt"; git -C "$REPO" add leak.txt
+zrun
+[[ $(calls) == 2 ]] && RC=0 || RC=1;                    expect "diff holding a secret is not sent" 0
+git -C "$REPO" reset -q; rm -f "$REPO/leak.txt"
 
 (cd "$TD" && zsh "$HOOKS_DIR/$H" </dev/null >/dev/null 2>&1); RC=$?
 expect "outside a repo exits 0" 0

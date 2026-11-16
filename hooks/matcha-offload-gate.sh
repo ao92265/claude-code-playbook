@@ -41,7 +41,7 @@ matcha offload gate: subscription at ${five}% of the 5 hour window and ${week}% 
 A ${model} subagent is exactly the work that should not be spending what is left.
 
 Send this task to Matcha instead (billed to ParentCo, not the subscription):
-  ~/.claude/scripts/matcha-run.sh --tier $( [[ "$model" == haiku ]] && echo fast || echo standard ) "<the task, with all the context the delegate needs>"
+  ~/.claude/skills/matcha/matcha-run.sh --tier $( [[ "$model" == haiku ]] && echo fast || echo standard ) "<the task, with all the context the delegate needs>"
 Add --write only if the task genuinely has to edit files.
 
 Keep judgment, orchestration and anything needing this conversation's context here.
