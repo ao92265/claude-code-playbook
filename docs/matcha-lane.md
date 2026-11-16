@@ -13,7 +13,7 @@ Three hooks sit around it: one reviews your working diff when a turn ends, one s
 
 The [matcha skill](../skills/matcha/) wraps `matcha-run.sh`, a script that launches `claude` in restricted mode against the gateway with a bounded prompt, a budget cap, and a timeout. Same shape as the Codex delegation lane described in [Multi-Model Orchestration](multi-model-orchestration.md): send a bounded slice of work, keep working yourself, collect the answer when it lands. You choose the tier (fast, standard, deep; default deep). The model inside the tier is picked automatically from whatever the gateway reports as current, never named from memory.
 
-Because the run is a full agent, it can read, grep, and glob inside a working directory you point it at. With `--write` it can also edit files and use a shell. The file tools are confined to the working directory, but the shell is not, so only point `--write` at a clean git checkout.
+Because the run is a full agent, it can read, grep, and glob inside a working directory you point it at. With `--write` it can also edit files, and it may be able to run shell commands. The file tools are confined to the working directory, but a shell is not, so only point `--write` at a clean git checkout.
 
 ## When To Reach For It
 
@@ -38,7 +38,7 @@ The nested run also ignores your own hooks on purpose, because it launches in re
 
 | Hook | Point | What it does |
 |------|-------|---------------|
-| [matcha-review.sh](../hooks/matcha-review.sh) | `Stop` | When a turn ends, sends the working diff to the gateway for an independent, read only review, in the background. Skips diffs that are too small to be worth it or too large for the delegate to hold, keeps a daily run cap (12 runs a day at a 0.60 USD budget each, so roughly 7.20 USD at most), and never blocks the stop. |
+| [matcha-review.sh](../hooks/matcha-review.sh) | `Stop` | When a turn ends, sends the working diff to the gateway for an independent, read only review, in the background. Only runs in repos you list, one absolute path per line, in `~/.claude/matcha-review.allow`, because the diff leaves your machine. Skips diffs that are too small to be worth it or too large for the delegate to hold, skips any diff whose added lines look like a secret, keeps a daily run cap (12 runs a day at a 0.60 USD budget each, so roughly 7.20 USD at most), and never blocks the stop. |
 | [matcha-surface.sh](../hooks/matcha-surface.sh) | `UserPromptSubmit` | On your next prompt, delivers any review that finished since the last one, and checks your subscription usage. If the window is nearly spent it tells you to route heavy work through the gateway instead of doing it here. |
 | [matcha-offload-gate.sh](../hooks/matcha-offload-gate.sh) | `PreToolUse` on `Agent` or `Task` | Under real quota pressure, blocks a cheap subagent spawn (Haiku or Sonnet tier) and points the caller at `matcha-run.sh` instead, so mechanical subagent work stops competing with the session for what is left of the subscription window. Fails open on any error, and can be bypassed with `MATCHA_OFFLOAD_OK=1`. |
 
