@@ -25,7 +25,7 @@ DIFF="$(git -C "$REPO" diff HEAD 2>/dev/null)"
 
 # Never send a diff whose added lines look like they hold a secret.
 printf '%s\n' "$DIFF" | grep -E '^\+' | grep -qiE \
-  'AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|gh[pousr]_[A-Za-z0-9]{30,}|sk-[A-Za-z0-9]{20,}|(api[_-]?key|secret|token|passw(or)?d)["'\'' ]*[=:]["'\'' ]*[A-Za-z0-9/+_.-]{16,}' && exit 0
+  'AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|xox[abpr]-[A-Za-z0-9-]{10,}|sk-[A-Za-z0-9_-]{20,}|(api[_-]?key|secret|token|passw(or)?d)["'\'' ]*[=:]["'\'' ]*[A-Za-z0-9/+_.-]{16,}' && exit 0
 
 LINES=$(printf '%s' "$DIFF" | wc -l | tr -d ' ')
 # Below 15 changed lines there is nothing worth 20p. Above 3000 the prompt
@@ -45,6 +45,9 @@ CEILING="${MATCHA_REVIEW_DAILY_MAX:-12}"
 [[ $COUNT -ge $CEILING ]] && exit 0
 echo $((COUNT + 1)) > "$SPENT_F"
 
+# Mark the diff before launching, so stops during a long run do not start the
+# same review again. A failed run removes the mark so the next stop retries.
+printf '%s' "$HASH" > "$STATE/$KEY.hash"
 OUT="$STATE/$KEY.findings"
 # Own temp file per run, so two overlapping reviews cannot mix their output.
 TMP="$OUT.$$.tmp"
@@ -68,7 +71,7 @@ $DIFF"
 # Stop hook never waits on the review.
 { nohup "$HOME/.claude/skills/matcha/matcha-run.sh" --dir "$REPO" --tier deep \
   --budget 0.60 --timeout 540 "$PROMPT" > "$TMP" 2>"$OUT.log" \
-  && mv "$TMP" "$OUT" && printf '%s' "$HASH" > "$STATE/$KEY.hash"; \
+  && mv "$TMP" "$OUT" || rm -f "$STATE/$KEY.hash"; \
   rm -f "$TMP"; } </dev/null >/dev/null 2>&1 &
 disown 2>/dev/null
 exit 0

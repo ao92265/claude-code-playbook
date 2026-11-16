@@ -58,4 +58,15 @@ git -C "$REPO" reset -q; rm -f "$REPO/leak.txt"
 (cd "$TD" && zsh "$HOOKS_DIR/$H" </dev/null >/dev/null 2>&1); RC=$?
 expect "outside a repo exits 0" 0
 [[ $(calls) == 2 ]] && RC=0 || RC=1;                    expect "outside a repo nothing is sent" 0
+cat > "$HOME/.claude/skills/matcha/matcha-run.sh" <<EOF
+#!/bin/bash
+echo call >> "$CALLS"
+exit 1
+EOF
+seq 1 40 > "$REPO/fail.txt"; git -C "$REPO" add fail.txt
+zrun
+[[ $(calls) == 3 ]] && RC=0 || RC=1;                    expect "failing run is sent" 0
+[[ -f "$STATE/$KEY.hash" ]] && RC=1 || RC=0;            expect "failed run clears the mark" 0
+zrun
+[[ $(calls) == 4 ]] && RC=0 || RC=1;                    expect "failed diff is retried on the next stop" 0
 finish
