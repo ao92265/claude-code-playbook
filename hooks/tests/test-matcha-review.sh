@@ -69,4 +69,15 @@ zrun
 [[ -f "$STATE/$KEY.hash" ]] && RC=1 || RC=0;            expect "failed run clears the mark" 0
 zrun
 [[ $(calls) == 4 ]] && RC=0 || RC=1;                    expect "failed diff is retried on the next stop" 0
+cat > "$HOME/.claude/skills/matcha/matcha-run.sh" <<EOF
+#!/bin/bash
+echo call >> "$CALLS"
+sleep 4
+echo "VERDICT slow"
+EOF
+{ seq 1 40; echo "risk-assessment-framework-check-for-desk"; } > "$REPO/slow.txt"; git -C "$REPO" add slow.txt
+zrun
+zrun
+[[ $(calls) == 5 ]] && RC=0 || RC=1;                    expect "review still running is not launched again" 0
+sleep 4
 finish

@@ -24,8 +24,8 @@ DIFF="$(git -C "$REPO" diff HEAD 2>/dev/null)"
 [[ -n "$DIFF" ]] || exit 0
 
 # Never send a diff whose added lines look like they hold a secret.
-printf '%s\n' "$DIFF" | grep -E '^\+' | grep -qiE \
-  'AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|xox[abpr]-[A-Za-z0-9-]{10,}|sk-[A-Za-z0-9_-]{20,}|(api[_-]?key|secret|token|passw(or)?d)["'\'' ]*[=:]["'\'' ]*[A-Za-z0-9/+_.-]{16,}' && exit 0
+printf '%s\n' "$DIFF" | grep -E '^\+' | grep -v '^+++' | grep -qiE \
+  'AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|xox[abpr]-[A-Za-z0-9-]{10,}|(^|[^A-Za-z0-9])sk-[A-Za-z0-9_-]{20,}|(api[_-]?key|secret|token|passw(or)?d)["'\'' ]*[=:]["'\'' ]*[A-Za-z0-9/+_.-]{16,}' && exit 0
 
 LINES=$(printf '%s' "$DIFF" | wc -l | tr -d ' ')
 # Below 15 changed lines there is nothing worth 20p. Above 3000 the prompt
@@ -71,7 +71,8 @@ $DIFF"
 # Stop hook never waits on the review.
 { nohup "$HOME/.claude/skills/matcha/matcha-run.sh" --dir "$REPO" --tier deep \
   --budget 0.60 --timeout 540 "$PROMPT" > "$TMP" 2>"$OUT.log" \
-  && mv "$TMP" "$OUT" || rm -f "$STATE/$KEY.hash"; \
+  && mv "$TMP" "$OUT" \
+  || { [[ "$(cat "$STATE/$KEY.hash" 2>/dev/null)" == "$HASH" ]] && rm -f "$STATE/$KEY.hash"; }; \
   rm -f "$TMP"; } </dev/null >/dev/null 2>&1 &
 disown 2>/dev/null
 exit 0
