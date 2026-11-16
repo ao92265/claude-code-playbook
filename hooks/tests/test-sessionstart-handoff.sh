@@ -12,7 +12,7 @@ ctx() { printf '%s' "$OUT" | jq -r '.hookSpecificOutput.additionalContext // emp
 start() { run $H "$(jq -nc --arg c "$W" --arg s "$1" --arg i "${2:-}" '{cwd:$c,source:$s} + (if $i=="" then {} else {session_id:$i} end)')" "${@:3}"; }
 
 start startup;                            expect "nothing to inject exits 0" 0
-[[ -z "$OUT" ]] && { pass=$((pass+1)); echo "ok   no handoff means no output"; } || { fail=$((fail+1)); echo "FAIL output with nothing to inject"; }
+[[ -z "$OUT" ]] && { pass=$((pass+1)); echo "ok   no handoff means no output"; } || { fail=$((fail+1)); echo "FAIL output with nothing to inject: $(printf '%s' "$OUT" | head -c 300)"; }
 
 # write a real handoff with the sibling stop hook so the key round trip is covered
 echo '{"cwd":"'"$W"'"}' | env HOME="$HOME" bash "$HOOKS_DIR/stop-handoff.sh"
