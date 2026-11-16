@@ -2,7 +2,7 @@
 name: cross-project-search
 description: >
   Search across all repos in the workspace for patterns, implementations, or examples.
-  Useful for finding where something is implemented across Example Project, ACT, NanoClaw, legacy system,
+  Useful for finding where something is implemented across Example Project, ACT, a personal assistant, legacy system,
   and other projects.
 
   Do NOT use this skill for: searching within a single project (use Grep or Glob directly

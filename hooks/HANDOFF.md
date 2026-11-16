@@ -34,7 +34,7 @@ $CLAUDE_CONFIG_DIR/handoffs/<repo-slug>.md          # live, overwritten each tur
 $CLAUDE_CONFIG_DIR/handoffs/<repo-slug>.compact.md  # preserved pre-compaction snapshots
 ```
 
-`<repo-slug>` is the working directory with `/`→`-` (e.g. `Users-me-Repos-Wraith`),
+`<repo-slug>` is the working directory with `/`→`-` (e.g. `Users-me-Repos-ExampleApp`),
 so each worktree gets its own file.
 
 ## Install

@@ -11,7 +11,7 @@
 [![Hooks](https://img.shields.io/badge/Hooks-85_included-EB5757?style=for-the-badge&logoColor=white)](#hooks)
 [![CI](https://img.shields.io/github/actions/workflow/status/ao92265/claude-code-playbook/validate.yml?style=for-the-badge&label=CI&logo=github)](https://github.com/ao92265/claude-code-playbook/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/License-MIT-27A644?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/ao92265/claude-code-playbook?style=for-the-badge&logo=github&color=F0BF00)](https://github.com/ao92265/claude-code-playbook/stargazers)
+[![Stars](https://img.shields.io/github/stars/ao92265/claude-code-playbook?style=for-the-badge&logo=github&color=F0BF00)](https://github.com/ao92265/claude-code-playbook)
 
 <br/>
 
@@ -805,6 +805,6 @@ Built with hard-won lessons at **[Harris Computer](https://www.harriscomputer.co
 
 *If this playbook saved you time, consider giving it a star.*
 
-<a href="https://github.com/ao92265/claude-code-playbook/stargazers"><img src="https://img.shields.io/github/stars/ao92265/claude-code-playbook?style=social" alt="Stars"></a>
+<a href="https://github.com/ao92265/claude-code-playbook"><img src="https://img.shields.io/github/stars/ao92265/claude-code-playbook?style=social" alt="Stars"></a>
 
 </div>
