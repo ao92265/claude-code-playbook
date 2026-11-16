@@ -38,12 +38,12 @@ zrun
 expect_has "warns at 95 percent of the week" "$OUT" "MATCHA OFFLOAD"
 echo '{"five_hour":{"used_percentage":99},"seven_day":{"used_percentage":50}}' > "$U"
 zrun
-expect_has "arms takeover at 99 percent" "$OUT" "MATCHA TAKEOVER ARMED"
+expect_has "urgent warning at 99 percent" "$OUT" "MATCHA OFFLOAD, URGENT"
 echo '{"five_hour":{"used_percentage":10},"seven_day":{"used_percentage":20}}' > "$U"
 zrun
 expect_lacks "quiet at low usage" "$OUT" "MATCHA OFFLOAD"
 echo '{"five_hour":{"used_percentage":99},"seven_day":{"used_percentage":99}}' > "$U"
 touch -t 202001010000 "$U"
 zrun
-expect_lacks "ignores a stale usage file" "$OUT" "MATCHA TAKEOVER"
+expect_lacks "ignores a stale usage file" "$OUT" "MATCHA OFFLOAD"
 finish

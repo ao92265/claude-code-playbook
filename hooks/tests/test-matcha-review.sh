@@ -10,13 +10,13 @@ TOP=$(git -C "$REPO" rev-parse --show-toplevel)
 KEY=$(printf '%s' "$TOP" | shasum | cut -c1-12)
 STATE="$HOME/.claude/.matcha-review"
 CALLS="$TD/calls"
-mkdir -p "$HOME/.claude/scripts"
-cat > "$HOME/.claude/scripts/matcha-run.sh" <<EOF
+mkdir -p "$HOME/.claude/skills/matcha"
+cat > "$HOME/.claude/skills/matcha/matcha-run.sh" <<EOF
 #!/bin/bash
 echo call >> "$CALLS"
 echo "VERDICT stub"
 EOF
-chmod +x "$HOME/.claude/scripts/matcha-run.sh"
+chmod +x "$HOME/.claude/skills/matcha/matcha-run.sh"
 
 zrun() { (cd "$REPO" && env "$@" zsh "$HOOKS_DIR/$H" </dev/null >/dev/null 2>&1); RC=$?; sleep 1; }
 calls() { if [[ -f "$CALLS" ]]; then wc -l < "$CALLS" | tr -d ' '; else echo 0; fi; }
