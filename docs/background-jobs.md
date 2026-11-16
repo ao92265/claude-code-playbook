@@ -11,6 +11,12 @@ scripts are in [`scripts/claude-ops/`](../scripts/claude-ops/) and example plist
 that call `claude -p` read a long-lived OAuth token from the macOS keychain at spawn time and pass
 it in the environment, never on the command line.
 
+The example plists use the placeholder `/Users/YOU`, because launchd does not expand `~`. Replace it with your home folder before you load them:
+
+```bash
+sed -i "" "s#/Users/YOU#$HOME#g" scripts/claude-ops/launchd/*.plist
+```
+
 | Job | Schedule | What it does |
 |---|---|---|
 | run-referee | every 10 min | Watchdog for runaway sessions (see [Session Lifecycle](session-lifecycle.md)) |

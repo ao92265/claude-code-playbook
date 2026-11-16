@@ -69,7 +69,7 @@ Hook points not in the table above that the example wiring also uses: `PreCompac
 
 | Field | Description |
 |-------|-------------|
-| `matcher` | Regex pattern matching tool names (e.g., `"Edit"`, `"Edit\\|Write"`, `""` for all) |
+| `matcher` | Regex pattern matching tool names (e.g., `"Edit"`, `"Edit\|Write"`, `""` for all) |
 | `type` | Always `"command"` |
 | `command` | Path to the hook script, with any flags |
 | `timeout` | Maximum execution time in seconds |
@@ -104,8 +104,8 @@ Block or warn before something irreversible, leaky or out of scope happens.
 | `research-only-guard.sh` | PreToolUse (Edit\|Write\|NotebookEdit and Bash) | While a `research-only.flag` sentinel exists, blocks edits and state-mutating shell commands. |
 | `run-referee-guard.sh` | PreToolUse (all tools) | Enforcement half of a run watchdog: blocks tool calls in a session the watchdog has paused or killed. |
 | `branch-guard.sh` | PreToolUse (Edit\|Write\|MultiEdit\|NotebookEdit\|Bash) | Prints the live branch, dirty state and any other session in the same checkout before editing. |
-| `worktree-gate.sh` | PreToolUse (Edit\\|Write\\|MultiEdit\\|NotebookEdit) | Allows one tracked file per session to be edited in a repo's main checkout, then blocks a second and tells the session to enter a worktree. Never gates linked worktrees, gitignored files or headless runs. |
-| `explainer-gate.py` | PreToolUse (Edit\\|Write\\|MultiEdit) | Blocks the first edit to an existing source file in a folder, once per session, until the reply contains an `Explainer:` line describing that slice. Gives up after two blocks so it cannot trap a session. |
+| `worktree-gate.sh` | PreToolUse (Edit\|Write\|MultiEdit\|NotebookEdit) | Allows one tracked file per session to be edited in a repo's main checkout, then blocks a second and tells the session to enter a worktree. Never gates linked worktrees, gitignored files or headless runs. |
+| `explainer-gate.py` | PreToolUse (Edit\|Write\|MultiEdit) | Blocks the first edit to an existing source file in a folder, once per session, until the reply contains an `Explainer:` line describing that slice. Gives up after two blocks so it cannot trap a session. |
 | `require-agent-model.sh` | PreToolUse (Agent\|Task) | Blocks subagent spawns that carry no explicit `model`. |
 | `no-new-dep.sh` | PreToolUse (Edit\|Write) | Warns when a new dependency name is about to be added to a `package.json`. |
 | `test-no-new-dep.sh` | manual | Assertion checklist for `no-new-dep.sh`; run it before and after changing that hook. |
@@ -121,8 +121,8 @@ Typecheck, lint, format, test and plan checks around edits, commits and stops.
 |--------|-----------------|--------------|
 | `ts-check.sh` | PostToolUse (Edit\|Write) | Runs `tsc --noEmit` after a TypeScript file is edited. |
 | `build-check.sh` | PostToolUse (Edit\|Write) | Runs a TypeScript build with OOM escalation after `.ts`/`.tsx` edits. |
-| `dotnet-build.sh` | PostToolUse (Edit\\|Write) | Runs `dotnet build` after `.cs` edits and returns only compiler error lines. Install it together with `dotnet-msbuild-guard.sh`. See [.NET Teams](../docs/dotnet-teams.md). |
-| `dotnet-msbuild-guard.sh` | PreToolUse (Edit\\|Write\\|MultiEdit\\|NotebookEdit) | Allowlist: asks the developer before any write outside the project, to a non-ASCII path, under `.git`/`obj`/`bin`/`.claude`/`.nuget` or MSBuild folders, or to a file type other than plain source and docs. Edit/Write only; Bash is not covered. |
+| `dotnet-build.sh` | PostToolUse (Edit\|Write) | Runs `dotnet build` after `.cs` edits and returns only compiler error lines. Install it together with `dotnet-msbuild-guard.sh`. See [.NET Teams](../docs/dotnet-teams.md). |
+| `dotnet-msbuild-guard.sh` | PreToolUse (Edit\|Write\|MultiEdit\|NotebookEdit) | Allowlist: asks the developer before any write outside the project, to a non-ASCII path, under `.git`/`obj`/`bin`/`.claude`/`.nuget` or MSBuild folders, or to a file type other than plain source and docs. Edit/Write only; Bash is not covered. |
 | `lint-check.sh` | PostToolUse (Edit\|Write) | Runs ESLint when a JS or TS file was edited. |
 | `format-check.sh` | PostToolUse (Edit\|Write) | Warns (exit 1) when an edited file fails Prettier. |
 | `test-on-save.sh` | PostToolUse (Edit\|Write) | Finds and runs the test file matching an edited source file. |
