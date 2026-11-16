@@ -50,7 +50,7 @@ sequenceDiagram
 
 ## Setup
 
-Agent Teams default to in-process mode, which works in any terminal. Split-pane display requires tmux or iTerm2 (Stale as of Nov 2026: tmux/iTerm2 is optional. Set `teammateMode` to `auto` or `tmux`, or pass `--teammate-mode`. Source: https://code.claude.com/docs/en/agent-teams#choose-a-display-mode).
+Agent Teams default to in-process mode, which works in any terminal. Split panes are optional and need tmux or iTerm2. Choose the display mode with the `teammateMode` setting or the `--teammate-mode` flag. Source: https://code.claude.com/docs/en/agent-teams#choose-a-display-mode
 
 ### Enable the Feature
 
@@ -157,7 +157,7 @@ Each agent runs in its own tmux pane:
 ### Step 3: Coordination via Messages
 
 ```
-Agent A → Broadcast: "Migration complete. Table: notifications,
+Agent A → each teammate: "Migration complete. Table: notifications,
           columns: id, user_id, title, body, read, created_at"
 
 Agent B → Agent D: "API endpoints ready: GET/POST/PATCH /api/notifications.
@@ -226,7 +226,7 @@ Hook events specific to Agent Teams (Stale as of Nov 2026: there are three, `Tea
 As of March 2026, Agent Teams are experimental (Stale as of Nov 2026: still experimental, but the limitations list below is outdated. Current list: no `/resume` or `/rewind` for in-process teammates, task status can lag, slow shutdown, one team per session, no nested teams, lead is fixed, no per-teammate permission modes at spawn. Source: https://code.claude.com/docs/en/agent-teams#limitations):
 
 - Requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` flag
-- tmux or iTerm2 required for the split-pane UI only (in-process mode works in any terminal; split panes are unsupported in VS Code's integrated terminal, Windows Terminal and Ghostty)
+- tmux or iTerm2 required for the split-pane UI only (in-process mode works in any terminal)
 - No built-in rollback if an agent makes conflicting changes
 - Git merge conflicts between agents must be resolved manually
 - No persistent state between team sessions (each session starts fresh) (Unverified Nov 2026: the task list directory stays on disk after a session ends, but a team does not carry over)
@@ -239,6 +239,6 @@ As of March 2026, Agent Teams are experimental (Stale as of Nov 2026: still expe
 1. **Keep teams small** — 3-4 agents maximum (official docs suggest 3-5; see above). Coordination overhead grows quadratically.
 2. **Make tasks independent** — If Agent B needs Agent A's output, they shouldn't run in parallel.
 3. **Use the lead agent for verification** — Don't trust agents to verify their own work.
-4. **Communicate schema changes via broadcast** — When one agent changes a shared interface, all agents need to know.
+4. **Message every teammate about schema changes**: when one agent changes a shared interface, send each teammate a message by name, because all of them need to know.
 5. **Run the full test suite at the end** — Individual agents may test their own work, but integration issues only surface when everything comes together.
 6. **Start with sub-agents** — If you're new to multi-agent work, master sub-agents first. Agent Teams add coordination complexity.
