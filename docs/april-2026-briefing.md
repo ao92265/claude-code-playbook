@@ -659,7 +659,7 @@ Andrej Karpathy dropped a GitHub Gist titled simply "LLM Wiki" in April. It's no
 
 ### What to do with this
 
-For any Harris internal knowledge base (customer support, engineering onboarding, compliance references) — this is the right architecture. Replacing or augmenting Notion/Confluence with an LLM-maintained wiki is practical today. The "new team members instantly browse an up-to-date wiki nobody manually wrote" use case is directly applicable to FIS customer support and onboarding.
+For any Harris internal knowledge base (customer support, engineering onboarding, compliance references) — this is the right architecture. Replacing or augmenting Notion/Confluence with an LLM-maintained wiki is practical today. The "new team members instantly browse an up-to-date wiki nobody manually wrote" use case is directly applicable to customer support and onboarding.
 
 ---
 

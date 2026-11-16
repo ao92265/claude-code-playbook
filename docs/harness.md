@@ -156,7 +156,7 @@ If the answer to all of these is no, you probably do not need a harness. You nee
 
 ---
 
-## FIS Defaults
+## Team Defaults
 
 For Harris projects:
 
