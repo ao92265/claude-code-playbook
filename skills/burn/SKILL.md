@@ -1,6 +1,7 @@
 ---
 name: burn
-description: Read your Claude usage momentum: whether you are about to hit the 5 hour or weekly limit, which live session is spending it, and when there is headroom to go back up a model. Explicit invoke only: /burn.
+description: >-
+  Read your Claude usage momentum: whether you are about to hit the 5 hour or weekly limit, which live session is spending it, and when there is headroom to go back up a model. Explicit invoke only: /burn.
 ---
 
 # Burn

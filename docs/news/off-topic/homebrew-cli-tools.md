@@ -55,7 +55,7 @@ Then start small — `btop` (monitoring) or `yazi` (navigation). Don't replace e
 
 ## Relevance to Harris / Constellation projects
 
-- **Zero project relevance** to Wraith / ACT / Centurion / NanoClaw
+- **Zero project relevance** to ExampleApp / ACT / Banking / Assistant
 - **Not newsworthy** for the April 2026 Briefing or Viva article
 - **Personal ergonomics only** — treat as a personal-productivity signal rather than an enterprise-adoption story
 

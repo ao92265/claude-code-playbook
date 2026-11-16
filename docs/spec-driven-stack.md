@@ -91,9 +91,9 @@ Each layer adds a different kind of verification. BMAD = human gates. GSD = cont
 
 ## What to Adopt at Harris (priority order)
 
-1. **Spec Kit** — install globally (`specify` CLI is now on this machine). Highest ROI, lowest friction. Try on one Wraith ticket.
+1. **Spec Kit** — install globally (`specify` CLI is now on this machine). Highest ROI, lowest friction. Try on one ExampleApp ticket.
 2. **GSD discipline** — already partially in place via `/compact` and `/clear` rules. Formalise the wave loop: `Discuss → Plan → Execute → Verify`.
-3. **GStack security-officer pattern** — adapt for Wraith / Centurion. Run a `security-reviewer` subagent on every PR before merge.
+3. **GStack security-officer pattern** — adapt for ExampleApp / banking products. Run a `security-reviewer` subagent on every PR before merge.
 4. **OTel traces on Claude Code** — gives auditable production trail. Useful for regulated workloads.
 5. **BMAD G-gates** — only on net-new builds, not bugfixes. Gate overhead is real on small work.
 

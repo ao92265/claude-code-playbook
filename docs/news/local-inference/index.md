@@ -18,4 +18,4 @@ The tau2-bench function-calling score jumped from 6.6% (Gemma 3) to 86.4% (Gemma
 
 ## Why it matters for regulated verticals
 
-For Centurion (banking), public sector, and any Harris vertical where data-egress is a compliance question, Apache 2.0 Gemma 4 running locally removes an entire class of compliance questions from your AI story. The hybrid workflow (\`codex --profile local\` for iteration + privacy-sensitive work; default cloud for complex) is a credible deployment pattern.
+For a banking product, public sector, and any Harris vertical where data-egress is a compliance question, Apache 2.0 Gemma 4 running locally removes an entire class of compliance questions from your AI story. The hybrid workflow (\`codex --profile local\` for iteration + privacy-sensitive work; default cloud for complex) is a credible deployment pattern.

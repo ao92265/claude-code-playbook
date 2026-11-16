@@ -37,7 +37,7 @@ A fast, modern, native terminal emulator. The pitch is development-efficiency wi
 
 ## Relevance to Harris / Constellation work
 
-Zero direct relevance to Wraith / ACT / Centurion / NanoClaw. Personal ergonomics only.
+Zero direct relevance to ExampleApp / ACT / Banking / Assistant. Personal ergonomics only.
 
 ## Related Playbook pages
 

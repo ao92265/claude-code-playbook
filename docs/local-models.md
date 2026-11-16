@@ -185,7 +185,7 @@ flowchart TB
 
 Local Gemma 4 via Codex CLI is a legitimate option for:
 
-- **FIS Centurion banking workflows** where code cannot leave the machine
+- **banking workflows** where code cannot leave the machine
 - **Public-sector customers** with data-residency requirements
 - **Azure-tenant deployment** of Gemma 4 (Apache 2.0) as a compliance-clean alternative to OpenAI/Anthropic endpoints for specific workloads
 

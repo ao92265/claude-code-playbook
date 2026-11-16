@@ -11,7 +11,7 @@
 [![Hooks](https://img.shields.io/badge/Hooks-85_included-EB5757?style=for-the-badge&logoColor=white)](#hooks)
 [![CI](https://img.shields.io/github/actions/workflow/status/ao92265/claude-code-playbook/validate.yml?style=for-the-badge&label=CI&logo=github)](https://github.com/ao92265/claude-code-playbook/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/License-MIT-27A644?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/ao92265/claude-code-playbook?style=for-the-badge&logo=github&color=F0BF00)](https://github.com/ao92265/claude-code-playbook/stargazers)
+[![Stars](https://img.shields.io/github/stars/ao92265/claude-code-playbook?style=for-the-badge&logo=github&color=F0BF00)](https://github.com/ao92265/claude-code-playbook)
 
 <br/>
 
@@ -68,7 +68,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 <td width="50%">
 
 **Learn**
-- The **[docs site](https://ao92265.github.io/claude-code-playbook/)** — 78 guides organised by section, from [Getting Started](docs/getting-started.md) to enterprise governance, plus 59 news deep-reads
+- The **[docs site](https://ao92265.github.io/claude-code-playbook/)**, 78 guides organised by section, from [Getting Started](docs/getting-started.md) to enterprise governance, plus 59 news deep-reads
 - [24 prompt engineering patterns](docs/prompt-patterns.md) with copy-paste examples and a decision tree
 - [Quick-reference cheat sheet](docs/cheat-sheet.md) for commands, model routing, and session management
 - [Troubleshooting guide](docs/troubleshooting.md) with 15 common issues and diagnostic flowcharts
@@ -78,7 +78,7 @@ After months of daily production use — debugging at 2am, shipping features acr
 <td width="50%">
 
 **Use**
-- [76 production-ready skills](skills/) (custom `/commands`) you can drop into any project
+- [81 production-ready skills](skills/) (custom `/commands`) you can drop into any project
 - [11 CLAUDE.md templates + 1 team onboarding template](templates/) — TypeScript, React, Node, Python, Full-stack, Go, Rust, Mobile, DevOps, Java, C#
 - [85 hook scripts](hooks/) that catch errors before they reach your commits
 - [5 annotated example sessions](examples/) showing real workflows in action
@@ -181,8 +181,8 @@ graph TB
 
 | Directory | Contents |
 |:----------|:---------|
-| **[docs/](docs/)** | 78 guides — patterns, configuration, architecture, enterprise, troubleshooting — plus [News & Research](docs/news/) with 59 deep-read article pages |
-| **[skills/](skills/)** | 52 ready-to-use custom slash commands ([full reference below](#skills-reference)) |
+| **[docs/](docs/)** | 78 guides, patterns, configuration, architecture, enterprise, troubleshooting, plus [News & Research](docs/news/) with 59 deep-read article pages |
+| **[skills/](skills/)** | 81 ready-to-use custom slash commands ([full reference below](#skills-reference)) |
 | **[hooks/](hooks/)** | 85 hook scripts — deterministic guard rails for commits, builds, secrets, and session state ([list below](#hooks)) |
 | **[templates/](templates/)** | 11 stack-specific CLAUDE.md files + a team onboarding template |
 | **[examples/](examples/)** | 5 annotated real-session transcripts |
@@ -379,7 +379,7 @@ graph LR
 
 ## Skills Reference
 
-Every skill is a drop-in `/command` that teaches Claude a specific workflow. All 52 are listed here — copy the ones you need.
+Every skill is a drop-in `/command` that teaches Claude a specific workflow. Highlights are listed here — copy the ones you need.
 
 <details open>
 <summary><strong>Environment & Safety</strong></summary>
@@ -805,6 +805,6 @@ Built with hard-won lessons at **[Harris Computer](https://www.harriscomputer.co
 
 *If this playbook saved you time, consider giving it a star.*
 
-<a href="https://github.com/ao92265/claude-code-playbook/stargazers"><img src="https://img.shields.io/github/stars/ao92265/claude-code-playbook?style=social" alt="Stars"></a>
+<a href="https://github.com/ao92265/claude-code-playbook"><img src="https://img.shields.io/github/stars/ao92265/claude-code-playbook?style=social" alt="Stars"></a>
 
 </div>

@@ -17,7 +17,7 @@ permalink: /docs/news/autonomous-code-review-bot/
 
 ## Why this is worth an evening
 
-16-minute read that ends with a working autonomous code review bot. For any Wraith / ACT / Centurion / NanoClaw maintenance, **the same pattern can be deployed into CI**. Expected output:
+16-minute read that ends with a working autonomous code review bot. For any ExampleApp / ACT / Banking / Assistant maintenance, **the same pattern can be deployed into CI**. Expected output:
 
 - Every PR gets reviewed automatically before a human looks at it
 - Low-signal comments (style, lint) are auto-fixed

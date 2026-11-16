@@ -7,12 +7,12 @@
   <key>ProgramArguments</key>
   <array>
     <string>/bin/bash</string>
-    <string>~/.claude/scripts/pr-review-sweep-check.sh</string>
+    <string>/Users/YOU/.claude/scripts/pr-review-sweep-check.sh</string>
   </array>
   <key>StandardOutPath</key>
-  <string>~/.claude/logs/com.example.claude-pr-review-check.log</string>
+  <string>/Users/YOU/.claude/logs/com.example.claude-pr-review-check.log</string>
   <key>StandardErrorPath</key>
-  <string>~/.claude/logs/com.example.claude-pr-review-check.log</string>
+  <string>/Users/YOU/.claude/logs/com.example.claude-pr-review-check.log</string>
   <key>StartCalendarInterval</key>
   <dict><key>Hour</key><integer>7</integer><key>Minute</key><integer>47</integer></dict>
   <key>RunAtLoad</key><false/>

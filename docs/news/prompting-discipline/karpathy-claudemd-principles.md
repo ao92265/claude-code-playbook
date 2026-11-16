@@ -25,7 +25,7 @@ Copying Karpathy's CLAUDE.md verbatim doesn't help if you don't understand *why*
 
 ## Audit your CLAUDE.md against this article
 
-If you haven't audited your four project CLAUDE.md files (Wraith, ACT, Centurion, NanoClaw) against Karpathy's principles + this article's explanations, that's the single highest-value one-hour task in your April 2026 playbook.
+If you haven't audited your four project CLAUDE.md files (ExampleApp, ACT, Banking, Assistant) against Karpathy's principles + this article's explanations, that's the single highest-value one-hour task in your April 2026 playbook.
 
 ## Related Playbook pages
 

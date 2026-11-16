@@ -145,7 +145,7 @@ Use this structure for a 10-minute pitch to management:
 The community has crystallised a six-tool stack — Big 5 + GS — that replaces ad-hoc prompting with a verifiable spec → plan → tasks → code pipeline. `specify` CLI is installed globally on this machine; start there.
 
 - Read: [Spec-Driven Stack 2026](spec-driven-stack.md)
-- Pilot: run `specify init` on one Wraith ticket. Compare cycle time vs. baseline.
+- Pilot: run `specify init` on one ExampleApp ticket. Compare cycle time vs. baseline.
 - Layer existing playbook hooks (TS check, env-guard, security-reviewer subagent) on top — the stacks are complementary, not exclusive.
 
 ---

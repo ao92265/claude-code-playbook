@@ -1,6 +1,7 @@
 ---
 name: multiask
-description: Cross-check an answer across 4 AI CLIs in parallel with an adversarial review pass. Expensive (about 1M tokens, 30 to 65s per call). Explicit invoke only: /multiask.
+description: >-
+  Cross-check an answer across 4 AI CLIs in parallel with an adversarial review pass. Expensive (about 1M tokens, 30 to 65s per call). Explicit invoke only: /multiask.
 ---
 
 # /multiask — Parallel multi-CLI fan-out with adversarial review

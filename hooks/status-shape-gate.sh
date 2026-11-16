@@ -32,8 +32,10 @@ stop_hook_active=$(printf '%s' "$input" | jq -r '.stop_hook_active // false' 2>/
 [ "$stop_hook_active" = "true" ] && exit 0
 
 last_user=$(tail -n 400 "$transcript" 2>/dev/null \
-  | jq -rs '[.[] | select(.type=="user")] | last | .message.content
-            | if type=="array" then map(select(.type=="text") // .text?) | join(" ") else . end' \
+  | jq -rs '[.[] | select(.type=="user")
+              | select((.message.content|type)=="string" or ((.message.content|type)=="array" and any(.message.content[]; .type=="text")))]
+            | last | .message.content
+            | if type=="array" then map(select(.type=="text").text) | join(" ") else . end' \
      2>/dev/null || true)
 [ -z "$last_user" ] && exit 0
 
@@ -41,7 +43,7 @@ last_user=$(tail -n 400 "$transcript" 2>/dev/null \
 shopt -s nocasematch 2>/dev/null || true
 is_status_prompt=0
 case "$last_user" in
-  *"keep going"*|*"status"*|*"how's it going"*|*"hows it going"*|*"progress"*|*"where are we"*|*"any update"*|*"check in"*|*"still going"*|*"any progress"*)
+  *"keep going"*|*"how's it going"*|*"hows it going"*|*"where are we"*|*"any update"*|*"check in"*|*"still going"*|*"any progress"*|"status"|"status?"|"progress"|"progress?"|"status update"|"what's the status"|"whats the status")
     is_status_prompt=1 ;;
 esac
 [ "$is_status_prompt" -eq 0 ] && exit 0

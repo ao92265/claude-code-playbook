@@ -1,6 +1,7 @@
 ---
 name: learn
-description: Turn logged corrections into hook proposals, but only once a tag hits three strikes. Explicit invoke only: /learn.
+description: >-
+  Turn logged corrections into hook proposals, but only once a tag hits three strikes. Explicit invoke only: /learn.
 ---
 
 # /learn
