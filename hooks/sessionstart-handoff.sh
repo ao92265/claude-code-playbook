@@ -235,14 +235,14 @@ if [ -z "$reboot" ] && [ -d "$REBOOT_DIR" ]; then
   # point — then one `ls -t` to order newest-first. xargs preserves argument order, so
   # everything downstream stays in that order.
   _rb_cands=$(find "$REBOOT_DIR" -maxdepth 1 -type f -name '*.md' -mtime -"$REBOOT_MAX_AGE_DAYS" -print0 2>/dev/null \
-              | xargs -0 ls -t 2>/dev/null | head -40)
+              | xargs -0 -r ls -t 2>/dev/null | head -40)
 
   # One grep to split the candidates by whether they carry an identity header at all.
   # Nearly every file here predates the header, and this discards all of them for the cost
   # of a single process instead of a sed fork each inside handoff_owns.
   _rb_headed=""
   [ -n "$_rb_cands" ] && _rb_headed=$(printf '%s\n' "$_rb_cands" | tr '\n' '\0' \
-                                      | xargs -0 grep -l -- '^- Path: `' 2>/dev/null || true)
+                                      | xargs -0 -r grep -l -- '^- Path: `' 2>/dev/null || true)
 
   # Ownership is only ever asked of header-bearing files, newest first.
   #
@@ -392,12 +392,12 @@ fi
 # body of work the user means, so the model is told to ask when the two disagree.
 if [ -n "$sname" ] && [ -d "$HANDOFF_DIR" ]; then
   _sn_other=$(find "$HANDOFF_DIR" -maxdepth 1 -type f -name '*.md' ! -name '*.compact.md' -mtime -14 -print0 2>/dev/null \
-              | xargs -0 grep -lxF -- "- Session: $sname" 2>/dev/null \
+              | xargs -0 -r grep -lxF -- "- Session: $sname" 2>/dev/null \
               | grep -vxF -e "$live" -e "$compact" \
               | while IFS= read -r _sn_f; do
                   _sn_p=$(sed -n 's/^- Path: `\(.*\)`$/\1/p' "$_sn_f" | head -1)
                   [ -n "$_sn_p" ] && [ "$_sn_p" != "$cwd" ] && printf '%s\n' "$_sn_f"
-                done | xargs ls -t 2>/dev/null | head -3)
+                done | xargs -r ls -t 2>/dev/null | head -3)
   if [ -n "$_sn_other" ]; then
     [ "$emitted" -eq 1 ] && echo
     echo "=== Other work under the name \"$sname\" (not loaded) ==="
