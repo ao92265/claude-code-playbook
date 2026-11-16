@@ -7,7 +7,7 @@
     <key>ProgramArguments</key>
     <array>
         <string>/opt/homebrew/bin/python3</string>
-        <string>~/.claude/scripts/standing-orders.py</string>
+        <string>/Users/YOU/.claude/scripts/standing-orders.py</string>
     </array>
     <key>StartCalendarInterval</key>
     <dict>
@@ -17,13 +17,13 @@
         <integer>10</integer>
     </dict>
     <key>StandardOutPath</key>
-    <string>~/.claude/standing-orders/launchd.log</string>
+    <string>/Users/YOU/.claude/standing-orders/launchd.log</string>
     <key>StandardErrorPath</key>
-    <string>~/.claude/standing-orders/launchd.log</string>
+    <string>/Users/YOU/.claude/standing-orders/launchd.log</string>
     <key>EnvironmentVariables</key>
     <dict>
         <key>PATH</key>
-        <string>~/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+        <string>/Users/YOU/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
     </dict>
 </dict>
 </plist>

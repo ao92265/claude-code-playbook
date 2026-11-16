@@ -7,12 +7,12 @@
   <key>ProgramArguments</key>
   <array>
     <string>/opt/homebrew/bin/python3</string>
-    <string>~/.claude/scripts/graveyard-sweep.py</string>
+    <string>/Users/YOU/.claude/scripts/graveyard-sweep.py</string>
   </array>
   <key>EnvironmentVariables</key>
   <dict>
     <key>PATH</key>
-    <string>~/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+    <string>/Users/YOU/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
   </dict>
   <key>StartCalendarInterval</key>
   <dict>
@@ -21,8 +21,8 @@
     <key>Minute</key><integer>5</integer>
   </dict>
   <key>StandardOutPath</key>
-  <string>~/.claude/graveyard/launchd.log</string>
+  <string>/Users/YOU/.claude/graveyard/launchd.log</string>
   <key>StandardErrorPath</key>
-  <string>~/.claude/graveyard/launchd.log</string>
+  <string>/Users/YOU/.claude/graveyard/launchd.log</string>
 </dict>
 </plist>
