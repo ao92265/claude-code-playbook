@@ -24,7 +24,7 @@ DIFF="$(git -C "$REPO" diff HEAD 2>/dev/null)"
 [[ -n "$DIFF" ]] || exit 0
 
 # Never send a diff whose added lines look like they hold a secret.
-printf '%s\n' "$DIFF" | grep -E '^\+' | grep -v '^+++' | grep -qiE \
+printf '%s\n' "$DIFF" | grep -E '^\+' | grep -vE '^\+\+\+ (b/|/dev/null)' | grep -qiE \
   'AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|xox[abpr]-[A-Za-z0-9-]{10,}|(^|[^A-Za-z0-9])sk-[A-Za-z0-9_-]{20,}|(api[_-]?key|secret|token|passw(or)?d)["'\'' ]*[=:]["'\'' ]*[A-Za-z0-9/+_.-]{16,}' && exit 0
 
 LINES=$(printf '%s' "$DIFF" | wc -l | tr -d ' ')
