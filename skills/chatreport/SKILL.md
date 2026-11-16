@@ -1,6 +1,7 @@
 ---
 name: chatreport
-description: Turn a WhatsApp chat export into a finished report about the relationship, then talk through what it found. Explicit invoke only: /chatreport.
+description: >-
+  Turn a WhatsApp chat export into a finished report about the relationship, then talk through what it found. Explicit invoke only: /chatreport.
 ---
 
 # chatreport: a chat export in, a finished report out
