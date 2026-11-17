@@ -14,11 +14,26 @@ else
   echo "ok   every tmux target in reap.sh is exact"
 fi
 
+# Window and pane commands need the trailing colon: "=name" alone is read as a
+# pane when the name holds a dot (v1.2-fix), and the command fails.
+nocolon=$(grep -nE 'tmux (list-windows|list-panes|capture-pane) .*-t "=\$[A-Za-z_]+"' "$REAP" || true)
+if [ -n "$nocolon" ]; then
+  echo "FAIL window or pane targets without the trailing colon:"; echo "$nocolon"; FAILURES=$((FAILURES+1))
+else
+  echo "ok   window and pane targets end in a colon"
+fi
+
 if command -v tmux >/dev/null; then
   LONG="reapexact-$$-longer"
   SHORT="reapexact-$$"
+  DOT="reapdot-$$.v2"
   tmux new-session -d -s "$LONG" "sleep 60" || { echo "could not create fixture"; exit 2; }
-  trap 'tmux kill-session -t "=$LONG" 2>/dev/null' EXIT
+  tmux new-session -d -s "$DOT" "sleep 60" || { echo "could not create dotted fixture"; exit 2; }
+  trap 'tmux kill-session -t "=$LONG" 2>/dev/null; tmux kill-session -t "=$DOT" 2>/dev/null' EXIT
+  tmux list-windows -t "=$DOT:" >/dev/null 2>&1 && echo "ok   window target works for a dotted session name" \
+    || { echo "FAIL window target failed for a dotted session name"; FAILURES=$((FAILURES+1)); }
+  tmux list-panes -t "=$DOT:" >/dev/null 2>&1 && echo "ok   pane target works for a dotted session name" \
+    || { echo "FAIL pane target failed for a dotted session name"; FAILURES=$((FAILURES+1)); }
   if tmux list-panes -t "=$SHORT:" >/dev/null 2>&1; then
     echo "FAIL exact pane target matched a longer session"; FAILURES=$((FAILURES+1))
   else echo "ok   exact pane target ignores a longer session"; fi

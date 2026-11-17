@@ -22,7 +22,7 @@ FAILURES=0
 
 # The fixture dir is a mktemp under the system temp dir and is left for the OS
 # to clear: a scripted recursive delete is not worth the blast radius here.
-cleanup() { tmux kill-session -t "$SESSION" 2>/dev/null; tmux kill-session -t "$BUSY" 2>/dev/null; }
+cleanup() { tmux kill-session -t "=$SESSION" 2>/dev/null; tmux kill-session -t "=$BUSY" 2>/dev/null; }
 trap cleanup EXIT
 
 # A stand-in for the Claude CLI. reap identifies Claude by the pane process

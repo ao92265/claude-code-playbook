@@ -76,7 +76,7 @@ while IFS='|' read -r NAME ATTACHED ACTIVITY; do
   # that is busy printing (an autonomous run, or session-rotate.sh typing via
   # send-keys) looks idle for days. Window activity moves on pane output, so
   # the idle clock is the newest of the two.
-  for W in $(tmux list-windows -t "=$NAME" -F '#{window_activity}' 2>/dev/null); do
+  for W in $(tmux list-windows -t "=$NAME:" -F '#{window_activity}' 2>/dev/null); do
     case "$W" in ''|*[!0-9]*) continue ;; esac
     [ "$W" -gt "$ACTIVITY" ] && ACTIVITY="$W"
   done
