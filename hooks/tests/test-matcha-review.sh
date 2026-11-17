@@ -115,4 +115,30 @@ NEWMARK="$(cat "$STATE/$KEY.hash" 2>/dev/null)"
 sleep 9
 [[ -n "$NEWMARK" && "$(cat "$STATE/$KEY.hash" 2>/dev/null)" == "$NEWMARK" ]] && RC=0 || RC=1
 expect "failed old run leaves the newer mark alone" 0
+
+# The whole diff is sent, so the secret screen has to read every body line, not
+# only the added ones: a removed line or an unchanged context line goes out too.
+cat > "$HOME/.claude/skills/matcha/matcha-run.sh" <<EOF
+#!/bin/bash
+echo call >> "$CALLS"
+echo "VERDICT fast"
+EOF
+rm -f "$STATE"/spend-*
+BIG="MATCHA_REVIEW_DAILY_MAX=100"
+{ seq 1 19; echo 'api_key = "ABCDEFGHIJKLMNOP123456"'; seq 21 40; } > "$REPO/ctx.txt"
+git -C "$REPO" add -A; git -C "$REPO" -c user.email=t@t -c user.name=t commit -q -m base
+BASE=$(calls)
+{ seq 1 19; echo 'api_key = "ABCDEFGHIJKLMNOP123456"'; seq 21 39; echo changed; } > "$REPO/ctx.txt"
+seq 41 80 >> "$REPO/ctx.txt"
+zrun $BIG
+[[ $(calls) == "$BASE" ]] && RC=0 || RC=1;              expect "secret on an unchanged context line is not sent" 0
+git -C "$REPO" checkout -q -- ctx.txt
+{ seq 1 18; seq 21 40; } > "$REPO/ctx.txt"
+seq 41 80 >> "$REPO/ctx.txt"
+zrun $BIG
+[[ $(calls) == "$BASE" ]] && RC=0 || RC=1;              expect "secret on a removed line is not sent" 0
+git -C "$REPO" checkout -q -- ctx.txt
+seq 100 140 > "$REPO/clean.txt"; git -C "$REPO" add clean.txt
+zrun $BIG
+[[ $(calls) == $((BASE + 1)) ]] && RC=0 || RC=1;        expect "a clean diff is still sent" 0
 finish
