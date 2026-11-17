@@ -255,12 +255,32 @@ turn_done() {
 # macOS, and the handoff stamps the path the shell reports while the map stores
 # the resolved one. Matching only one spelling silently finds nothing, which
 # reads as "the session never wrote a handoff". (Measured live: it did.)
+#
+# The folder has to match whole. A plain substring match let /x/foo claim a
+# handoff written for /x/foo-bar. has_path accepts a hit only when no name
+# character sits right before it or right after it (a "/" after is fine, that
+# is a subfolder).
+has_path() {  # has_path <file> <path>
+  [ -n "$2" ] || return 1
+  # The path goes in through the environment: awk -v would turn a backslash in a
+  # folder name into an escape sequence.
+  P="$2" awk '
+    BEGIN { p = ENVIRON["P"]; n = length(p) }
+    { s = $0; off = 0
+      while ((i = index(s, p)) > 0) {
+        pre  = (off + i > 1) ? substr($0, off + i - 1, 1) : ""
+        post = substr(s, i + n, 1)
+        if (pre !~ "[A-Za-z0-9._/-]" && post !~ "[A-Za-z0-9._-]") { found = 1; exit }
+        off += i; s = substr(s, i + 1)
+      } }
+    END { exit found ? 0 : 1 }' "$1" 2>/dev/null
+}
 owns() {
   [ -n "$MAP_CWD" ] || return 0
-  grep -qF "$MAP_CWD" "$1" 2>/dev/null && return 0
+  has_path "$1" "$MAP_CWD" && return 0
   local stripped="${MAP_CWD#/private}"
-  [ "$stripped" != "$MAP_CWD" ] && grep -qF "$stripped" "$1" 2>/dev/null && return 0
-  grep -qF "/private$MAP_CWD" "$1" 2>/dev/null && return 0
+  [ "$stripped" != "$MAP_CWD" ] && has_path "$1" "$stripped" && return 0
+  has_path "$1" "/private$MAP_CWD" && return 0
   return 1
 }
 
