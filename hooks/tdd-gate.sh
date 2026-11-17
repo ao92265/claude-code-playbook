@@ -104,13 +104,21 @@ case "$ext" in
     d="$dir"
     while [[ ! -d "$d" && "$d" != "/" && "$d" != "." ]]; do d="$(dirname "$d")"; done
     root="$(git -C "$d" rev-parse --show-toplevel 2>/dev/null || true)"
+    # The name is compared as plain text by awk, never as a glob or a pathspec,
+    # so UserServiceTests.cs does not count for Service.cs and Gen[1].cs is a name.
     if [[ -n "$root" ]]; then
-      cand=$(git -C "$root" ls-files --cached --others --exclude-standard -- "*${name}Tests.cs" "*${name}.Tests.cs" 2>/dev/null | head -1 || true)
+      cand=$(git -C "$root" ls-files --cached --others --exclude-standard -- '*Tests.cs' 2>/dev/null \
+        | awk -F/ -v a="${name}Tests.cs" -v b="${name}.Tests.cs" '$NF==a || $NF==b { print; exit }' || true)
     else
-      # Not in a repo: a shallow, pruned search, so a big folder cannot stall the hook.
+      # Not in a repo: a shallow, pruned search, so a big folder cannot stall the
+      # hook. Never from the home folder or the root: that takes tens of seconds.
       base="$PWD"; [[ "$d" == "$PWD"/* ]] || base="$d"
-      cand=$(find "$base" -maxdepth 3 \( -name bin -o -name obj -o -name node_modules -o -name .git -o -name .claude -o -name .worktrees -o -name worktrees \) -prune -o \
-        -type f \( -name "${name}Tests.cs" -o -name "${name}.Tests.cs" \) -print 2>/dev/null | head -1 || true)
+      cand=""
+      if [[ "$base" != "$HOME" && "$base" != "${HOME%/}" && "$base" != "/" ]]; then
+        cand=$(find "$base" -maxdepth 3 \( -name bin -o -name obj -o -name node_modules -o -name .git -o -name .claude -o -name .worktrees -o -name worktrees \) -prune -o \
+          -type f -name '*Tests.cs' -print 2>/dev/null \
+          | awk -F/ -v a="${name}Tests.cs" -v b="${name}.Tests.cs" '$NF==a || $NF==b { print; exit }' || true)
+      fi
     fi
     [[ -n "$cand" ]] && matches+=("$cand")
     ;;

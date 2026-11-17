@@ -44,13 +44,31 @@ touch "$R/tests/QuxTests.cs"
 edat / "$R/src/Qux.cs";                   expect "cs test in its repo is found from another folder" 0
 mkdir -p "$R/.worktrees/feat/tests"; git -C "$R/.worktrees/feat" init -q 2>/dev/null; touch "$R/.worktrees/feat/tests/BazTests.cs"
 edat "$R" "$R/src/Baz.cs";                expect "cs test only in a .worktrees checkout does not count" 1
-mkdir -p "$EMPTY/.claude/worktrees/x/tests"; touch "$EMPTY/.claude/worktrees/x/tests/ZedTests.cs"
+# Worktree folders are skipped outside a repo. The files sit within the 3 level
+# search depth, so the skip rules are really what keeps them out.
+mkdir -p "$EMPTY/.claude"; touch "$EMPTY/.claude/ZedTests.cs"
 edat "$EMPTY" "$EMPTY/src/Zed.cs";        expect "cs test only in a .claude worktree does not count" 1
-mkdir -p "$EMPTY/.worktrees/y/tests"; touch "$EMPTY/.worktrees/y/tests/YakTests.cs"
+mkdir -p "$EMPTY/.worktrees"; touch "$EMPTY/.worktrees/YakTests.cs"
 edat "$EMPTY" "$EMPTY/src/Yak.cs";        expect "cs test only in a plain .worktrees folder does not count" 1
+mkdir -p "$EMPTY/worktrees"; touch "$EMPTY/worktrees/XylTests.cs"
+edat "$EMPTY" "$EMPTY/src/Xyl.cs";        expect "cs test only in a worktrees folder does not count" 1
 mkdir -p "$R/src/test/java/a"; touch "$R/src/test/java/a/FooTest.java"
 edat / "$R/src/main/java/a/Foo.java";     expect "java test in its repo is found from another folder" 0
 edat / "$R/src/main/java/brandnew/Foo.java"; expect "java in a folder that does not exist yet is found from another folder" 0
+mkdir -p "$R/lib"; touch "$R/src/test/ZapTest.java"
+edat / "$R/lib/newdir/Zap.java";          expect "java outside src/main in a new folder finds its repo" 0
+# The test name has to match the whole file name, and glob characters are plain text.
+touch "$R/tests/UserServiceTests.cs"
+edat "$R" "$R/src/Service.cs";            expect "cs test for a longer name does not count" 1
+touch "$R/tests/Gen1Tests.cs"
+edat "$R" "$R/src/Gen[1].cs";             expect "cs name with glob characters is plain text" 1
+# Outside a repo, never search from the home folder or the root.
+mkdir -p "$HOME/a/b"; touch "$HOME/a/b/HomeTests.cs"
+edat "$HOME" "$HOME/Home.cs";             expect "cs search never starts from the home folder" 1
+# An unreadable folder must not end the hook early either.
+U="$TD/unread"; mkdir -p "$U/src" "$U/noread"; chmod 000 "$U/noread"
+edat "$U" "$U/src/Locked.cs" TDD_GATE_BLOCK=1; expect "cs search over an unreadable folder still blocks" 2
+chmod 755 "$U/noread"
 ed "$W/src/style.css";                    expect "css skipped" 0
 ed "$W/src/unknown.xyz";                  expect "unknown extension skipped" 0
 run $H '{"tool_input":{}}';               expect "no file_path ok" 0
