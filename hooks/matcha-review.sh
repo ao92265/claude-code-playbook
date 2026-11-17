@@ -23,8 +23,10 @@ grep -qxF "$REPO" "$HOME/.claude/matcha-review.allow" 2>/dev/null || exit 0
 DIFF="$(git -C "$REPO" diff HEAD 2>/dev/null)"
 [[ -n "$DIFF" ]] || exit 0
 
-# Never send a diff whose added lines look like they hold a secret.
-printf '%s\n' "$DIFF" | grep -E '^\+' | grep -vE '^\+\+\+ (b/|/dev/null)' | grep -qiE \
+# Never send a diff that holds something that looks like a secret. The whole
+# diff goes to the gateway, so removed lines and unchanged context lines count
+# too. Only the file header lines are left out.
+printf '%s\n' "$DIFF" | grep -vE '^(\+\+\+|---) (a/|b/|/dev/null)' | grep -qiE \
   'AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|xox[abpr]-[A-Za-z0-9-]{10,}|(^|[^A-Za-z0-9])sk-[A-Za-z0-9_-]{20,}|(api[_-]?key|secret|token|passw(or)?d)["'\'' ]*[=:]["'\'' ]*[A-Za-z0-9/+_.-]{16,}' && exit 0
 
 LINES=$(printf '%s' "$DIFF" | wc -l | tr -d ' ')
@@ -59,7 +61,7 @@ BRANCH="$(git -C "$REPO" rev-parse --abbrev-ref HEAD 2>/dev/null)"
 PROMPT="You are a second reviewer on a working diff. Another reviewer has already seen it, so only report what a careful reader would still flag.
 
 Repo: $(basename "$REPO")   Branch: $BRANCH
-You can read the surrounding source in this directory for context. Do not suggest edits, do not rewrite code.
+You can read the surrounding source in this directory for context. Do not suggest edits, do not rewrite code. New files that are not tracked by git yet are not in the diff, so say so if the change seems to depend on one.
 
 Look for: logic that is wrong for a real input, a case the change does not handle, state that can be observed half updated, an assumption the surrounding code does not actually hold, and anything the diff claims in a comment or message that the code does not do.
 
