@@ -269,4 +269,4 @@ Most teams will see **50–75% output-token reduction + 20–40% cost reduction*
 - [I Cut Claude Code's Output Tokens by 75% — Alex Dunlop (Medium)](https://medium.com/vibe-coding/i-cut-claude-codes-output-tokens-by-75-why-did-nobody-tell-me-3275138852e2)
 - [The New Claude Code Monitoring — Reza Rezvani (Medium)](https://medium.com/@alirezarezvani/the-new-claude-code-monitoring-what-our-team-data-revealed-e7f0424d738f)
 - [Opus 4.7 reference]({{ site.baseurl }}/docs/opus-4-7/)
-- [Matcha Lane]({{ site.baseurl }}/docs/matcha-lane/): billing delegate runs to a second gateway, with a daily cap
+- [Matcha Lane]({{ site.baseurl }}/docs/matcha-lane/): sends delegate runs to a second gateway, billed per token, with a daily cap
