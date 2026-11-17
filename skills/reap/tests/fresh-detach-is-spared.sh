@@ -27,18 +27,18 @@ trap cleanup EXIT
 
 # A stand-in for the Claude CLI. reap identifies Claude by the pane process
 # command, so the path has to end in /claude and the process has to stay up.
+# A shell script shows up in ps as "/bin/sh .../claude", which reap rightly
+# does not count, so link the name to a real binary instead.
 mkdir -p "$FIX/bin"
-printf '%s\n' '#!/bin/sh' 'sleep 600' > "$FIX/bin/claude"
-chmod +x "$FIX/bin/claude"
+ln -s "$(command -v sleep)" "$FIX/bin/claude"
 
-tmux new-session -d -s "$SESSION" -c "$FIX" "$FIX/bin/claude" || {
+tmux new-session -d -s "$SESSION" -c "$FIX" "$FIX/bin/claude 600" || {
   echo "could not create the fixture session"; exit 2; }
 
-# Same stand-in, but it prints output at 65s, after the 1 minute threshold.
-mkdir -p "$FIX/busy/bin"
-printf '%s\n' '#!/bin/sh' 'sleep 65' 'echo "working on it"' 'sleep 600' > "$FIX/busy/bin/claude"
-chmod +x "$FIX/busy/bin/claude"
-tmux new-session -d -s "$BUSY" -c "$FIX" "$FIX/busy/bin/claude" || {
+# Same stand-in as a child of a pane that prints at 65s, after the 1 minute
+# threshold. reap also looks at the pane's children, so it still counts.
+printf '%s\n' '#!/bin/sh' "\"$FIX/bin/claude\" 600 &" 'sleep 65' 'echo "working on it"' 'wait' > "$FIX/busy.sh"
+tmux new-session -d -s "$BUSY" -c "$FIX" "sh $FIX/busy.sh" || {
   echo "could not create the busy fixture session"; exit 2; }
 
 # Past the --minutes 1 threshold but under the floor. That gap is where the bug
