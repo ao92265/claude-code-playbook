@@ -56,8 +56,9 @@ else:
 [ -z "$REL" ] && ask "could not resolve the path"
 [ "$REL" = "OUTSIDE" ] && ask "path resolves outside the project directory"
 
-# Components of both the given path and the resolved path (relative to the project)
-LOWER=$(printf '%s\n%s' "$P" "$REL" | tr '[:upper:]' '[:lower:]')
+# Components of the resolved path, relative to the project. Not the folders above
+# the project: a project that lives under .claude/worktrees would ask on every edit.
+LOWER=$(printf '%s\n' "$REL" | tr '[:upper:]' '[:lower:]')
 while IFS= read -r line; do
   IFS='/' read -r -a parts <<< "$line"
   for c in "${parts[@]}"; do

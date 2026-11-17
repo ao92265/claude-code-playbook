@@ -10,6 +10,14 @@ silent() { run $H "$(jq -nc --arg f "$2" '{tool_input:{file_path:$f}}')" CLAUDE_
 silent "cs inside project is silent"       "$P/src/A.cs"
 silent "new md inside project is silent"   "$P/docs.md"
 silent "relative cs is silent"             "src/B.cs"
+# A project that itself lives under a .claude/worktrees folder: only the part
+# inside the project counts, not the folders above it.
+P2="$TD/.claude/worktrees/feat"; mkdir -p "$P2/src" "$P2/bin"
+run $H "$(jq -nc --arg f "$P2/src/A.cs" '{tool_input:{file_path:$f}}')" CLAUDE_PROJECT_DIR="$P2"
+expect "cs in a project under .claude/worktrees exits 0" 0
+expect_lacks "cs in a project under .claude/worktrees is silent" "$OUT" 'ask'
+run $H "$(jq -nc --arg f "$P2/bin/A.cs" '{tool_input:{file_path:$f}}')" CLAUDE_PROJECT_DIR="$P2"
+expect_has "bin inside that project still asks" "$OUT" '"permissionDecision":"ask"'
 ask    "csproj asks"                       "$P/src/App.csproj"
 ask    "props asks"                        "$P/Directory.Build.props"
 ask    "global.json asks"                  "$P/global.json"
