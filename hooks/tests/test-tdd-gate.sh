@@ -23,6 +23,10 @@ ed "$W/README.md";                        expect "markdown skipped" 0
 ed "$W/package.json";                     expect "json skipped" 0
 ed "$W/src/migrations/001.ts";            expect "migrations skipped" 0
 ed "$W/node_modules/x/index.js";          expect "node_modules skipped" 0
+mkdir -p "$W/src/test/java/com/acme"; touch "$W/src/test/java/com/acme/FooTest.java"
+ed "$W/src/main/java/com/acme/Foo.java";  expect "java test deep under src/test passes" 0
+mkdir -p "$W/tests/App.Tests/Unit"; touch "$W/tests/App.Tests/Unit/BarTests.cs"
+ed "$W/src/Bar.cs";                       expect "cs test two folders down passes" 0
 ed "$W/src/style.css";                    expect "css skipped" 0
 ed "$W/src/unknown.xyz";                  expect "unknown extension skipped" 0
 run $H '{"tool_input":{}}';               expect "no file_path ok" 0

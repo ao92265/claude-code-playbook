@@ -81,15 +81,16 @@ case "$ext" in
     grep -lE '^[[:space:]]*#\[cfg\(test\)\]' "$file" 2>/dev/null && matches+=("$file:inline")
     [[ -f "$dir/../tests/${name}.rs" ]] && matches+=("$dir/../tests/${name}.rs")
     ;;
+  # find, not **, because macOS bash 3.2 has no globstar and these test trees
+  # are usually several folders deep.
   java|kt)
-    for cand in src/test/**/"${name}Test.$ext" src/test/**/"${name}Tests.$ext"; do
-      [[ -f "$cand" ]] && matches+=("$cand")
-    done
+    cand=$(find src/test -type f \( -name "${name}Test.$ext" -o -name "${name}Tests.$ext" \) 2>/dev/null | head -1)
+    [[ -n "$cand" ]] && matches+=("$cand")
     ;;
   cs)
-    for cand in **/"${name}Tests.cs" **/"${name}.Tests.cs"; do
-      [[ -f "$cand" ]] && matches+=("$cand")
-    done
+    cand=$(find . \( -name bin -o -name obj -o -name node_modules -o -name .git \) -prune -o \
+      -type f \( -name "${name}Tests.cs" -o -name "${name}.Tests.cs" \) -print 2>/dev/null | head -1)
+    [[ -n "$cand" ]] && matches+=("$cand")
     ;;
 esac
 
