@@ -19,10 +19,10 @@ $ARGUMENTS
 
 ## Instructions
 
-1. Run `scripts/search.sh` with the search pattern (and another-projectnal file glob) to search across all repos
-   - Example: `scripts/search.sh "ZohoClient" "*.ts"`
-   - The script excludes `node_modules/`, `.git/`, `dist/`, `build/`, lock files, and generated directories
-   - Results are automatically grouped by project/repository
+1. Search every repo under the workspace root with Grep (or `grep -rn` from the root) for the pattern, with an optional file glob
+   - Example: Grep pattern `ZohoClient`, glob `*.ts`
+   - Skip `node_modules/`, `.git/`, `dist/`, `build/`, lock files, and generated directories
+   - Group the results by project/repository when you report them
 2. For each match, read enough context to understand how it's used
 
 ## Output Format

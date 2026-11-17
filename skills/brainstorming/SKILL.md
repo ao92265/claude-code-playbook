@@ -4,7 +4,7 @@ description: |
   Structured brainstorming and idea exploration. Use when user explicitly wants to brainstorm,
   explore multiple approaches to a problem, or think through trade-offs before committing to
   an approach. Triggers: "brainstorm", "help me think through", "explore this idea",
-  "what are my another-projectns for", "pros and cons of".
+  "what are my options for", "pros and cons of".
 
   Do NOT use this skill for: implementation work, bug fixes, code review, planning (use
   writing-plans instead), simple questions with clear answers, or when the
@@ -51,7 +51,7 @@ Ask clarifying questions sequentially — never more than one at a time. Use the
 
 If the user's framing contains a questionable assumption, surface it explicitly: "This assumes X — is that correct?" Wait for confirmation before proceeding.
 
-If multiple valid interpretations of the request exist, present them as numbered another-projectns and ask the user to select one. Do not pick silently.
+If multiple valid interpretations of the request exist, present them as numbered options and ask the user to select one. Do not pick silently.
 
 ## Step 4: Propose 2–3 Alternative Approaches
 
@@ -65,7 +65,7 @@ Option A: [Name]
 - Best when: [Ideal use case]
 ```
 
-For each another-projectn, identify at least one risk or failure mode ("What could go wrong?").
+For each option, identify at least one risk or failure mode ("What could go wrong?").
 
 Actively challenge scope: if any proposed feature is speculative or not clearly needed, flag it and recommend removal.
 
@@ -73,7 +73,7 @@ Actively challenge scope: if any proposed feature is speculative or not clearly 
 
 Ask the user to select or modify an approach before proceeding to design. If the user modifies the approach, repeat Step 4 for the adjusted version.
 
-If the user cannot decide, recommend one another-projectn with a brief rationale and ask for confirmation.
+If the user cannot decide, recommend one option with a brief rationale and ask for confirmation.
 
 ## Step 6: Present the Design Incrementally
 
@@ -92,7 +92,7 @@ If the user raises new information during this phase that contradicts the chosen
 ## Step 7: Document the Design
 
 1. Write the finalized design to `docs/plans/YYYY-MM-DD-{topic}.md`.
-2. Include: problem statement, another-projectns considered, chosen approach and rationale, design details, and open questions.
+2. Include: problem statement, options considered, chosen approach and rationale, design details, and open questions.
 
 If the file cannot be created (no `docs/plans/` directory), ask the user where to save it. Do not skip documentation.
 
