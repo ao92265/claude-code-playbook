@@ -87,18 +87,31 @@ case "$ext" in
   # (no such folder, unreadable folder) must not end the hook under set -e, or
   # block mode would quietly turn into exit 1.
   java|kt)
-    root="$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null || true)"
-    [[ -n "$root" ]] || root="$PWD"
+    d="$dir"
+    while [[ ! -d "$d" && "$d" != "/" && "$d" != "." ]]; do d="$(dirname "$d")"; done
+    root="$(git -C "$d" rev-parse --show-toplevel 2>/dev/null || true)"
+    if [[ -z "$root" ]]; then root="$PWD"; [[ "$d" == "$PWD"/* ]] || root="$d"; fi
     tdir="$root/src/test"
     [[ "$file" == */src/main/* ]] && tdir="${file%/src/main/*}/src/test"
     cand=$(find "$tdir" -type f \( -name "${name}Test.$ext" -o -name "${name}Tests.$ext" \) 2>/dev/null | head -1 || true)
     [[ -n "$cand" ]] && matches+=("$cand")
     ;;
   cs)
-    root="$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null || true)"
-    [[ -n "$root" ]] || root="$PWD"
-    cand=$(find "$root" \( -name bin -o -name obj -o -name node_modules -o -name .git -o -name .claude \) -prune -o \
-      -type f \( -name "${name}Tests.cs" -o -name "${name}.Tests.cs" \) -print 2>/dev/null | head -1 || true)
+    # Inside a git repo, ask git: it is fast, scoped to this checkout (nested
+    # worktrees are separate repos and are not listed), and includes new test
+    # files that are not committed yet. The hook has a short timeout, and a
+    # timed-out hook does not block.
+    d="$dir"
+    while [[ ! -d "$d" && "$d" != "/" && "$d" != "." ]]; do d="$(dirname "$d")"; done
+    root="$(git -C "$d" rev-parse --show-toplevel 2>/dev/null || true)"
+    if [[ -n "$root" ]]; then
+      cand=$(git -C "$root" ls-files --cached --others --exclude-standard -- "*${name}Tests.cs" "*${name}.Tests.cs" 2>/dev/null | head -1 || true)
+    else
+      # Not in a repo: a shallow, pruned search, so a big folder cannot stall the hook.
+      base="$PWD"; [[ "$d" == "$PWD"/* ]] || base="$d"
+      cand=$(find "$base" -maxdepth 3 \( -name bin -o -name obj -o -name node_modules -o -name .git -o -name .claude -o -name .worktrees -o -name worktrees \) -prune -o \
+        -type f \( -name "${name}Tests.cs" -o -name "${name}.Tests.cs" \) -print 2>/dev/null | head -1 || true)
+    fi
     [[ -n "$cand" ]] && matches+=("$cand")
     ;;
 esac
