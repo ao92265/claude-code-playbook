@@ -13,7 +13,7 @@ Three hooks sit around it: one reviews your working diff when a turn ends, one s
 
 The [matcha skill](../skills/matcha/) wraps `matcha-run.sh`, a script that launches `claude` in restricted mode against the gateway with a bounded prompt, a budget cap, and a timeout. Same shape as the Codex delegation lane described in [Multi-Model Orchestration](multi-model-orchestration.md): send a bounded slice of work, keep working yourself, collect the answer when it lands. You choose the tier (fast, standard, deep; default deep). The model inside the tier is picked automatically from whatever the gateway reports as current, never named from memory.
 
-Because the run is a full agent, it can read, grep, and glob inside a working directory you point it at. With `--write` it can also edit files, and it may be able to run shell commands. The file tools are confined to the working directory, but a shell is not, so only point `--write` at a clean git checkout.
+Because the run is a full agent, it can read, grep, and glob inside a working directory you point it at. With `--write` it can also edit files, still confined to the working directory. It never gets a shell, because its environment holds the gateway key, so you run the build and tests yourself afterwards. Only point `--write` at a clean git checkout.
 
 ## When To Reach For It
 

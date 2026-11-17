@@ -117,3 +117,9 @@ These files sit in `hooks/` but are not hook scripts, so they have no test of th
 | hooks.json, notification.conf | Configuration |
 | test-no-new-dep.sh | An older assertion checklist for no-new-dep.sh, kept as is |
 | lib/ | Shared helpers, exercised through the hooks that load them |
+
+## Non-hook scripts with tests
+
+| Script | Test |
+|--------|------|
+| skills/matcha/matcha-run.sh | test-matcha-run.sh (zsh; fake security, stat and claude, nothing leaves the machine) |

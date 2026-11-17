@@ -7,7 +7,7 @@
 #
 # Usage:
 #   matcha-run.sh [opts] "task"
-#     --write            allow Edit/Write/Bash in the working dir (default: read only)
+#     --write            allow Edit/Write in the working dir, never a shell (default: read only)
 #     --tier deep|standard|fast   default deep
 #     --dir PATH         working dir (default: cwd)
 #     --budget USD       spend cap (default 2.00)
@@ -115,7 +115,9 @@ grep -qF "\"$MODEL\"" "$CACHE" || { print -u2 "matcha-run: model $MODEL is not i
 # settings, so your hooks never fire inside the nested run. It also confines
 # the file tools to the working directory.
 if [[ $WRITE -eq 1 ]]; then
-  TOOLS="Read,Grep,Glob,Edit,Write,Bash"
+  # No Bash: the delegate's environment holds the gateway key, and a shell is
+  # not confined to the working directory. The caller runs the checks instead.
+  TOOLS="Read,Grep,Glob,Edit,Write"
   PERM="acceptEdits"
 else
   TOOLS="Read,Grep,Glob"
