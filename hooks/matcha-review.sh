@@ -33,7 +33,8 @@ LINES=$(printf '%s' "$DIFF" | wc -l | tr -d ' ')
 [[ $LINES -lt 15 || $LINES -gt 3000 ]] && exit 0
 
 HASH="$(printf '%s' "$DIFF" | shasum | cut -c1-16)"
-[[ -f "$STATE/$KEY.hash" && "$(cat "$STATE/$KEY.hash")" == "$HASH" ]] && exit 0
+MARK="$(cat "$STATE/$KEY.hash" 2>/dev/null)"
+[[ "${MARK%%.*}" == "$HASH" ]] && exit 0
 
 # Daily spend ceiling. A stop hook that fires all day is how a delegate quietly
 # runs up a bill nobody authorised.
@@ -47,7 +48,9 @@ echo $((COUNT + 1)) > "$SPENT_F"
 
 # Mark the diff before launching, so stops during a long run do not start the
 # same review again. A failed run removes the mark so the next stop retries.
-printf '%s' "$HASH" > "$STATE/$KEY.hash"
+# The mark is "<hash>.<pid>", so each run can tell whether it still owns it.
+TOKEN="$HASH.$$"
+printf '%s' "$TOKEN" > "$STATE/$KEY.hash"
 OUT="$STATE/$KEY.findings"
 # Own temp file per run, so two overlapping reviews cannot mix their output.
 TMP="$OUT.$$.tmp"
@@ -70,9 +73,11 @@ $DIFF"
 # Detach fully (stdin, stdout, stderr) so the hook's pipes close at once and the
 # Stop hook never waits on the review.
 { nohup "$HOME/.claude/skills/matcha/matcha-run.sh" --dir "$REPO" --tier deep \
-  --budget 0.60 --timeout 540 "$PROMPT" > "$TMP" 2>"$OUT.log" \
-  && mv "$TMP" "$OUT" \
-  || { [[ "$(cat "$STATE/$KEY.hash" 2>/dev/null)" == "$HASH" ]] && rm -f "$STATE/$KEY.hash"; }; \
+  --budget 0.60 --timeout 540 "$PROMPT" > "$TMP" 2>"$OUT.log"; RC=$?; \
+  if [[ "$(cat "$STATE/$KEY.hash" 2>/dev/null)" == "$TOKEN" ]]; then \
+    if (( RC == 0 )); then mv "$TMP" "$OUT" || rm -f "$STATE/$KEY.hash"; \
+    else rm -f "$STATE/$KEY.hash"; fi; \
+  fi; \
   rm -f "$TMP"; } </dev/null >/dev/null 2>&1 &
 disown 2>/dev/null
 exit 0

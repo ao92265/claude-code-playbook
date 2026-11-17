@@ -80,4 +80,20 @@ zrun
 zrun
 [[ $(calls) == 5 ]] && RC=0 || RC=1;                    expect "review still running is not launched again" 0
 sleep 4
+# An older slow review must not overwrite a newer review's findings.
+cat > "$HOME/.claude/skills/matcha/matcha-run.sh" <<EOF
+#!/bin/bash
+L=\$(cat "$TD/label"); D=\$(cat "$TD/delay")
+echo call >> "$CALLS"
+sleep "\$D"
+echo "VERDICT \$L"
+EOF
+echo 4 > "$TD/delay"; echo OLDSLOW > "$TD/label"
+seq 1 50 > "$REPO/stale.txt"; git -C "$REPO" add stale.txt
+zrun
+echo 0 > "$TD/delay"; echo NEWFAST > "$TD/label"
+seq 1 60 > "$REPO/stale.txt"; git -C "$REPO" add stale.txt
+zrun
+sleep 5
+expect_has "newer review is kept over an older slow one" "$(cat "$STATE/$KEY.findings" 2>/dev/null)" "NEWFAST"
 finish
