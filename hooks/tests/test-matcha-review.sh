@@ -83,11 +83,14 @@ sleep 4
 # An older slow review must not overwrite a newer review's findings.
 cat > "$HOME/.claude/skills/matcha/matcha-run.sh" <<EOF
 #!/bin/bash
-L=\$(cat "$TD/label"); D=\$(cat "$TD/delay")
+L=\$(cat "$TD/label"); D=\$(cat "$TD/delay"); X=\$(cat "$TD/exit")
+echo "\$L" >> "$TD/labels"
 echo call >> "$CALLS"
 sleep "\$D"
 echo "VERDICT \$L"
+exit "\$X"
 EOF
+echo 0 > "$TD/exit"
 echo 4 > "$TD/delay"; echo OLDSLOW > "$TD/label"
 seq 1 50 > "$REPO/stale.txt"; git -C "$REPO" add stale.txt
 zrun
@@ -95,5 +98,21 @@ echo 0 > "$TD/delay"; echo NEWFAST > "$TD/label"
 seq 1 60 > "$REPO/stale.txt"; git -C "$REPO" add stale.txt
 zrun
 sleep 5
+expect_has "the old run really was the slow one" "$(cat "$TD/labels" 2>/dev/null)" "OLDSLOW"
 expect_has "newer review is kept over an older slow one" "$(cat "$STATE/$KEY.findings" 2>/dev/null)" "NEWFAST"
+
+# A slow old run that fails must leave the newer run's mark alone.
+echo 1 > "$TD/exit"; echo 8 > "$TD/delay"; echo OLDFAIL > "$TD/label"
+seq 1 70 > "$REPO/stale.txt"; git -C "$REPO" add stale.txt
+zrun
+echo 0 > "$TD/exit"; echo 0 > "$TD/delay"; echo NEWOK > "$TD/label"
+seq 1 80 > "$REPO/stale.txt"; git -C "$REPO" add stale.txt
+zrun
+# Back to the first diff: a new run for the same hash, while the old one is still going.
+seq 1 70 > "$REPO/stale.txt"; git -C "$REPO" add stale.txt
+zrun
+NEWMARK="$(cat "$STATE/$KEY.hash" 2>/dev/null)"
+sleep 9
+[[ -n "$NEWMARK" && "$(cat "$STATE/$KEY.hash" 2>/dev/null)" == "$NEWMARK" ]] && RC=0 || RC=1
+expect "failed old run leaves the newer mark alone" 0
 finish
