@@ -30,5 +30,7 @@ want 0 "private spelling in the file"         '- Path: `/private/tmp/foo`'      
 want 0 "private spelling in the map"          '- Path: `/tmp/foo`'                 /private/tmp/foo
 want 1 "private sibling is not a match"       '- Path: `/private/tmp/foo-bar`'     /tmp/foo
 want 0 "empty map folder owns everything"     '- Path: `/anything`'                ""
+want 0 "folder name with a backslash matches" '- Path: `/x/a\tb`'                  '/x/a\tb'
+want 1 "backslash folder does not match a sibling" '- Path: `/x/a\tb2`'            '/x/a\tb'
 
 [ "$FAIL" -eq 0 ]

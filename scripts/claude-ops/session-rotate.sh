@@ -262,8 +262,10 @@ turn_done() {
 # is a subfolder).
 has_path() {  # has_path <file> <path>
   [ -n "$2" ] || return 1
-  awk -v p="$2" '
-    BEGIN { n = length(p) }
+  # The path goes in through the environment: awk -v would turn a backslash in a
+  # folder name into an escape sequence.
+  P="$2" awk '
+    BEGIN { p = ENVIRON["P"]; n = length(p) }
     { s = $0; off = 0
       while ((i = index(s, p)) > 0) {
         pre  = (off + i > 1) ? substr($0, off + i - 1, 1) : ""
