@@ -21,9 +21,9 @@ That is the whole point, and also the reason every run is capped.
 ```
 
 Read only by default. It can read, grep and glob inside the working directory
-and nothing else. `--write` adds editing and a shell. The file tools stay
-confined to the working directory, but the shell is not confined: it can reach
-anywhere the user can, so point `--write` only at a clean git checkout.
+and nothing else. `--write` adds editing, still confined to the working
+directory. It never gets a shell, because the delegate's environment holds the
+gateway key. Point `--write` only at a clean git checkout.
 
 ## Choosing the tier
 
@@ -46,7 +46,7 @@ Run it in the background and carry on. Do not sit and watch it.
 1. Confirm the working directory holds the code the task is about. The run
    cannot see outside it.
 2. For a review or diagnosis, put the evidence where the delegate can read it.
-   It has no shell in read mode, so a diff has to be written to a file in the
+   It never has a shell, so a diff has to be written to a file in the
    working directory first, not fetched by the delegate.
 3. Launch with `run_in_background`.
 4. Collect when it lands. It prints the answer on stdout, and the cost, turn
@@ -59,10 +59,10 @@ the prompt: what the code is for, what to look at, what a good answer looks
 like. A bare "review this" gets a bare review.
 
 Send one whole feature slice per run, not a string of small ones. For a
-`--write` job that means build, test and fix-until-green in one task, with the
-check command named in the prompt so the delegate knows what finished means.
-Note that headless runs deny shell commands nothing has pre-approved, so the
-delegate may be unable to run that check itself. Re-run it yourself afterwards.
+`--write` job that means editing the whole slice in one task, including its
+tests. The delegate has no shell, so it cannot build or run the tests. Run the
+check yourself afterwards, and send one follow-up run with the failures if it
+is red.
 Every separate run pays again to read the repo, so five small runs cost more
 than one run that does all five parts.
 
