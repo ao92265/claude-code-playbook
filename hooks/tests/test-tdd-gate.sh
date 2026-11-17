@@ -74,6 +74,10 @@ edat "$HOME" "$HOME/Home.cs";             expect "cs search never starts from th
 U="$TD/unread"; mkdir -p "$U/src" "$U/noread"; chmod 000 "$U/noread"
 edat "$U" "$U/src/Locked.cs" TDD_GATE_BLOCK=1; expect "cs search over an unreadable folder still blocks" 2
 chmod 755 "$U/noread"
+# Writing a JVM test first must not be blocked: the test file itself is skipped.
+ed "$W/src/test/kotlin/FooTest.kt" TDD_GATE_BLOCK=1;   expect "kotlin FooTest.kt itself skipped" 0
+ed "$W/src/test/kotlin/FooTests.kt" TDD_GATE_BLOCK=1;  expect "kotlin FooTests.kt itself skipped" 0
+ed "$W/src/test/java/FooTests.java" TDD_GATE_BLOCK=1;  expect "java FooTests.java itself skipped" 0
 ed "$W/src/style.css";                    expect "css skipped" 0
 ed "$W/src/unknown.xyz";                  expect "unknown extension skipped" 0
 run $H '{"tool_input":{}}';               expect "no file_path ok" 0

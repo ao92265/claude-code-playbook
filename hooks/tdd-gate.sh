@@ -30,7 +30,7 @@ file="$(jq -r '.tool_input.file_path // empty' <<<"$payload")"
 
 # Skip non-source files.
 case "$file" in
-  *.test.*|*.spec.*|*_test.go|*test_*.py|*Test.java|*Tests.cs) exit 0 ;;
+  *.test.*|*.spec.*|*_test.go|*test_*.py|*Test.java|*Tests.java|*Test.kt|*Tests.kt|*Tests.cs) exit 0 ;;
   *.md|*.mdx|*.json|*.yml|*.yaml|*.toml|*.lock|Dockerfile*|*.dockerfile) exit 0 ;;
   *.css|*.scss|*.html|*.svg|*.png|*.jpg|*.gif) exit 0 ;;
   */migrations/*|*/generated/*|*/__generated__/*|*/.next/*|*/dist/*|*/build/*) exit 0 ;;
