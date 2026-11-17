@@ -6,7 +6,7 @@ Each test was checked against a deliberate break: the hook body was replaced wit
 
 ## Totals
 
-- Hook scripts: 84
+- Hook scripts: 84 (the README and CI count 85 files in `hooks/`, because they also count `test-no-new-dep.sh`, an old checklist that is not a hook)
 - Tested: 82
 - Untestable offline: 2
 
@@ -19,7 +19,7 @@ Each test was checked against a deliberate break: the hook body was replaced wit
 
 ## Tested
 
-Some tests skip themselves where a tool is missing: the three zsh hooks skip where zsh is not installed (the stock Ubuntu CI image), and `test-commit-message-check.sh` skips where grep has no PCRE support (stock macOS).
+Some tests skip themselves where a tool is missing: the three zsh hooks skip where zsh is not installed (the CI job installs zsh, so they run there), and `test-commit-message-check.sh` skips where grep has no PCRE support (stock macOS).
 
 | Hook | Test file |
 |------|-----------|

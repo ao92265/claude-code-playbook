@@ -117,6 +117,8 @@ jobs:
           done
       - name: Run hook behaviour tests
         run: bash hooks/tests/run-all.sh
+      - name: Run the reaper Claude-detection test
+        run: bash skills/reap/tests/claude-detect-by-argv0.sh
 
   validate-templates:
     name: Validate Templates
