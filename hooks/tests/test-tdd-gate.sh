@@ -62,6 +62,11 @@ touch "$R/tests/UserServiceTests.cs"
 edat "$R" "$R/src/Service.cs";            expect "cs test for a longer name does not count" 1
 touch "$R/tests/Gen1Tests.cs"
 edat "$R" "$R/src/Gen[1].cs";             expect "cs name with glob characters is plain text" 1
+# git quotes and escapes paths with accents or quotes unless asked not to.
+mkdir -p "$R/tests/$(printf '\xc3\x9c')ber"; touch "$R/tests/$(printf '\xc3\x9c')ber/AlphaTests.cs"
+edat "$R" "$R/src/Alpha.cs";              expect "cs test in an accented folder is found" 0
+mkdir -p "$R/tests/q\"x"; touch "$R/tests/q\"x/GammaTests.cs"
+edat "$R" "$R/src/Gamma.cs";              expect "cs test in a folder with a quote is found" 0
 # Outside a repo, never search from the home folder or the root.
 mkdir -p "$HOME/a/b"; touch "$HOME/a/b/HomeTests.cs"
 edat "$HOME" "$HOME/Home.cs";             expect "cs search never starts from the home folder" 1

@@ -107,8 +107,9 @@ case "$ext" in
     # The name is compared as plain text by awk, never as a glob or a pathspec,
     # so UserServiceTests.cs does not count for Service.cs and Gen[1].cs is a name.
     if [[ -n "$root" ]]; then
-      cand=$(git -C "$root" ls-files --cached --others --exclude-standard -- '*Tests.cs' 2>/dev/null \
-        | awk -F/ -v a="${name}Tests.cs" -v b="${name}.Tests.cs" '$NF==a || $NF==b { print; exit }' || true)
+      # -z: without it git wraps paths with accents or quotes in quotes and escapes them.
+      cand=$(git -C "$root" ls-files -z --cached --others --exclude-standard -- '*Tests.cs' 2>/dev/null \
+        | tr '\0' '\n' | awk -F/ -v a="${name}Tests.cs" -v b="${name}.Tests.cs" '$NF==a || $NF==b { print; exit }' || true)
     else
       # Not in a repo: a shallow, pruned search, so a big folder cannot stall the
       # hook. Never from the home folder or the root: that takes tens of seconds.
