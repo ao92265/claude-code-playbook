@@ -38,5 +38,7 @@ rm -f "$ARGS"
 mrun --write "write task"
 expect "write run exits 0" 0
 [[ "$(tools)" == *Edit* && "$(tools)" == *Write* ]] && RC=0 || RC=1; expect "write run can edit files" 0
-[[ "$(tools)" != *Bash* ]] && RC=0 || RC=1;                   expect "write run gets no shell" 0
+[[ "$(tools)" == "Read,Grep,Glob,Edit,Write" ]] && RC=0 || RC=1; expect "write run gets exactly the edit tools, no shell" 0
+grep -qx -- '--restricted' "$ARGS" && grep -qx -- '--strict-mcp-config' "$ARGS" && RC=0 || RC=1
+expect "write run keeps restricted and strict MCP flags" 0
 finish

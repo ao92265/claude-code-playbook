@@ -59,10 +59,10 @@ the prompt: what the code is for, what to look at, what a good answer looks
 like. A bare "review this" gets a bare review.
 
 Send one whole feature slice per run, not a string of small ones. For a
-`--write` job that means build, test and fix-until-green in one task, with the
-check command named in the prompt so the delegate knows what finished means.
-The delegate has no shell, so it cannot run that check itself. Run it
-yourself afterwards, and send a follow-up run if it fails.
+`--write` job that means editing the whole slice in one task, including its
+tests. The delegate has no shell, so it cannot build or run the tests. Run the
+check yourself afterwards, and send one follow-up run with the failures if it
+is red.
 Every separate run pays again to read the repo, so five small runs cost more
 than one run that does all five parts.
 
