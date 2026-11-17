@@ -135,7 +135,7 @@ Typecheck, lint, format, test and plan checks around edits, commits and stops.
 | `push-gate.py` | Stop | One nudge when a session committed but did not push: push, or say in one line why not. Skips headless runs, repos with no remote and an allow list. |
 | `auto-simplify.sh` | PreToolUse (Bash) | On `git commit`, sends the staged diff to a Codex review and blocks on P1 findings. |
 | `codex-prepush-review.sh` | PreToolUse (Bash) | On `git push`, sends HEAD vs the main branch to a Codex review and blocks on P1 findings. |
-| `matcha-review.sh` | Stop | Sends the working diff to an alternate gateway for a background, read-only second review. |
+| `matcha-review.sh` | Stop | Sends the working diff to an alternate gateway for a background, read-only second review. Opt-in per repo through `~/.claude/matcha-review.allow`, and skips diffs that look like they hold a secret. |
 | `matcha-offload-gate.sh` | PreToolUse (Agent\|Task) | When the subscription window is nearly spent, steers cheap mechanical subagent work to the gateway. |
 
 ### Evidence recorder and gate pairs
@@ -198,7 +198,7 @@ Inject a short rule next to the request so it binds, or check the reply shape at
 | `chrome-ref-first.sh` | PreToolUse (chrome computer, read_page, find) | Advisory: prefer element references over pixel coordinates. |
 | `auto-mode.py` | UserPromptSubmit `--prompt`, PreToolUse (AskUserQuestion) `--gate`, Stop `--stop` | When auto mode is on, Claude decides instead of asking. |
 | `tldr-mode.py` | skill frontmatter hook (once) | Latches a plain-English tldr register for the rest of the session. |
-| `matcha-surface.sh` | UserPromptSubmit | Delivers finished background reviews and warns when the subscription window is nearly spent. |
+| `matcha-surface.sh` | UserPromptSubmit | Delivers finished background reviews, labelled as untrusted text, and warns when the subscription window is nearly spent. |
 
 ### PR gates
 

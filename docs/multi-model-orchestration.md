@@ -304,3 +304,4 @@ Only works when units are independent. If one unit depends on another, use stand
 - [Anthropic Managed Agents launch](https://claude.com/blog/claude-managed-agents)
 - [Regulated AI]({{ site.baseurl }}/docs/regulated-ai/) — the compliance implications of multi-model pipelines
 - [Opus 4.7 reference]({{ site.baseurl }}/docs/opus-4-7/)
+- [Matcha Lane]({{ site.baseurl }}/docs/matcha-lane/): a delegation lane to a second gateway, modelled on the Codex lane
