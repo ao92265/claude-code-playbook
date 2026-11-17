@@ -30,7 +30,7 @@ file="$(jq -r '.tool_input.file_path // empty' <<<"$payload")"
 
 # Skip non-source files.
 case "$file" in
-  *.test.*|*.spec.*|*_test.go|*test_*.py|*Test.java|*Tests.cs) exit 0 ;;
+  *.test.*|*.spec.*|*_test.go|*test_*.py|*Test.java|*Tests.java|*Test.kt|*Tests.kt|*Tests.cs) exit 0 ;;
   *.md|*.mdx|*.json|*.yml|*.yaml|*.toml|*.lock|Dockerfile*|*.dockerfile) exit 0 ;;
   *.css|*.scss|*.html|*.svg|*.png|*.jpg|*.gif) exit 0 ;;
   */migrations/*|*/generated/*|*/__generated__/*|*/.next/*|*/dist/*|*/build/*) exit 0 ;;
@@ -81,15 +81,47 @@ case "$ext" in
     grep -lE '^[[:space:]]*#\[cfg\(test\)\]' "$file" 2>/dev/null && matches+=("$file:inline")
     [[ -f "$dir/../tests/${name}.rs" ]] && matches+=("$dir/../tests/${name}.rs")
     ;;
+  # find, not **, because macOS bash 3.2 has no globstar and these test trees
+  # are usually several folders deep.
+  # Start from the edited file's repo, not the hook's folder. A failing find
+  # (no such folder, unreadable folder) must not end the hook under set -e, or
+  # block mode would quietly turn into exit 1.
   java|kt)
-    for cand in src/test/**/"${name}Test.$ext" src/test/**/"${name}Tests.$ext"; do
-      [[ -f "$cand" ]] && matches+=("$cand")
-    done
+    d="$dir"
+    while [[ ! -d "$d" && "$d" != "/" && "$d" != "." ]]; do d="$(dirname "$d")"; done
+    root="$(git -C "$d" rev-parse --show-toplevel 2>/dev/null || true)"
+    if [[ -z "$root" ]]; then root="$PWD"; [[ "$d" == "$PWD"/* ]] || root="$d"; fi
+    tdir="$root/src/test"
+    [[ "$file" == */src/main/* ]] && tdir="${file%/src/main/*}/src/test"
+    cand=$(find "$tdir" -type f \( -name "${name}Test.$ext" -o -name "${name}Tests.$ext" \) 2>/dev/null | head -1 || true)
+    [[ -n "$cand" ]] && matches+=("$cand")
     ;;
   cs)
-    for cand in **/"${name}Tests.cs" **/"${name}.Tests.cs"; do
-      [[ -f "$cand" ]] && matches+=("$cand")
-    done
+    # Inside a git repo, ask git: it is fast, scoped to this checkout (nested
+    # worktrees are separate repos and are not listed), and includes new test
+    # files that are not committed yet. The hook has a short timeout, and a
+    # timed-out hook does not block.
+    d="$dir"
+    while [[ ! -d "$d" && "$d" != "/" && "$d" != "." ]]; do d="$(dirname "$d")"; done
+    root="$(git -C "$d" rev-parse --show-toplevel 2>/dev/null || true)"
+    # The name is compared as plain text by awk, never as a glob or a pathspec,
+    # so UserServiceTests.cs does not count for Service.cs and Gen[1].cs is a name.
+    if [[ -n "$root" ]]; then
+      # -z: without it git wraps paths with accents or quotes in quotes and escapes them.
+      cand=$(git -C "$root" ls-files -z --cached --others --exclude-standard -- '*Tests.cs' 2>/dev/null \
+        | tr '\0' '\n' | awk -F/ -v a="${name}Tests.cs" -v b="${name}.Tests.cs" '$NF==a || $NF==b { print; exit }' || true)
+    else
+      # Not in a repo: a shallow, pruned search, so a big folder cannot stall the
+      # hook. Never from the home folder or the root: that takes tens of seconds.
+      base="$PWD"; [[ "$d" == "$PWD"/* ]] || base="$d"
+      cand=""
+      if [[ "$base" != "$HOME" && "$base" != "${HOME%/}" && "$base" != "/" ]]; then
+        cand=$(find "$base" -maxdepth 3 \( -name bin -o -name obj -o -name node_modules -o -name .git -o -name .claude -o -name .worktrees -o -name worktrees \) -prune -o \
+          -type f -name '*Tests.cs' -print 2>/dev/null \
+          | awk -F/ -v a="${name}Tests.cs" -v b="${name}.Tests.cs" '$NF==a || $NF==b { print; exit }' || true)
+      fi
+    fi
+    [[ -n "$cand" ]] && matches+=("$cand")
     ;;
 esac
 
