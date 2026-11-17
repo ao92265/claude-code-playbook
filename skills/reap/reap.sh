@@ -76,7 +76,7 @@ while IFS='|' read -r NAME ATTACHED ACTIVITY; do
   # that is busy printing (an autonomous run, or session-rotate.sh typing via
   # send-keys) looks idle for days. Window activity moves on pane output, so
   # the idle clock is the newest of the two.
-  for W in $(tmux list-windows -t "$NAME" -F '#{window_activity}' 2>/dev/null); do
+  for W in $(tmux list-windows -t "=$NAME:" -F '#{window_activity}' 2>/dev/null); do
     case "$W" in ''|*[!0-9]*) continue ;; esac
     [ "$W" -gt "$ACTIVITY" ] && ACTIVITY="$W"
   done
@@ -90,7 +90,7 @@ while IFS='|' read -r NAME ATTACHED ACTIVITY; do
   # renames tmux sessions, so a protect list keyed only on the tmux name goes
   # stale the moment a bot session gets renamed.
   CLAUDE_NAME=""
-  probe="$(tmux list-panes -t "$NAME" -F '#{pane_pid}' 2>/dev/null | head -1)"
+  probe="$(tmux list-panes -t "=$NAME:" -F '#{pane_pid}' 2>/dev/null | head -1)"
   for _ in 1 2 3; do
     [ -z "$probe" ] && break
     f="$HOME/.claude/sessions/$probe.json"
@@ -110,7 +110,7 @@ while IFS='|' read -r NAME ATTACHED ACTIVITY; do
 
   # Is the pane really Claude? Walk the pane's process tree, because the pane
   # command string is Claude's version banner, not a program name.
-  PANE_PID="$(tmux list-panes -t "$NAME" -F '#{pane_pid}' 2>/dev/null | head -1)"
+  PANE_PID="$(tmux list-panes -t "=$NAME:" -F '#{pane_pid}' 2>/dev/null | head -1)"
   IS_CLAUDE=0
   if [ -n "$PANE_PID" ]; then
     if ps -o command= -p "$PANE_PID" 2>/dev/null | is_claude_cmd; then
@@ -144,7 +144,7 @@ while IFS='|' read -r NAME ATTACHED ACTIVITY; do
   # with dim text kept (the busy and dialog hints may be dim); PROMPT_PANE also
   # drops the dim spans and is only used to read the ❯ row. The no-break space
   # Claude draws after ❯ becomes a plain space in both.
-  RAW="$(tmux capture-pane -p -e -t "$NAME" 2>/dev/null || true)"
+  RAW="$(tmux capture-pane -p -e -t "=$NAME:" 2>/dev/null || true)"
   NBSP="$(printf '\302\240')"
   PANE="$(printf '%s\n' "$RAW" | perl -pe 's/\e\[[0-9;?]*[A-Za-z]//g' | tr -d '\r' | sed "s/$NBSP/ /g")"
   PROMPT_PANE="$(printf '%s\n' "$RAW" | perl -pe 's/\e\[2m.*?\e\[0m//g; s/\e\[[0-9;?]*[A-Za-z]//g' \
@@ -221,7 +221,7 @@ fi
 if [ "$DO_KILL" -eq 1 ] && [ "${#DEAD[@]}" -gt 0 ]; then
   echo
   for s in "${DEAD[@]}"; do
-    if tmux kill-session -t "$s" 2>/dev/null; then echo "killed $s"; else echo "FAILED to kill $s"; fi
+    if tmux kill-session -t "=$s" 2>/dev/null; then echo "killed $s"; else echo "FAILED to kill $s"; fi
   done
   echo
   echo "Conversations are not lost. 'claude --resume' reopens any of them."
