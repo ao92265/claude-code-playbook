@@ -27,6 +27,16 @@ mkdir -p "$W/src/test/java/com/acme"; touch "$W/src/test/java/com/acme/FooTest.j
 ed "$W/src/main/java/com/acme/Foo.java";  expect "java test deep under src/test passes" 0
 mkdir -p "$W/tests/App.Tests/Unit"; touch "$W/tests/App.Tests/Unit/BarTests.cs"
 ed "$W/src/Bar.cs";                       expect "cs test two folders down passes" 0
+# A failing find (here: no src/test folder at all) must not end the hook early.
+EMPTY="$TD/empty"; mkdir -p "$EMPTY"
+( cd "$EMPTY" && run $H "$(file_payload Edit "$EMPTY/src/Nope.java")" TDD_GATE_BLOCK=1; echo "$RC" > "$TD/rc1" )
+RC=$(cat "$TD/rc1");                      expect "java with no src/test still blocks in block mode" 2
+( cd "$EMPTY" && run $H "$(file_payload Edit "$EMPTY/src/Nope.cs")" TDD_GATE_BLOCK=1; echo "$RC" > "$TD/rc2" )
+RC=$(cat "$TD/rc2");                      expect "cs search still blocks in block mode" 2
+# A repo-root search must not count a test that lives in a sibling worktree.
+mkdir -p "$EMPTY/.claude/worktrees/other/src/test"; touch "$EMPTY/.claude/worktrees/other/src/test/NopeTest.java"
+( cd "$EMPTY" && run $H "$(file_payload Edit "$EMPTY/src/Nope.java")"; echo "$RC" > "$TD/rc3" )
+RC=$(cat "$TD/rc3");                      expect "test in a sibling worktree does not count" 1
 ed "$W/src/style.css";                    expect "css skipped" 0
 ed "$W/src/unknown.xyz";                  expect "unknown extension skipped" 0
 run $H '{"tool_input":{}}';               expect "no file_path ok" 0

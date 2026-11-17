@@ -83,13 +83,22 @@ case "$ext" in
     ;;
   # find, not **, because macOS bash 3.2 has no globstar and these test trees
   # are usually several folders deep.
+  # Start from the edited file's repo, not the hook's folder. A failing find
+  # (no such folder, unreadable folder) must not end the hook under set -e, or
+  # block mode would quietly turn into exit 1.
   java|kt)
-    cand=$(find src/test -type f \( -name "${name}Test.$ext" -o -name "${name}Tests.$ext" \) 2>/dev/null | head -1)
+    root="$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null || true)"
+    [[ -n "$root" ]] || root="$PWD"
+    tdir="$root/src/test"
+    [[ "$file" == */src/main/* ]] && tdir="${file%/src/main/*}/src/test"
+    cand=$(find "$tdir" -type f \( -name "${name}Test.$ext" -o -name "${name}Tests.$ext" \) 2>/dev/null | head -1 || true)
     [[ -n "$cand" ]] && matches+=("$cand")
     ;;
   cs)
-    cand=$(find . \( -name bin -o -name obj -o -name node_modules -o -name .git \) -prune -o \
-      -type f \( -name "${name}Tests.cs" -o -name "${name}.Tests.cs" \) -print 2>/dev/null | head -1)
+    root="$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null || true)"
+    [[ -n "$root" ]] || root="$PWD"
+    cand=$(find "$root" \( -name bin -o -name obj -o -name node_modules -o -name .git -o -name .claude \) -prune -o \
+      -type f \( -name "${name}Tests.cs" -o -name "${name}.Tests.cs" \) -print 2>/dev/null | head -1 || true)
     [[ -n "$cand" ]] && matches+=("$cand")
     ;;
 esac
